@@ -21,7 +21,10 @@
         "noUnusedLocals": false,
         "noUnusedParameters": false,
         "useUnknownInCatchVariables": false,
-        "noEmitOnError": false
+        "noEmitOnError": false,
+        "noErrorTruncation": false,
+        "allowJs": true,
+        "checkJs": false
     },
     "exclude": [
         "node_modules",
