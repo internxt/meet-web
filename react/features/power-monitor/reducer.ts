@@ -1,12 +1,8 @@
-// @ts-expect-error
-import { Transport } from '../../../modules/transport';
-import ReducerRegistry from '../base/redux/ReducerRegistry';
-import { set } from '../base/redux/functions';
+import { Transport } from "../../../modules/transport";
+import ReducerRegistry from "../base/redux/ReducerRegistry";
+import { set } from "../base/redux/functions";
 
-import {
-    SET_TRANSPORT,
-    SUSPEND_DETECTED
-} from './actionTypes';
+import { SET_TRANSPORT, SUSPEND_DETECTED } from "./actionTypes";
 
 export interface IPowerMonitorState {
     suspendDetected?: boolean;
@@ -16,14 +12,13 @@ export interface IPowerMonitorState {
 /**
  * Reduces the redux actions of the feature power monitor.
  */
-ReducerRegistry.register<IPowerMonitorState>('features/power-monitor', (state = {}, action): IPowerMonitorState => {
+ReducerRegistry.register<IPowerMonitorState>("features/power-monitor", (state = {}, action): IPowerMonitorState => {
     switch (action.type) {
-    case SET_TRANSPORT:
-        return _setTransport(state, action.transport);
+        case SET_TRANSPORT:
+            return _setTransport(state, action.transport);
 
-    case SUSPEND_DETECTED:
-        return _suspendDetected(state);
-
+        case SUSPEND_DETECTED:
+            return _suspendDetected(state);
     }
 
     return state;
@@ -39,7 +34,7 @@ ReducerRegistry.register<IPowerMonitorState>('features/power-monitor', (state = 
  * the specified action.
  */
 function _setTransport(state: IPowerMonitorState, transport?: Transport) {
-    return set(state, 'transport', transport);
+    return set(state, "transport", transport);
 }
 
 /**
@@ -51,6 +46,5 @@ function _setTransport(state: IPowerMonitorState, transport?: Transport) {
  * the specified action.
  */
 function _suspendDetected(state: IPowerMonitorState) {
-    return set(state, 'suspendDetected', true);
+    return set(state, "suspendDetected", true);
 }
-

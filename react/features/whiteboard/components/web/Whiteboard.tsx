@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { WithTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-// @ts-expect-error
+
 import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
 import { IReduxState } from '../../../app/types';
 import { translate } from '../../../base/i18n/functions';

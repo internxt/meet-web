@@ -1,22 +1,21 @@
-// @ts-expect-error
-import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
-import { IStore } from '../app/types';
-import { getParticipantById } from '../base/participants/functions';
-import { getVideoTrackByParticipant } from '../base/tracks/functions.web';
+import VideoLayout from "../../../modules/UI/videolayout/VideoLayout";
+import { IStore } from "../app/types";
+import { getParticipantById } from "../base/participants/functions";
+import { getVideoTrackByParticipant } from "../base/tracks/functions.web";
 
-import { SET_SEE_WHAT_IS_BEING_SHARED } from './actionTypes';
+import { SET_SEE_WHAT_IS_BEING_SHARED } from "./actionTypes";
 
-export * from './actions.any';
+export * from "./actions.any";
 
 /**
-* Captures a screenshot of the video displayed on the large video.
-*
-* @returns {Function}
-*/
+ * Captures a screenshot of the video displayed on the large video.
+ *
+ * @returns {Function}
+ */
 export function captureLargeVideoScreenshot() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
-        const largeVideo = state['features/large-video'];
+        const largeVideo = state["features/large-video"];
         const promise = Promise.resolve();
 
         if (!largeVideo?.participantId) {
@@ -38,23 +37,23 @@ export function captureLargeVideoScreenshot() {
 
         // Get the video element for the large video, cast HTMLElement to HTMLVideoElement to make flow happy.
         /* eslint-disable-next-line no-extra-parens*/
-        const videoElement = (document.getElementById('largeVideo') as any);
+        const videoElement = document.getElementById("largeVideo") as any;
 
         if (!videoElement) {
             return promise;
         }
 
         // Create a HTML canvas and draw video on to the canvas.
-        const [ track ] = videoStream.getVideoTracks();
+        const [track] = videoStream.getVideoTracks();
         const { height, width } = track.getSettings() ?? track.getConstraints();
-        const canvasElement = document.createElement('canvas');
-        const ctx = canvasElement.getContext('2d');
+        const canvasElement = document.createElement("canvas");
+        const ctx = canvasElement.getContext("2d");
 
-        canvasElement.style.display = 'none';
+        canvasElement.style.display = "none";
         canvasElement.height = parseInt(height, 10);
         canvasElement.width = parseInt(width, 10);
         ctx?.drawImage(videoElement, 0, 0);
-        const dataURL = canvasElement.toDataURL('image/png', 1.0);
+        const dataURL = canvasElement.toDataURL("image/png", 1.0);
 
         // Cleanup.
         ctx?.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -72,9 +71,9 @@ export function captureLargeVideoScreenshot() {
  * @returns {Function}
  */
 export function resizeLargeVideo(width: number, height: number) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
-        const largeVideo = state['features/large-video'];
+        const largeVideo = state["features/large-video"];
 
         if (largeVideo) {
             const largeVideoContainer = VideoLayout.getLargeVideo();
@@ -97,6 +96,6 @@ export function resizeLargeVideo(width: number, height: number) {
 export function setSeeWhatIsBeingShared(seeWhatIsBeingShared: boolean) {
     return {
         type: SET_SEE_WHAT_IS_BEING_SHARED,
-        seeWhatIsBeingShared
+        seeWhatIsBeingShared,
     };
 }

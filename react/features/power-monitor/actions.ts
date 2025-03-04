@@ -1,10 +1,6 @@
-// @ts-expect-error
-import { Transport } from '../../../modules/transport';
+import { Transport } from "../../../modules/transport";
 
-import {
-    SET_TRANSPORT,
-    SUSPEND_DETECTED
-} from './actionTypes';
+import { SET_TRANSPORT, SUSPEND_DETECTED } from "./actionTypes";
 
 /**
  * Signals that suspend was detected.
@@ -16,7 +12,7 @@ import {
  */
 export function suspendDetected() {
     return {
-        type: SUSPEND_DETECTED
+        type: SUSPEND_DETECTED,
     };
 }
 
@@ -32,6 +28,6 @@ export function suspendDetected() {
 export function setTransport(transport?: Transport) {
     return {
         type: SET_TRANSPORT,
-        transport
+        transport,
     };
 }

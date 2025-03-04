@@ -1,19 +1,12 @@
-// @ts-expect-error
-import { jitsiLocalStorage } from '@jitsi/js-utils';
+import { jitsiLocalStorage } from "@jitsi/js-utils";
 
-import { IStore } from '../../app/types';
-import { isOnline } from '../net-info/selectors';
+import { IStore } from "../../app/types";
+import { isOnline } from "../net-info/selectors";
 
-import JitsiMeetJS from './_';
-import {
-    LIB_DID_DISPOSE,
-    LIB_DID_INIT,
-    LIB_INIT_ERROR,
-    LIB_WILL_DISPOSE,
-    LIB_WILL_INIT
-} from './actionTypes';
-import { isAnalyticsEnabled } from './functions.any';
-import logger from './logger';
+import JitsiMeetJS from "./_";
+import { LIB_DID_DISPOSE, LIB_DID_INIT, LIB_INIT_ERROR, LIB_WILL_DISPOSE, LIB_WILL_INIT } from "./actionTypes";
+import { isAnalyticsEnabled } from "./functions.any";
+import logger from "./logger";
 
 /**
  * Disposes (of) lib-jitsi-meet.
@@ -21,7 +14,7 @@ import logger from './logger';
  * @returns {Function}
  */
 export function disposeLib() {
-    return (dispatch: IStore['dispatch']) => {
+    return (dispatch: IStore["dispatch"]) => {
         dispatch({ type: LIB_WILL_DISPOSE });
 
         // TODO Currently, lib-jitsi-meet doesn't have the functionality to
@@ -37,12 +30,12 @@ export function disposeLib() {
  * @returns {Function}
  */
 export function initLib() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
-        const config = state['features/base/config'];
+        const config = state["features/base/config"];
 
         if (!config) {
-            throw new Error('Cannot init lib-jitsi-meet without config');
+            throw new Error("Cannot init lib-jitsi-meet without config");
         }
 
         dispatch({ type: LIB_WILL_INIT });
@@ -51,10 +44,10 @@ export function initLib() {
             JitsiMeetJS.init({
                 enableAnalyticsLogging: isAnalyticsEnabled(getState),
                 ...config,
-                externalStorage: jitsiLocalStorage.isLocalStorageDisabled() ? jitsiLocalStorage : undefined
+                externalStorage: jitsiLocalStorage.isLocalStorageDisabled() ? jitsiLocalStorage : undefined,
             });
             JitsiMeetJS.setNetworkInfo({
-                isOnline: isOnline(state)
+                isOnline: isOnline(state),
             });
 
             logger.info(`lib-jitsi-meet version:${JitsiMeetJS.version}`);
@@ -78,6 +71,6 @@ export function initLib() {
 export function libInitError(error: Error) {
     return {
         type: LIB_INIT_ERROR,
-        error
+        error,
     };
 }

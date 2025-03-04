@@ -84,7 +84,7 @@ const options: i18next.InitOptions = {
     ns: [ 'main', 'languages', 'countries', 'translation-languages' ],
     react: {
         // re-render when a new resource bundle is added
-        // @ts-expect-error. Fixed in i18next 19.6.1.
+        . Fixed in i18next 19.6.1.
         bindI18nStore: 'added',
         useSuspense: false
     },

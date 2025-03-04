@@ -1,15 +1,14 @@
-// @ts-expect-error
-import UIEvents from '../../../service/UI/UIEvents';
-import { CONFERENCE_JOIN_IN_PROGRESS } from '../base/conference/actionTypes';
-import { getCurrentConference } from '../base/conference/functions';
-import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import StateListenerRegistry from '../base/redux/StateListenerRegistry';
-import { sanitizeUrl } from '../base/util/uri';
+import UIEvents from "../../../service/UI/UIEvents";
+import { CONFERENCE_JOIN_IN_PROGRESS } from "../base/conference/actionTypes";
+import { getCurrentConference } from "../base/conference/functions";
+import MiddlewareRegistry from "../base/redux/MiddlewareRegistry";
+import StateListenerRegistry from "../base/redux/StateListenerRegistry";
+import { sanitizeUrl } from "../base/util/uri";
 
-import { TOGGLE_DOCUMENT_EDITING } from './actionTypes';
-import { setDocumentUrl } from './actions';
+import { TOGGLE_DOCUMENT_EDITING } from "./actionTypes";
+import { setDocumentUrl } from "./actions";
 
-const ETHERPAD_COMMAND = 'etherpad';
+const ETHERPAD_COMMAND = "etherpad";
 
 /**
  * Middleware that captures actions related to collaborative document editing
@@ -19,15 +18,14 @@ const ETHERPAD_COMMAND = 'etherpad';
  * @returns {Function}
  */
 // eslint-disable-next-line no-unused-vars
-MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
+MiddlewareRegistry.register(({ dispatch, getState }) => (next) => (action) => {
     switch (action.type) {
-    case CONFERENCE_JOIN_IN_PROGRESS: {
-        const { conference } = action;
+        case CONFERENCE_JOIN_IN_PROGRESS: {
+            const { conference } = action;
 
-        conference.addCommandListener(ETHERPAD_COMMAND,
-            ({ value }: { value: string; }) => {
+            conference.addCommandListener(ETHERPAD_COMMAND, ({ value }: { value: string }) => {
                 let url;
-                const { etherpad_base: etherpadBase } = getState()['features/base/config'];
+                const { etherpad_base: etherpadBase } = getState()["features/base/config"];
                 const etherpadBaseUrl = sanitizeUrl(etherpadBase);
 
                 if (etherpadBaseUrl) {
@@ -35,16 +33,15 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 }
 
                 dispatch(setDocumentUrl(url));
-            }
-        );
-        break;
-    }
-    case TOGGLE_DOCUMENT_EDITING: {
-        if (typeof APP !== 'undefined') {
-            APP.UI.emitEvent(UIEvents.ETHERPAD_CLICKED);
+            });
+            break;
         }
-        break;
-    }
+        case TOGGLE_DOCUMENT_EDITING: {
+            if (typeof APP !== "undefined") {
+                APP.UI.emitEvent(UIEvents.ETHERPAD_CLICKED);
+            }
+            break;
+        }
     }
 
     return next(action);
@@ -56,9 +53,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
  * open.
  */
 StateListenerRegistry.register(
-    state => getCurrentConference(state),
+    (state) => getCurrentConference(state),
     (conference, { dispatch }, previousConference) => {
         if (previousConference) {
             dispatch(setDocumentUrl(undefined));
         }
-    });
+    }
+);

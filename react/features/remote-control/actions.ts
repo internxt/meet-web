@@ -1,21 +1,20 @@
-// @ts-expect-error
-import $ from 'jquery';
-import React from 'react';
+import $ from "jquery";
+import React from "react";
 
-import { IStore } from '../app/types';
-import { openDialog } from '../base/dialog/actions';
-import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { pinParticipant } from '../base/participants/actions';
+import { IStore } from "../app/types";
+import { openDialog } from "../base/dialog/actions";
+import { JitsiConferenceEvents } from "../base/lib-jitsi-meet";
+import { pinParticipant } from "../base/participants/actions";
 import {
     getParticipantDisplayName,
     getPinnedParticipant,
-    getVirtualScreenshareParticipantByOwnerId
-} from '../base/participants/functions';
-import { toggleScreensharing } from '../base/tracks/actions';
-import { getLocalDesktopTrack } from '../base/tracks/functions';
-import { showNotification } from '../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../notifications/constants';
-import { isScreenVideoShared } from '../screen-share/functions';
+    getVirtualScreenshareParticipantByOwnerId,
+} from "../base/participants/functions";
+import { toggleScreensharing } from "../base/tracks/actions";
+import { getLocalDesktopTrack } from "../base/tracks/functions";
+import { showNotification } from "../notifications/actions";
+import { NOTIFICATION_TIMEOUT_TYPE } from "../notifications/constants";
+import { isScreenVideoShared } from "../screen-share/functions";
 
 import {
     CAPTURE_EVENTS,
@@ -24,30 +23,31 @@ import {
     SET_CONTROLLER,
     SET_RECEIVER_ENABLED,
     SET_RECEIVER_TRANSPORT,
-    SET_REQUESTED_PARTICIPANT
-} from './actionTypes';
-import RemoteControlAuthorizationDialog from './components/RemoteControlAuthorizationDialog';
+    SET_REQUESTED_PARTICIPANT,
+} from "./actionTypes";
+import RemoteControlAuthorizationDialog from "./components/RemoteControlAuthorizationDialog";
 import {
     DISCO_REMOTE_CONTROL_FEATURE,
     EVENTS,
     PERMISSIONS_ACTIONS,
     REMOTE_CONTROL_MESSAGE_NAME,
-    REQUESTS
-} from './constants';
+    REQUESTS,
+} from "./constants";
 import {
     getKey,
     getModifiers,
     getRemoteConrolEventCaptureArea,
     isRemoteControlEnabled,
-    sendRemoteControlEndpointMessage
-} from './functions';
-import logger from './logger';
+    sendRemoteControlEndpointMessage,
+} from "./functions";
+import logger from "./logger";
 
 /**
  * Listeners.
  */
 let permissionsReplyListener: Function | undefined,
-    receiverEndpointMessageListener: Function, stopListener: Function | undefined;
+    receiverEndpointMessageListener: Function,
+    stopListener: Function | undefined;
 
 /**
  * Signals that the remote control authorization dialog should be displayed.
@@ -74,17 +74,17 @@ export function openRemoteControlAuthorizationDialog(participantId: string) {
  * @returns {Function}
  */
 export function setRemoteControlActive(active: boolean) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
-        const { active: oldActive } = state['features/remote-control'];
-        const { conference } = state['features/base/conference'];
+        const { active: oldActive } = state["features/remote-control"];
+        const { conference } = state["features/base/conference"];
 
         if (active !== oldActive) {
             dispatch({
                 type: REMOTE_CONTROL_ACTIVE,
-                active
+                active,
             });
-            conference?.setLocalParticipantProperty('remoteControlSessionStatus', active);
+            conference?.setLocalParticipantProperty("remoteControlSessionStatus", active);
         }
     };
 }
@@ -97,20 +97,19 @@ export function setRemoteControlActive(active: boolean) {
  * @returns {Function}
  */
 export function requestRemoteControl(userId: string) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
         const enabled = isRemoteControlEnabled(state);
 
         if (!enabled) {
-            return Promise.reject(new Error('Remote control is disabled!'));
+            return Promise.reject(new Error("Remote control is disabled!"));
         }
 
         dispatch(setRemoteControlActive(true));
 
         logger.log(`Requsting remote control permissions from: ${userId}`);
 
-        const { conference } = state['features/base/conference'];
-
+        const { conference } = state["features/base/conference"];
 
         permissionsReplyListener = (participant: any, event: any) => {
             dispatch(processPermissionRequestReply(participant.getId(), event));
@@ -120,16 +119,15 @@ export function requestRemoteControl(userId: string) {
 
         dispatch({
             type: SET_REQUESTED_PARTICIPANT,
-            requestedParticipant: userId
+            requestedParticipant: userId,
         });
 
-        if (!sendRemoteControlEndpointMessage(
-            conference,
-            userId,
-            {
+        if (
+            !sendRemoteControlEndpointMessage(conference, userId, {
                 type: EVENTS.permissions,
-                action: PERMISSIONS_ACTIONS.request
-            })) {
+                action: PERMISSIONS_ACTIONS.request,
+            })
+        ) {
             dispatch(clearRequest());
         }
     };
@@ -143,50 +141,55 @@ export function requestRemoteControl(userId: string) {
  * @returns {Function}
  */
 export function processPermissionRequestReply(participantId: string, event: any) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
         const { action, name, type } = event;
-        const { requestedParticipant } = state['features/remote-control'].controller;
+        const { requestedParticipant } = state["features/remote-control"].controller;
 
-        if (isRemoteControlEnabled(state) && name === REMOTE_CONTROL_MESSAGE_NAME && type === EVENTS.permissions
-                && participantId === requestedParticipant) {
-            let descriptionKey, permissionGranted = false;
+        if (
+            isRemoteControlEnabled(state) &&
+            name === REMOTE_CONTROL_MESSAGE_NAME &&
+            type === EVENTS.permissions &&
+            participantId === requestedParticipant
+        ) {
+            let descriptionKey,
+                permissionGranted = false;
 
             switch (action) {
-            case PERMISSIONS_ACTIONS.grant: {
-                dispatch({
-                    type: SET_CONTROLLED_PARTICIPANT,
-                    controlled: participantId
-                });
+                case PERMISSIONS_ACTIONS.grant: {
+                    dispatch({
+                        type: SET_CONTROLLED_PARTICIPANT,
+                        controlled: participantId,
+                    });
 
-                logger.log('Remote control permissions granted!', participantId);
-                logger.log('Starting remote control controller.');
+                    logger.log("Remote control permissions granted!", participantId);
+                    logger.log("Starting remote control controller.");
 
-                const { conference } = state['features/base/conference'];
+                    const { conference } = state["features/base/conference"];
 
-                stopListener = (participant: any, stopEvent: { name: string; type: string; }) => {
-                    dispatch(handleRemoteControlStoppedEvent(participant.getId(), stopEvent));
-                };
+                    stopListener = (participant: any, stopEvent: { name: string; type: string }) => {
+                        dispatch(handleRemoteControlStoppedEvent(participant.getId(), stopEvent));
+                    };
 
-                conference?.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, stopListener);
+                    conference?.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, stopListener);
 
-                dispatch(resume());
+                    dispatch(resume());
 
-                permissionGranted = true;
-                descriptionKey = 'dialog.remoteControlAllowedMessage';
-                break;
-            }
-            case PERMISSIONS_ACTIONS.deny:
-                logger.log('Remote control permissions denied!', participantId);
-                descriptionKey = 'dialog.remoteControlDeniedMessage';
-                break;
-            case PERMISSIONS_ACTIONS.error:
-                logger.error('Error occurred on receiver side');
-                descriptionKey = 'dialog.remoteControlErrorMessage';
-                break;
-            default:
-                logger.error('Unknown reply received!');
-                descriptionKey = 'dialog.remoteControlErrorMessage';
+                    permissionGranted = true;
+                    descriptionKey = "dialog.remoteControlAllowedMessage";
+                    break;
+                }
+                case PERMISSIONS_ACTIONS.deny:
+                    logger.log("Remote control permissions denied!", participantId);
+                    descriptionKey = "dialog.remoteControlDeniedMessage";
+                    break;
+                case PERMISSIONS_ACTIONS.error:
+                    logger.error("Error occurred on receiver side");
+                    descriptionKey = "dialog.remoteControlErrorMessage";
+                    break;
+                default:
+                    logger.error("Unknown reply received!");
+                    descriptionKey = "dialog.remoteControlErrorMessage";
             }
 
             dispatch(clearRequest());
@@ -195,11 +198,16 @@ export function processPermissionRequestReply(participantId: string, event: any)
                 dispatch(setRemoteControlActive(false));
             }
 
-            dispatch(showNotification({
-                descriptionArguments: { user: getParticipantDisplayName(state, participantId) },
-                descriptionKey,
-                titleKey: 'dialog.remoteControlTitle'
-            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+            dispatch(
+                showNotification(
+                    {
+                        descriptionArguments: { user: getParticipantDisplayName(state, participantId) },
+                        descriptionKey,
+                        titleKey: "dialog.remoteControlTitle",
+                    },
+                    NOTIFICATION_TIMEOUT_TYPE.MEDIUM
+                )
+            );
 
             if (permissionGranted) {
                 // the remote control permissions has been granted
@@ -228,14 +236,18 @@ export function processPermissionRequestReply(participantId: string, event: any)
  * @property {string} type - The function process only events with name REMOTE_CONTROL_MESSAGE_NAME.
  * @returns {void}
  */
-export function handleRemoteControlStoppedEvent(participantId: Object, event: { name: string; type: string; }) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+export function handleRemoteControlStoppedEvent(participantId: Object, event: { name: string; type: string }) {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
         const { name, type } = event;
-        const { controlled } = state['features/remote-control'].controller;
+        const { controlled } = state["features/remote-control"].controller;
 
-        if (isRemoteControlEnabled(state) && name === REMOTE_CONTROL_MESSAGE_NAME && type === EVENTS.stop
-                && participantId === controlled) {
+        if (
+            isRemoteControlEnabled(state) &&
+            name === REMOTE_CONTROL_MESSAGE_NAME &&
+            type === EVENTS.stop &&
+            participantId === controlled
+        ) {
             dispatch(stopController());
         }
     };
@@ -249,23 +261,23 @@ export function handleRemoteControlStoppedEvent(participantId: Object, event: { 
  * @returns {void}
  */
 export function stopController(notifyRemoteParty = false) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
-        const { controlled } = state['features/remote-control'].controller;
+        const { controlled } = state["features/remote-control"].controller;
 
         if (!controlled) {
             return;
         }
 
-        const { conference } = state['features/base/conference'];
+        const { conference } = state["features/base/conference"];
 
         if (notifyRemoteParty) {
             sendRemoteControlEndpointMessage(conference, controlled, {
-                type: EVENTS.stop
+                type: EVENTS.stop,
             });
         }
 
-        logger.log('Stopping remote control controller.');
+        logger.log("Stopping remote control controller.");
 
         conference?.off(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, stopListener);
         stopListener = undefined;
@@ -274,14 +286,19 @@ export function stopController(notifyRemoteParty = false) {
 
         dispatch({
             type: SET_CONTROLLED_PARTICIPANT,
-            controlled: undefined
+            controlled: undefined,
         });
 
         dispatch(setRemoteControlActive(false));
-        dispatch(showNotification({
-            descriptionKey: 'dialog.remoteControlStopMessage',
-            titleKey: 'dialog.remoteControlTitle'
-        }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+        dispatch(
+            showNotification(
+                {
+                    descriptionKey: "dialog.remoteControlStopMessage",
+                    titleKey: "dialog.remoteControlTitle",
+                },
+                NOTIFICATION_TIMEOUT_TYPE.LONG
+            )
+        );
     };
 }
 
@@ -291,19 +308,18 @@ export function stopController(notifyRemoteParty = false) {
  * @returns {Function}
  */
 export function clearRequest() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const { conference } = getState()['features/base/conference'];
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
+        const { conference } = getState()["features/base/conference"];
 
         dispatch({
             type: SET_REQUESTED_PARTICIPANT,
-            requestedParticipant: undefined
+            requestedParticipant: undefined,
         });
 
         conference?.off(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, permissionsReplyListener);
         permissionsReplyListener = undefined;
     };
 }
-
 
 /**
  * Sets that transport object that is used by the receiver to communicate with the native part of the remote control
@@ -318,7 +334,7 @@ export function clearRequest() {
 export function setReceiverTransport(transport?: Object) {
     return {
         type: SET_RECEIVER_TRANSPORT,
-        transport
+        transport,
     };
 }
 
@@ -328,31 +344,37 @@ export function setReceiverTransport(transport?: Object) {
  * @returns {Function}
  */
 export function enableReceiver() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
-        const { enabled } = state['features/remote-control'].receiver;
+        const { enabled } = state["features/remote-control"].receiver;
 
         if (enabled) {
             return;
         }
 
-        const { connection } = state['features/base/connection'];
-        const { conference } = state['features/base/conference'];
+        const { connection } = state["features/base/connection"];
+        const { conference } = state["features/base/conference"];
 
         if (!connection || !conference) {
-            logger.error('Couldn\'t enable the remote receiver! The connection or conference instance is undefined!');
+            logger.error("Couldn't enable the remote receiver! The connection or conference instance is undefined!");
 
             return;
         }
 
         dispatch({
             type: SET_RECEIVER_ENABLED,
-            enabled: true
+            enabled: true,
         });
 
         connection.addFeature(DISCO_REMOTE_CONTROL_FEATURE, true);
-        receiverEndpointMessageListener = (participant: any, message: {
-            action: string; name: string; type: string; }) => {
+        receiverEndpointMessageListener = (
+            participant: any,
+            message: {
+                action: string;
+                name: string;
+                type: string;
+            }
+        ) => {
             dispatch(endpointMessageReceived(participant.getId(), message));
         };
         conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, receiverEndpointMessageListener);
@@ -365,28 +387,28 @@ export function enableReceiver() {
  * @returns {Function}
  */
 export function disableReceiver() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
-        const { enabled } = state['features/remote-control'].receiver;
+        const { enabled } = state["features/remote-control"].receiver;
 
         if (!enabled) {
             return;
         }
 
-        const { connection } = state['features/base/connection'];
-        const { conference } = state['features/base/conference'];
+        const { connection } = state["features/base/connection"];
+        const { conference } = state["features/base/conference"];
 
         if (!connection || !conference) {
-            logger.error('Couldn\'t enable the remote receiver! The connection or conference instance is undefined!');
+            logger.error("Couldn't enable the remote receiver! The connection or conference instance is undefined!");
 
             return;
         }
 
-        logger.log('Remote control receiver disabled.');
+        logger.log("Remote control receiver disabled.");
 
         dispatch({
             type: SET_RECEIVER_ENABLED,
-            enabled: false
+            enabled: false,
         });
 
         dispatch(stopReceiver(true));
@@ -405,44 +427,48 @@ export function disableReceiver() {
  * @returns {Function}
  */
 export function stopReceiver(dontNotifyLocalParty = false, dontNotifyRemoteParty = false) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
-        const { receiver } = state['features/remote-control'];
+        const { receiver } = state["features/remote-control"];
         const { controller, transport } = receiver;
 
         if (!controller) {
             return;
         }
 
-        const { conference } = state['features/base/conference'];
+        const { conference } = state["features/base/conference"];
 
         if (!dontNotifyRemoteParty) {
             sendRemoteControlEndpointMessage(conference, controller, {
-                type: EVENTS.stop
+                type: EVENTS.stop,
             });
         }
 
         dispatch({
             type: SET_CONTROLLER,
-            controller: undefined
+            controller: undefined,
         });
 
         transport?.sendEvent({
             name: REMOTE_CONTROL_MESSAGE_NAME,
-            type: EVENTS.stop
+            type: EVENTS.stop,
         });
 
         dispatch(setRemoteControlActive(false));
 
         if (!dontNotifyLocalParty) {
-            dispatch(showNotification({
-                descriptionKey: 'dialog.remoteControlStopMessage',
-                titleKey: 'dialog.remoteControlTitle'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            dispatch(
+                showNotification(
+                    {
+                        descriptionKey: "dialog.remoteControlStopMessage",
+                        titleKey: "dialog.remoteControlTitle",
+                    },
+                    NOTIFICATION_TIMEOUT_TYPE.LONG
+                )
+            );
         }
     };
 }
-
 
 /**
  * Handles only remote control endpoint messages.
@@ -453,9 +479,15 @@ export function stopReceiver(dontNotifyLocalParty = false, dontNotifyRemoteParty
  * name REMOTE_CONTROL_MESSAGE_NAME.
  * @returns {Function}
  */
-export function endpointMessageReceived(participantId: string, message: {
-    action: string; name: string; type: string; }) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+export function endpointMessageReceived(
+    participantId: string,
+    message: {
+        action: string;
+        name: string;
+        type: string;
+    }
+) {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const { action, name, type } = message;
 
         if (name !== REMOTE_CONTROL_MESSAGE_NAME) {
@@ -463,7 +495,7 @@ export function endpointMessageReceived(participantId: string, message: {
         }
 
         const state = getState();
-        const { receiver } = state['features/remote-control'];
+        const { receiver } = state["features/remote-control"];
         const { enabled, transport } = receiver;
 
         if (enabled) {
@@ -475,16 +507,17 @@ export function endpointMessageReceived(participantId: string, message: {
             } else if (controller === participantId) {
                 if (type === EVENTS.stop) {
                     dispatch(stopReceiver(false, true));
-                } else { // forward the message
+                } else {
+                    // forward the message
                     try {
                         transport?.sendEvent(message);
                     } catch (error) {
-                        logger.error('Error while trying to execute remote control message', error);
+                        logger.error("Error while trying to execute remote control message", error);
                     }
                 }
             } // else ignore
         } else {
-            logger.log('Remote control message is ignored because remote control is disabled', message);
+            logger.log("Remote control message is ignored because remote control is disabled", message);
         }
     };
 }
@@ -497,14 +530,14 @@ export function endpointMessageReceived(participantId: string, message: {
  * @returns {Function}
  */
 export function deny(participantId: string) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
-        const { conference } = state['features/base/conference'];
+        const { conference } = state["features/base/conference"];
 
         dispatch(setRemoteControlActive(false));
         sendRemoteControlEndpointMessage(conference, participantId, {
             type: EVENTS.permissions,
-            action: PERMISSIONS_ACTIONS.deny
+            action: PERMISSIONS_ACTIONS.deny,
         });
     };
 }
@@ -515,21 +548,21 @@ export function deny(participantId: string) {
  * @returns {Function}
  */
 export function sendStartRequest() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
-        const tracks = state['features/base/tracks'];
+        const tracks = state["features/base/tracks"];
         const track = getLocalDesktopTrack(tracks);
         const { sourceId } = track?.jitsiTrack || {};
-        const { transport } = state['features/remote-control'].receiver;
+        const { transport } = state["features/remote-control"].receiver;
 
-        if (typeof sourceId === 'undefined') {
-            return Promise.reject(new Error('Cannot identify screen for the remote control session'));
+        if (typeof sourceId === "undefined") {
+            return Promise.reject(new Error("Cannot identify screen for the remote control session"));
         }
 
         return transport?.sendRequest({
             name: REMOTE_CONTROL_MESSAGE_NAME,
             type: REQUESTS.start,
-            sourceId
+            sourceId,
         });
     };
 }
@@ -542,50 +575,54 @@ export function sendStartRequest() {
  * @returns {Function}
  */
 export function grant(participantId: string) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         dispatch({
             type: SET_CONTROLLER,
-            controller: participantId
+            controller: participantId,
         });
         logger.log(`Remote control permissions granted to: ${participantId}`);
 
         let promise;
         const state = getState();
-        const tracks = state['features/base/tracks'];
+        const tracks = state["features/base/tracks"];
         const track = getLocalDesktopTrack(tracks);
         const isScreenSharing = isScreenVideoShared(state);
         const { sourceType } = track?.jitsiTrack || {};
 
-        if (isScreenSharing && sourceType === 'screen') {
+        if (isScreenSharing && sourceType === "screen") {
             promise = dispatch(sendStartRequest());
         } else {
-            promise = dispatch(toggleScreensharing(
-                true,
-                false,
-                { desktopSharingSources: [ 'screen' ] }
-            ))
-            .then(() => dispatch(sendStartRequest()));
+            promise = dispatch(toggleScreensharing(true, false, { desktopSharingSources: ["screen"] })).then(() =>
+                dispatch(sendStartRequest())
+            );
         }
 
-        const { conference } = state['features/base/conference'];
+        const { conference } = state["features/base/conference"];
 
         promise
-            .then(() => sendRemoteControlEndpointMessage(conference, participantId, {
-                type: EVENTS.permissions,
-                action: PERMISSIONS_ACTIONS.grant
-            }))
+            .then(() =>
+                sendRemoteControlEndpointMessage(conference, participantId, {
+                    type: EVENTS.permissions,
+                    action: PERMISSIONS_ACTIONS.grant,
+                })
+            )
             .catch((error: any) => {
                 logger.error(error);
 
                 sendRemoteControlEndpointMessage(conference, participantId, {
                     type: EVENTS.permissions,
-                    action: PERMISSIONS_ACTIONS.error
+                    action: PERMISSIONS_ACTIONS.error,
                 });
 
-                dispatch(showNotification({
-                    descriptionKey: 'dialog.startRemoteControlErrorMessage',
-                    titleKey: 'dialog.remoteControlTitle'
-                }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+                dispatch(
+                    showNotification(
+                        {
+                            descriptionKey: "dialog.startRemoteControlErrorMessage",
+                            titleKey: "dialog.remoteControlTitle",
+                        },
+                        NOTIFICATION_TIMEOUT_TYPE.LONG
+                    )
+                );
 
                 dispatch(stopReceiver(true));
             });
@@ -600,16 +637,16 @@ export function grant(participantId: string) {
  * @returns {Function}
  */
 export function mouseClicked(type: string, event: React.MouseEvent) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
-        const { conference } = state['features/base/conference'];
-        const { controller } = state['features/remote-control'];
+        const { conference } = state["features/base/conference"];
+        const { controller } = state["features/remote-control"];
 
         sendRemoteControlEndpointMessage(conference, controller.controlled, {
             type,
 
             // @ts-ignore
-            button: event.which
+            button: event.which,
         });
     };
 }
@@ -621,7 +658,7 @@ export function mouseClicked(type: string, event: React.MouseEvent) {
  * @returns {Function}
  */
 export function mouseMoved(event: React.MouseEvent) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const area = getRemoteConrolEventCaptureArea();
 
         if (!area) {
@@ -630,13 +667,13 @@ export function mouseMoved(event: React.MouseEvent) {
 
         const position = area.position();
         const state = getState();
-        const { conference } = state['features/base/conference'];
-        const { controller } = state['features/remote-control'];
+        const { conference } = state["features/base/conference"];
+        const { controller } = state["features/remote-control"];
 
         sendRemoteControlEndpointMessage(conference, controller.controlled, {
             type: EVENTS.mousemove,
             x: (event.pageX - position.left) / area.width(),
-            y: (event.pageY - position.top) / area.height()
+            y: (event.pageY - position.top) / area.height(),
         });
     };
 }
@@ -647,16 +684,16 @@ export function mouseMoved(event: React.MouseEvent) {
  * @param {Event} event - The mouse event.
  * @returns {Function}
  */
-export function mouseScrolled(event: { deltaX: number; deltaY: number; }) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+export function mouseScrolled(event: { deltaX: number; deltaY: number }) {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
-        const { conference } = state['features/base/conference'];
-        const { controller } = state['features/remote-control'];
+        const { conference } = state["features/base/conference"];
+        const { controller } = state["features/remote-control"];
 
         sendRemoteControlEndpointMessage(conference, controller.controlled, {
             type: EVENTS.mousescroll,
             x: event.deltaX,
-            y: event.deltaY
+            y: event.deltaY,
         });
     };
 }
@@ -669,38 +706,38 @@ export function mouseScrolled(event: { deltaX: number; deltaY: number; }) {
  * @returns {Function}
  */
 export function keyPressed(type: string, event: React.KeyboardEvent) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
-        const { conference } = state['features/base/conference'];
-        const { controller } = state['features/remote-control'];
+        const { conference } = state["features/base/conference"];
+        const { controller } = state["features/remote-control"];
 
         sendRemoteControlEndpointMessage(conference, controller.controlled, {
             type,
             key: getKey(event),
-            modifiers: getModifiers(event)
+            modifiers: getModifiers(event),
         });
     };
 }
 
 /**
-* Disables the keyboatd shortcuts. Starts collecting remote control
-* events. It can be used to resume an active remote control session which
-* was paused with the pause action.
-*
-* @returns {Function}
-*/
+ * Disables the keyboatd shortcuts. Starts collecting remote control
+ * events. It can be used to resume an active remote control session which
+ * was paused with the pause action.
+ *
+ * @returns {Function}
+ */
 export function resume() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const area = getRemoteConrolEventCaptureArea();
         const state = getState();
-        const { controller } = state['features/remote-control'];
+        const { controller } = state["features/remote-control"];
         const { controlled, isCapturingEvents } = controller;
 
         if (!isRemoteControlEnabled(state) || !area || !controlled || isCapturingEvents) {
             return;
         }
 
-        logger.log('Resuming remote control controller.');
+        logger.log("Resuming remote control controller.");
 
         area.mousemove((event: React.MouseEvent) => {
             dispatch(mouseMoved(event));
@@ -721,11 +758,10 @@ export function resume() {
 
         dispatch({
             type: CAPTURE_EVENTS,
-            isCapturingEvents: true
+            isCapturingEvents: true,
         });
     };
 }
-
 
 /**
  * Pauses the collecting of events and enables the keyboard shortcus. But
@@ -737,34 +773,34 @@ export function resume() {
  * @returns {Function}
  */
 export function pause() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
-        const { controller } = state['features/remote-control'];
+        const { controller } = state["features/remote-control"];
         const { controlled, isCapturingEvents } = controller;
 
         if (!isRemoteControlEnabled(state) || !controlled || !isCapturingEvents) {
             return;
         }
 
-        logger.log('Pausing remote control controller.');
+        logger.log("Pausing remote control controller.");
 
         const area = getRemoteConrolEventCaptureArea();
 
         if (area) {
-            area.off('contextmenu');
-            area.off('dblclick');
-            area.off('mousedown');
-            area.off('mousemove');
-            area.off('mouseup');
+            area.off("contextmenu");
+            area.off("dblclick");
+            area.off("mousedown");
+            area.off("mousemove");
+            area.off("mouseup");
             area[0].onwheel = undefined;
         }
 
-        $(window).off('keydown');
-        $(window).off('keyup');
+        $(window).off("keydown");
+        $(window).off("keyup");
 
         dispatch({
             type: CAPTURE_EVENTS,
-            isCapturingEvents: false
+            isCapturingEvents: false,
         });
     };
 }

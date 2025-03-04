@@ -1,25 +1,23 @@
-// @ts-expect-error
-import { randomInt } from '@jitsi/js-utils/random';
-import React, { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { randomInt } from "@jitsi/js-utils/random";
+import React, { Component } from "react";
+import { WithTranslation } from "react-i18next";
+import { connect } from "react-redux";
 
-import { appNavigate, reloadNow } from '../../../../app/actions.native';
-import { IReduxState, IStore } from '../../../../app/types';
-import { translate } from '../../../i18n/functions';
-import { isFatalJitsiConnectionError } from '../../../lib-jitsi-meet/functions.native';
-import { hideDialog } from '../../actions';
-import logger from '../../logger';
+import { appNavigate, reloadNow } from "../../../../app/actions.native";
+import { IReduxState, IStore } from "../../../../app/types";
+import { translate } from "../../../i18n/functions";
+import { isFatalJitsiConnectionError } from "../../../lib-jitsi-meet/functions.native";
+import { hideDialog } from "../../actions";
+import logger from "../../logger";
 
-import ConfirmDialog from './ConfirmDialog';
-
+import ConfirmDialog from "./ConfirmDialog";
 
 /**
  * The type of the React {@code Component} props of
  * {@link PageReloadDialog}.
  */
 interface IPageReloadDialogProps extends WithTranslation {
-    dispatch: IStore['dispatch'];
+    dispatch: IStore["dispatch"];
     isNetworkFailure: boolean;
     reason?: string;
 }
@@ -54,7 +52,7 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
         this._timeoutSeconds = 10 + randomInt(0, 20);
 
         this.state = {
-            timeLeft: this._timeoutSeconds
+            timeLeft: this._timeoutSeconds,
         };
 
         this._onCancel = this._onCancel.bind(this);
@@ -71,12 +69,9 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
     componentDidMount() {
         const { timeLeft } = this.state;
 
-        logger.info(
-            `The conference will be reloaded after ${timeLeft} seconds.`
-        );
+        logger.info(`The conference will be reloaded after ${timeLeft} seconds.`);
 
-        this._interval = setInterval(() =>
-            this._onReconnecting(), 1000);
+        this._interval = setInterval(() => this._onReconnecting(), 1000);
     }
 
     /**
@@ -127,7 +122,7 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
         }
 
         this.setState({
-            timeLeft: timeLeft - 1
+            timeLeft: timeLeft - 1,
         });
     }
 
@@ -161,21 +156,22 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
         let message, title;
 
         if (isNetworkFailure) {
-            title = 'dialog.conferenceDisconnectTitle';
-            message = 'dialog.conferenceDisconnectMsg';
+            title = "dialog.conferenceDisconnectTitle";
+            message = "dialog.conferenceDisconnectMsg";
         } else {
-            title = 'dialog.conferenceReloadTitle';
-            message = 'dialog.conferenceReloadMsg';
+            title = "dialog.conferenceReloadTitle";
+            message = "dialog.conferenceReloadMsg";
         }
 
         return (
             <ConfirmDialog
-                cancelLabel = 'dialog.Cancel'
-                confirmLabel = 'dialog.rejoinNow'
-                descriptionKey = { `${t(message, { seconds: timeLeft })}` }
-                onCancel = { this._onCancel }
-                onSubmit = { this._onReloadNow }
-                title = { title } />
+                cancelLabel="dialog.Cancel"
+                confirmLabel="dialog.rejoinNow"
+                descriptionKey={`${t(message, { seconds: timeLeft })}`}
+                onCancel={this._onCancel}
+                onSubmit={this._onReloadNow}
+                title={title}
+            />
         );
     }
 }
@@ -191,13 +187,12 @@ class PageReloadDialog extends Component<IPageReloadDialogProps, IPageReloadDial
  * }}
  */
 function mapStateToProps(state: IReduxState) {
-    const { error: conferenceError } = state['features/base/conference'];
-    const { error: configError } = state['features/base/config'];
-    const { error: connectionError } = state['features/base/connection'];
-    const { fatalError } = state['features/overlay'];
+    const { error: conferenceError } = state["features/base/conference"];
+    const { error: configError } = state["features/base/config"];
+    const { error: connectionError } = state["features/base/connection"];
+    const { fatalError } = state["features/overlay"];
 
-    const fatalConnectionError
-        = connectionError && isFatalJitsiConnectionError(connectionError);
+    const fatalConnectionError = connectionError && isFatalJitsiConnectionError(connectionError);
     const fatalConfigError = fatalError === configError;
 
     const isNetworkFailure = Boolean(fatalConfigError || fatalConnectionError);
@@ -211,12 +206,12 @@ function mapStateToProps(state: IReduxState) {
     } else if (configError) {
         reason = `error.config.${configError.name}`;
     } else {
-        logger.error('No reload reason defined!');
+        logger.error("No reload reason defined!");
     }
 
     return {
         isNetworkFailure,
-        reason
+        reason,
     };
 }
 

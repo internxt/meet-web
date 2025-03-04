@@ -1,10 +1,5 @@
 /* eslint-disable lines-around-comment */
-import {
-    PC_CON_STATE_CHANGE,
-    PC_STATE_CONNECTED,
-    PC_STATE_FAILED
-    // @ts-expect-error
-} from '@jitsi/rtcstats/events';
+import { PC_CON_STATE_CHANGE, PC_STATE_CONNECTED, PC_STATE_FAILED } from "@jitsi/rtcstats/events";
 
 import JitsiMeetJS, { RTCStatsEvents } from '../base/lib-jitsi-meet';
 

@@ -1,24 +1,21 @@
-// @ts-expect-error
-import { jitsiLocalStorage } from '@jitsi/js-utils';
-import React, { PureComponent } from 'react';
-import { WithTranslation } from 'react-i18next';
-import { connect } from 'react-redux';
+import { jitsiLocalStorage } from "@jitsi/js-utils";
+import React, { PureComponent } from "react";
+import { WithTranslation } from "react-i18next";
+import { connect } from "react-redux";
 
-import { createChromeExtensionBannerEvent } from '../../analytics/AnalyticsEvents';
-import { sendAnalytics } from '../../analytics/functions';
-import { IReduxState } from '../../app/types';
-import { getCurrentConference } from '../../base/conference/functions';
-import { IJitsiConference } from '../../base/conference/reducer';
-import checkChromeExtensionsInstalled from '../../base/environment/checkChromeExtensionsInstalled.web';
-import {
-    isMobileBrowser
-} from '../../base/environment/utils';
-import { translate } from '../../base/i18n/functions';
-import Icon from '../../base/icons/components/Icon';
-import { IconCloseLarge } from '../../base/icons/svg';
-import { browser } from '../../base/lib-jitsi-meet';
-import { isVpaasMeeting } from '../../jaas/functions';
-import logger from '../logger';
+import { createChromeExtensionBannerEvent } from "../../analytics/AnalyticsEvents";
+import { sendAnalytics } from "../../analytics/functions";
+import { IReduxState } from "../../app/types";
+import { getCurrentConference } from "../../base/conference/functions";
+import { IJitsiConference } from "../../base/conference/reducer";
+import checkChromeExtensionsInstalled from "../../base/environment/checkChromeExtensionsInstalled.web";
+import { isMobileBrowser } from "../../base/environment/utils";
+import { translate } from "../../base/i18n/functions";
+import Icon from "../../base/icons/components/Icon";
+import { IconCloseLarge } from "../../base/icons/svg";
+import { browser } from "../../base/lib-jitsi-meet";
+import { isVpaasMeeting } from "../../jaas/functions";
+import logger from "../logger";
 
 const emptyObject = {};
 
@@ -27,13 +24,12 @@ const emptyObject = {};
  * If the user checks this before closing the banner, next time he will access a jitsi domain
  * the banner will not be shown regardless of extensions being installed or not.
  */
-const DONT_SHOW_AGAIN_CHECKED = 'hide_chrome_extension_banner';
+const DONT_SHOW_AGAIN_CHECKED = "hide_chrome_extension_banner";
 
 /**
  * The type of the React {@code PureComponent} props of {@link ChromeExtensionBanner}.
  */
 interface IProps extends WithTranslation {
-
     /**
      * Contains info about installed/to be installed chrome extension(s).
      */
@@ -63,7 +59,6 @@ interface IProps extends WithTranslation {
  * The type of the React {@link PureComponent} state of {@link ChromeExtensionBanner}.
  */
 interface IState {
-
     /**
      * Tells whether user pressed install extension or close button.
      */
@@ -100,7 +95,7 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
         this.state = {
             dontShowAgainChecked: false,
             closePressed: false,
-            shouldShow: false
+            shouldShow: false,
         };
 
         this.isEdge = /Edg(e)?/.test(navigator.userAgent);
@@ -127,20 +122,16 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
         const prevBannerCfg = prevProps.bannerCfg;
 
         if (bannerCfg.url && !prevBannerCfg.url) {
-            logger.info('Chrome extension URL found.');
+            logger.info("Chrome extension URL found.");
         }
 
         if ((bannerCfg.chromeExtensionsInfo || []).length && !(prevBannerCfg.chromeExtensionsInfo || []).length) {
-            logger.info('Chrome extension(s) info found.');
+            logger.info("Chrome extension(s) info found.");
         }
 
         const hasExtensions = await checkChromeExtensionsInstalled(this.props.bannerCfg);
 
-        if (
-            hasExtensions?.length
-            && hasExtensions.every(ext => !ext)
-            && !this.state.shouldShow
-        ) {
+        if (hasExtensions?.length && hasExtensions.every((ext) => !ext) && !this.state.shouldShow) {
             this.setState({ shouldShow: true }); // eslint-disable-line
         }
     }
@@ -152,11 +143,13 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
      * @returns {boolean}
      */
     _isSupportedEnvironment() {
-        return interfaceConfig.SHOW_CHROME_EXTENSION_BANNER
-            && browser.isChromiumBased()
-            && !browser.isTwa()
-            && !isMobileBrowser()
-            && !this.props.isVpaas;
+        return (
+            interfaceConfig.SHOW_CHROME_EXTENSION_BANNER &&
+            browser.isChromiumBased() &&
+            !browser.isTwa() &&
+            !isMobileBrowser() &&
+            !this.props.isVpaas
+        );
     }
 
     /**
@@ -177,7 +170,7 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
      * @returns {void}
      */
     _onCloseKeyPress(e: React.KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
+        if (e.key === " " || e.key === "Enter") {
             e.preventDefault();
             this._onClosePressed();
         }
@@ -204,7 +197,7 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
      * @returns {void}
      */
     _onInstallExtensionKeyPress(e: React.KeyboardEvent) {
-        if (e.key === ' ' || e.key === 'Enter') {
+        if (e.key === " " || e.key === "Enter") {
             e.preventDefault();
             this._onClosePressed();
         }
@@ -220,21 +213,23 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
             return true;
         }
 
-        const dontShowAgain = jitsiLocalStorage.getItem(DONT_SHOW_AGAIN_CHECKED) === 'true';
+        const dontShowAgain = jitsiLocalStorage.getItem(DONT_SHOW_AGAIN_CHECKED) === "true";
 
-        return !this.props.bannerCfg.url
-            || dontShowAgain
-            || this.state.closePressed
-            || !this.state.shouldShow
-            || this.props.iAmRecorder;
+        return (
+            !this.props.bannerCfg.url ||
+            dontShowAgain ||
+            this.state.closePressed ||
+            !this.state.shouldShow ||
+            this.props.iAmRecorder
+        );
     }
 
     /**
-    * Handles the current `don't show again` checkbox state.
-    *
-    * @param {Object} event - Input change event.
-    * @returns {void}
-    */
+     * Handles the current `don't show again` checkbox state.
+     *
+     * @param {Object} event - Input change event.
+     * @returns {void}
+     */
     _onDontShowAgainChange(event: React.ChangeEvent<HTMLInputElement>) {
         this.setState({ dontShowAgainChecked: event.target.checked });
     }
@@ -248,72 +243,73 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
     render(): React.ReactNode {
         if (this._shouldNotRender()) {
             if (this.state.dontShowAgainChecked) {
-                jitsiLocalStorage.setItem(DONT_SHOW_AGAIN_CHECKED, 'true');
+                jitsiLocalStorage.setItem(DONT_SHOW_AGAIN_CHECKED, "true");
             }
 
             return null;
         }
         const { bannerCfg, t } = this.props;
         const mainClassNames = this.props.conference
-            ? 'chrome-extension-banner chrome-extension-banner__pos_in_meeting'
-            : 'chrome-extension-banner';
+            ? "chrome-extension-banner chrome-extension-banner__pos_in_meeting"
+            : "chrome-extension-banner";
 
         return (
-            <div className = { mainClassNames }>
+            <div className={mainClassNames}>
                 <div
-                    aria-describedby = 'chrome-extension-banner__text-container'
-                    className = 'chrome-extension-banner__container'
-                    role = 'banner'>
-                    <div className = 'chrome-extension-banner__icon-container' />
+                    aria-describedby="chrome-extension-banner__text-container"
+                    className="chrome-extension-banner__container"
+                    role="banner"
+                >
+                    <div className="chrome-extension-banner__icon-container" />
                     <div
-                        className = 'chrome-extension-banner__text-container'
-                        id = 'chrome-extension-banner__text-container'>
-                        { t('chromeExtensionBanner.installExtensionText') }
+                        className="chrome-extension-banner__text-container"
+                        id="chrome-extension-banner__text-container"
+                    >
+                        {t("chromeExtensionBanner.installExtensionText")}
                     </div>
                     <div
-                        aria-label = { t('chromeExtensionBanner.close') }
-                        className = 'chrome-extension-banner__close-container'
-                        onClick = { this._onClosePressed }
-                        onKeyPress = { this._onCloseKeyPress }
-                        role = 'button'
-                        tabIndex = { 0 }>
-                        <Icon
-                            className = 'gray'
-                            size = { 12 }
-                            src = { IconCloseLarge } />
+                        aria-label={t("chromeExtensionBanner.close")}
+                        className="chrome-extension-banner__close-container"
+                        onClick={this._onClosePressed}
+                        onKeyPress={this._onCloseKeyPress}
+                        role="button"
+                        tabIndex={0}
+                    >
+                        <Icon className="gray" size={12} src={IconCloseLarge} />
                     </div>
                 </div>
-                <div
-                    className = 'chrome-extension-banner__button-container'>
+                <div className="chrome-extension-banner__button-container">
                     <div
-                        aria-labelledby = 'chrome-extension-banner__button-text'
-                        className = 'chrome-extension-banner__button-open-url'
-                        onClick = { this._onInstallExtensionClick }
-                        onKeyPress = { this._onInstallExtensionKeyPress }
-                        role = 'button'
-                        tabIndex = { 0 }>
-                        <div
-                            className = 'chrome-extension-banner__button-text'
-                            id = 'chrome-extension-banner__button-text'>
-                            { t(this.isEdge && bannerCfg.edgeUrl
-                                ? 'chromeExtensionBanner.buttonTextEdge'
-                                : 'chromeExtensionBanner.buttonText')
-                            }
+                        aria-labelledby="chrome-extension-banner__button-text"
+                        className="chrome-extension-banner__button-open-url"
+                        onClick={this._onInstallExtensionClick}
+                        onKeyPress={this._onInstallExtensionKeyPress}
+                        role="button"
+                        tabIndex={0}
+                    >
+                        <div className="chrome-extension-banner__button-text" id="chrome-extension-banner__button-text">
+                            {t(
+                                this.isEdge && bannerCfg.edgeUrl
+                                    ? "chromeExtensionBanner.buttonTextEdge"
+                                    : "chromeExtensionBanner.buttonText"
+                            )}
                         </div>
                     </div>
                 </div>
-                <div className = 'chrome-extension-banner__checkbox-container'>
+                <div className="chrome-extension-banner__checkbox-container">
                     <label
-                        className = 'chrome-extension-banner__checkbox-label'
-                        htmlFor = 'chrome-extension-banner__checkbox'
-                        id = 'chrome-extension-banner__checkbox-label'>
+                        className="chrome-extension-banner__checkbox-label"
+                        htmlFor="chrome-extension-banner__checkbox"
+                        id="chrome-extension-banner__checkbox-label"
+                    >
                         <input
-                            aria-labelledby = 'chrome-extension-banner__checkbox-label'
-                            checked = { this.state.dontShowAgainChecked }
-                            id = 'chrome-extension-banner__checkbox'
-                            onChange = { this._onDontShowAgainChange }
-                            type = 'checkbox' />
-                        &nbsp;{ t('chromeExtensionBanner.dontShowAgain') }
+                            aria-labelledby="chrome-extension-banner__checkbox-label"
+                            checked={this.state.dontShowAgainChecked}
+                            id="chrome-extension-banner__checkbox"
+                            onChange={this._onDontShowAgainChange}
+                            type="checkbox"
+                        />
+                        &nbsp;{t("chromeExtensionBanner.dontShowAgain")}
                     </label>
                 </div>
             </div>
@@ -330,10 +326,10 @@ class ChromeExtensionBanner extends PureComponent<IProps, IState> {
 const _mapStateToProps = (state: IReduxState) => {
     return {
         // Using emptyObject so that we don't change the reference every time when _mapStateToProps is called.
-        bannerCfg: state['features/base/config'].chromeExtensionBanner || emptyObject,
+        bannerCfg: state["features/base/config"].chromeExtensionBanner || emptyObject,
         conference: getCurrentConference(state),
-        iAmRecorder: Boolean(state['features/base/config'].iAmRecorder),
-        isVpaas: isVpaasMeeting(state)
+        iAmRecorder: Boolean(state["features/base/config"].iAmRecorder),
+        isVpaas: isVpaasMeeting(state),
     };
 };
 

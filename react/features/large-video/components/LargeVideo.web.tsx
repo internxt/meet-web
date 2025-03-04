@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-// @ts-expect-error
+
 import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 import { IReduxState, IStore } from '../../app/types';
 import { VIDEO_TYPE } from '../../base/media/constants';

@@ -1,26 +1,21 @@
-// @ts-expect-error
-import { randomInt } from '@jitsi/js-utils/random';
-import React, { Component } from 'react';
-import { WithTranslation } from 'react-i18next';
+import { randomInt } from "@jitsi/js-utils/random";
+import React, { Component } from "react";
+import { WithTranslation } from "react-i18next";
 
-import { createPageReloadScheduledEvent } from '../../../analytics/AnalyticsEvents';
-import { sendAnalytics } from '../../../analytics/functions';
-import { reloadNow } from '../../../app/actions.web';
-import { IReduxState, IStore } from '../../../app/types';
-import {
-    isFatalJitsiConferenceError,
-    isFatalJitsiConnectionError
-} from '../../../base/lib-jitsi-meet/functions.web';
-import logger from '../../logger';
+import { createPageReloadScheduledEvent } from "../../../analytics/AnalyticsEvents";
+import { sendAnalytics } from "../../../analytics/functions";
+import { reloadNow } from "../../../app/actions.web";
+import { IReduxState, IStore } from "../../../app/types";
+import { isFatalJitsiConferenceError, isFatalJitsiConnectionError } from "../../../base/lib-jitsi-meet/functions.web";
+import logger from "../../logger";
 
-import ReloadButton from './ReloadButton';
+import ReloadButton from "./ReloadButton";
 
 /**
  * The type of the React {@code Component} props of
  * {@link AbstractPageReloadOverlay}.
  */
 export interface IProps extends WithTranslation {
-
     /**
      * The details is an object containing more information about the connection
      * failed (shard changes, was the computer suspended, etc.).
@@ -30,7 +25,7 @@ export interface IProps extends WithTranslation {
     /**
      * Redux dispatch function.
      */
-    dispatch: IStore['dispatch'];
+    dispatch: IStore["dispatch"];
 
     /**
      * The error that caused the display of the overlay.
@@ -55,7 +50,6 @@ export interface IProps extends WithTranslation {
  * {@link AbstractPageReloadOverlay}.
  */
 interface IState {
-
     /**
      * The translation key for the title of the overlay.
      */
@@ -83,9 +77,7 @@ interface IState {
  *
  * FIXME: This is not really an abstract class as some components and functions are very web specific.
  */
-export default class AbstractPageReloadOverlay<P extends IProps>
-    extends Component<P, IState> {
-
+export default class AbstractPageReloadOverlay<P extends IProps> extends Component<P, IState> {
     /**
      * Determines whether this overlay needs to be rendered (according to a
      * specific redux state). Called by {@link OverlayContainer}.
@@ -95,14 +87,12 @@ export default class AbstractPageReloadOverlay<P extends IProps>
      * {@code false}, otherwise.
      */
     static needsRender(state: IReduxState) {
-        const { error: conferenceError } = state['features/base/conference'];
-        const { error: configError } = state['features/base/config'];
-        const { error: connectionError } = state['features/base/connection'];
+        const { error: conferenceError } = state["features/base/conference"];
+        const { error: configError } = state["features/base/config"];
+        const { error: connectionError } = state["features/base/connection"];
 
-        const jitsiConnectionError
-            = connectionError && isFatalJitsiConnectionError(connectionError);
-        const jitsiConferenceError
-            = conferenceError && isFatalJitsiConferenceError(conferenceError);
+        const jitsiConnectionError = connectionError && isFatalJitsiConnectionError(connectionError);
+        const jitsiConferenceError = conferenceError && isFatalJitsiConferenceError(conferenceError);
 
         return jitsiConnectionError || jitsiConferenceError || configError;
     }
@@ -130,18 +120,18 @@ export default class AbstractPageReloadOverlay<P extends IProps>
         let message, title;
 
         if (this.props.isNetworkFailure) {
-            title = 'dialog.conferenceDisconnectTitle';
-            message = 'dialog.conferenceDisconnectMsg';
+            title = "dialog.conferenceDisconnectTitle";
+            message = "dialog.conferenceDisconnectMsg";
         } else {
-            title = 'dialog.conferenceReloadTitle';
-            message = 'dialog.conferenceReloadMsg';
+            title = "dialog.conferenceReloadTitle";
+            message = "dialog.conferenceReloadMsg";
         }
 
         this.state = {
             message,
             timeLeft: timeoutSeconds,
             timeoutSeconds,
-            title
+            title,
         };
     }
 
@@ -153,41 +143,37 @@ export default class AbstractPageReloadOverlay<P extends IProps>
      */
     componentDidMount() {
         // FIXME: We should dispatch action for this.
-        if (typeof APP !== 'undefined' && APP.conference?._room) {
-            APP.conference._room.sendApplicationLog(JSON.stringify({
-                name: 'page.reload',
-                label: this.props.reason
-            }));
+        if (typeof APP !== "undefined" && APP.conference?._room) {
+            APP.conference._room.sendApplicationLog(
+                JSON.stringify({
+                    name: "page.reload",
+                    label: this.props.reason,
+                })
+            );
         }
 
-        sendAnalytics(createPageReloadScheduledEvent(
-            this.props.reason ?? '',
-            this.state.timeoutSeconds,
-            this.props.details));
+        sendAnalytics(
+            createPageReloadScheduledEvent(this.props.reason ?? "", this.state.timeoutSeconds, this.props.details)
+        );
 
-        logger.info(
-            `The conference will be reloaded after ${
-                this.state.timeoutSeconds} seconds.`);
+        logger.info(`The conference will be reloaded after ${this.state.timeoutSeconds} seconds.`);
 
-        this._interval
-            = window.setInterval(
-                () => {
-                    if (this.state.timeLeft === 0) {
-                        if (this._interval) {
-                            clearInterval(this._interval);
-                            this._interval = undefined;
-                        }
+        this._interval = window.setInterval(() => {
+            if (this.state.timeLeft === 0) {
+                if (this._interval) {
+                    clearInterval(this._interval);
+                    this._interval = undefined;
+                }
 
-                        this.props.dispatch(reloadNow());
-                    } else {
-                        this.setState(prevState => {
-                            return {
-                                timeLeft: prevState.timeLeft - 1
-                            };
-                        });
-                    }
-                },
-                1000);
+                this.props.dispatch(reloadNow());
+            } else {
+                this.setState((prevState) => {
+                    return {
+                        timeLeft: prevState.timeLeft - 1,
+                    };
+                });
+            }
+        }, 1000);
     }
 
     /**
@@ -211,9 +197,7 @@ export default class AbstractPageReloadOverlay<P extends IProps>
      */
     _renderButton() {
         if (this.props.isNetworkFailure) {
-            return (
-                <ReloadButton textKey = 'dialog.rejoinNow' />
-            );
+            return <ReloadButton textKey="dialog.rejoinNow" />;
         }
 
         return null;
@@ -228,16 +212,11 @@ export default class AbstractPageReloadOverlay<P extends IProps>
     _renderProgressBar() {
         const { timeLeft, timeoutSeconds } = this.state;
         const timeRemaining = timeoutSeconds - timeLeft;
-        const percentageComplete
-            = Math.floor((timeRemaining / timeoutSeconds) * 100);
+        const percentageComplete = Math.floor((timeRemaining / timeoutSeconds) * 100);
 
         return (
-            <div
-                className = 'progress-indicator'
-                id = 'reloadProgressBar'>
-                <div
-                    className = 'progress-indicator-fill'
-                    style = {{ width: `${percentageComplete}%` }} />
+            <div className="progress-indicator" id="reloadProgressBar">
+                <div className="progress-indicator-fill" style={{ width: `${percentageComplete}%` }} />
             </div>
         );
     }
@@ -256,14 +235,14 @@ export default class AbstractPageReloadOverlay<P extends IProps>
  * }}
  */
 export function abstractMapStateToProps(state: IReduxState) {
-    const { error: configError } = state['features/base/config'];
-    const { error: connectionError } = state['features/base/connection'];
-    const { fatalError } = state['features/overlay'];
+    const { error: configError } = state["features/base/config"];
+    const { error: connectionError } = state["features/base/connection"];
+    const { fatalError } = state["features/overlay"];
 
     let reason = fatalError && (fatalError.message || fatalError.name);
 
     if (!reason) {
-        const { error: conferenceError } = state['features/base/conference'];
+        const { error: conferenceError } = state["features/base/conference"];
 
         if (conferenceError) {
             reason = `error.conference.${conferenceError.name}`;
@@ -272,15 +251,14 @@ export function abstractMapStateToProps(state: IReduxState) {
         } else if (connectionError) {
             reason = `error.connection.${connectionError.name}`;
         } else {
-            logger.error('No reload reason defined!');
+            logger.error("No reload reason defined!");
         }
     }
 
     return {
         details: fatalError?.details,
         error: fatalError,
-        isNetworkFailure:
-            fatalError === configError || fatalError === connectionError,
-        reason
+        isNetworkFailure: fatalError === configError || fatalError === connectionError,
+        reason,
     };
 }

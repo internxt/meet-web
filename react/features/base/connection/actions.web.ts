@@ -1,18 +1,17 @@
-// @ts-expect-error
-import { jitsiLocalStorage } from '@jitsi/js-utils';
+import { jitsiLocalStorage } from "@jitsi/js-utils";
 
-import { IStore } from '../../app/types';
-import { getCustomerDetails } from '../../jaas/actions.any';
-import { getJaasJWT, isVpaasMeeting } from '../../jaas/functions';
-import { showWarningNotification } from '../../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
-import { stopLocalVideoRecording } from '../../recording/actions.any';
-import LocalRecordingManager from '../../recording/components/Recording/LocalRecordingManager.web';
-import { setJWT } from '../jwt/actions';
+import { IStore } from "../../app/types";
+import { getCustomerDetails } from "../../jaas/actions.any";
+import { getJaasJWT, isVpaasMeeting } from "../../jaas/functions";
+import { showWarningNotification } from "../../notifications/actions";
+import { NOTIFICATION_TIMEOUT_TYPE } from "../../notifications/constants";
+import { stopLocalVideoRecording } from "../../recording/actions.any";
+import LocalRecordingManager from "../../recording/components/Recording/LocalRecordingManager.web";
+import { setJWT } from "../jwt/actions";
 
-import { _connectInternal } from './actions.any';
+import { _connectInternal } from "./actions.any";
 
-export * from './actions.any';
+export * from "./actions.any";
 
 /**
  * Opens new connection.
@@ -22,10 +21,10 @@ export * from './actions.any';
  * @returns {Function}
  */
 export function connect(id?: string, password?: string) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
-        const { jwt } = state['features/base/jwt'];
-        const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
+        const { jwt } = state["features/base/jwt"];
+        const { iAmRecorder, iAmSipGateway } = state["features/base/config"];
 
         if (!iAmRecorder && !iAmSipGateway && isVpaasMeeting(state)) {
             return dispatch(getCustomerDetails())
@@ -34,13 +33,13 @@ export function connect(id?: string, password?: string) {
                         return getJaasJWT(state);
                     }
                 })
-                .then(j => j && dispatch(setJWT(j)))
+                .then((j) => j && dispatch(setJWT(j)))
                 .then(() => dispatch(_connectInternal(id, password)));
         }
 
         // used by jibri
-        const usernameOverride = jitsiLocalStorage.getItem('xmpp_username_override');
-        const passwordOverride = jitsiLocalStorage.getItem('xmpp_password_override');
+        const usernameOverride = jitsiLocalStorage.getItem("xmpp_username_override");
+        const passwordOverride = jitsiLocalStorage.getItem("xmpp_password_override");
 
         if (usernameOverride && usernameOverride.length > 0) {
             id = usernameOverride; // eslint-disable-line no-param-reassign
@@ -63,16 +62,21 @@ export function connect(id?: string, password?: string) {
  */
 export function hangup(requestFeedback = false, feedbackTitle?: string) {
     // XXX For web based version we use conference hanging up logic from the old app.
-    return async (dispatch: IStore['dispatch']) => {
+    return async (dispatch: IStore["dispatch"]) => {
         if (LocalRecordingManager.isRecordingLocally()) {
             dispatch(stopLocalVideoRecording());
-            dispatch(showWarningNotification({
-                titleKey: 'localRecording.stopping',
-                descriptionKey: 'localRecording.wait'
-            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+            dispatch(
+                showWarningNotification(
+                    {
+                        titleKey: "localRecording.stopping",
+                        descriptionKey: "localRecording.wait",
+                    },
+                    NOTIFICATION_TIMEOUT_TYPE.STICKY
+                )
+            );
 
             // wait 1000ms for the recording to end and start downloading
-            await new Promise(res => {
+            await new Promise((res) => {
                 setTimeout(res, 1000);
             });
         }

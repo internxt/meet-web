@@ -1,10 +1,9 @@
-// @ts-expect-error
-import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
+import { generateRoomWithoutSeparator } from "@jitsi/js-utils/random";
 
-import { createCalendarConnectedEvent } from '../analytics/AnalyticsEvents';
-import { sendAnalytics } from '../analytics/functions';
-import { IStore } from '../app/types';
-import { loadGoogleAPI } from '../google-api/actions';
+import { createCalendarConnectedEvent } from "../analytics/AnalyticsEvents";
+import { sendAnalytics } from "../analytics/functions";
+import { IStore } from "../app/types";
+import { loadGoogleAPI } from "../google-api/actions";
 
 import {
     CLEAR_CALENDAR_INTEGRATION,
@@ -12,13 +11,13 @@ import {
     SET_CALENDAR_ERROR,
     SET_CALENDAR_INTEGRATION,
     SET_CALENDAR_PROFILE_EMAIL,
-    SET_LOADING_CALENDAR_EVENTS
-} from './actionTypes';
-import { refreshCalendar, setCalendarEvents } from './actions.web';
-import { _getCalendarIntegration, isCalendarEnabled } from './functions.web';
-import logger from './logger';
+    SET_LOADING_CALENDAR_EVENTS,
+} from "./actionTypes";
+import { refreshCalendar, setCalendarEvents } from "./actions.web";
+import { _getCalendarIntegration, isCalendarEnabled } from "./functions.web";
+import logger from "./logger";
 
-export * from './actions.any';
+export * from "./actions.any";
 
 /**
  * Sets the initial state of calendar integration by loading third party APIs
@@ -27,20 +26,15 @@ export * from './actions.any';
  * @returns {Function}
  */
 export function bootstrapCalendarIntegration() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
 
         if (!isCalendarEnabled(state)) {
             return Promise.reject();
         }
 
-        const {
-            googleApiApplicationClientID
-        } = state['features/base/config'];
-        const {
-            integrationReady,
-            integrationType
-        } = state['features/calendar-sync'];
+        const { googleApiApplicationClientID } = state["features/base/config"];
+        const { integrationReady, integrationType } = state["features/calendar-sync"];
 
         return Promise.resolve()
             .then(() => {
@@ -53,8 +47,7 @@ export function bootstrapCalendarIntegration() {
                     return;
                 }
 
-                const integrationToLoad
-                    = _getCalendarIntegration(integrationType);
+                const integrationToLoad = _getCalendarIntegration(integrationType);
 
                 if (!integrationToLoad) {
                     dispatch(clearCalendarIntegration());
@@ -62,15 +55,14 @@ export function bootstrapCalendarIntegration() {
                     return;
                 }
 
-                return dispatch(integrationToLoad._isSignedIn())
-                    .then((signedIn: boolean) => {
-                        if (signedIn) {
-                            dispatch(setIntegrationReady(integrationType));
-                            dispatch(updateProfile(integrationType));
-                        } else {
-                            dispatch(clearCalendarIntegration());
-                        }
-                    });
+                return dispatch(integrationToLoad._isSignedIn()).then((signedIn: boolean) => {
+                    if (signedIn) {
+                        dispatch(setIntegrationReady(integrationType));
+                        dispatch(updateProfile(integrationType));
+                    } else {
+                        dispatch(clearCalendarIntegration());
+                    }
+                });
             });
     };
 }
@@ -85,7 +77,7 @@ export function bootstrapCalendarIntegration() {
  */
 export function clearCalendarIntegration() {
     return {
-        type: CLEAR_CALENDAR_INTEGRATION
+        type: CLEAR_CALENDAR_INTEGRATION,
     };
 }
 
@@ -99,8 +91,7 @@ export function clearCalendarIntegration() {
  * @param {string} calendarId - The calendar id.
  * @returns {Function}
  */
-export function openUpdateCalendarEventDialog(
-        eventId: string, calendarId: string) {
+export function openUpdateCalendarEventDialog(eventId: string, calendarId: string) {
     return updateCalendarEvent(eventId, calendarId);
 }
 
@@ -117,7 +108,7 @@ export function openUpdateCalendarEventDialog(
 export function setCalendarAPIAuthState(newState?: Object) {
     return {
         type: SET_CALENDAR_AUTH_STATE,
-        msAuthState: newState
+        msAuthState: newState,
     };
 }
 
@@ -133,7 +124,7 @@ export function setCalendarAPIAuthState(newState?: Object) {
 export function setCalendarError(error?: Object) {
     return {
         type: SET_CALENDAR_ERROR,
-        error
+        error,
     };
 }
 
@@ -149,7 +140,7 @@ export function setCalendarError(error?: Object) {
 export function setCalendarProfileEmail(newEmail?: string) {
     return {
         type: SET_CALENDAR_PROFILE_EMAIL,
-        email: newEmail
+        email: newEmail,
     };
 }
 
@@ -166,7 +157,7 @@ export function setCalendarProfileEmail(newEmail?: string) {
 export function setLoadingCalendarEvents(isLoadingEvents: boolean) {
     return {
         type: SET_LOADING_CALENDAR_EVENTS,
-        isLoadingEvents
+        isLoadingEvents,
     };
 }
 
@@ -185,7 +176,7 @@ export function setIntegrationReady(integrationType: string) {
     return {
         type: SET_CALENDAR_INTEGRATION,
         integrationReady: true,
-        integrationType
+        integrationType,
     };
 }
 
@@ -197,11 +188,11 @@ export function setIntegrationReady(integrationType: string) {
  * @returns {Function}
  */
 export function signIn(calendarType: string) {
-    return (dispatch: IStore['dispatch']) => {
+    return (dispatch: IStore["dispatch"]) => {
         const integration = _getCalendarIntegration(calendarType);
 
         if (!integration) {
-            return Promise.reject('No supported integration found');
+            return Promise.reject("No supported integration found");
         }
 
         return dispatch(integration.load())
@@ -211,9 +202,7 @@ export function signIn(calendarType: string) {
             .then(() => dispatch(refreshCalendar()))
             .then(() => sendAnalytics(createCalendarConnectedEvent()))
             .catch((error: any) => {
-                logger.error(
-                    'Error occurred while signing into calendar integration',
-                    error);
+                logger.error("Error occurred while signing into calendar integration", error);
 
                 return Promise.reject(error);
             });
@@ -229,41 +218,36 @@ export function signIn(calendarType: string) {
  * @returns {Function}
  */
 export function updateCalendarEvent(id: string, calendarId: string) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-
-        const { integrationType = '' } = getState()['features/calendar-sync'];
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
+        const { integrationType = "" } = getState()["features/calendar-sync"];
         const integration = _getCalendarIntegration(integrationType);
 
         if (!integration) {
-            return Promise.reject('No integration found');
+            return Promise.reject("No integration found");
         }
 
-        const { locationURL } = getState()['features/base/connection'];
+        const { locationURL } = getState()["features/base/connection"];
         const newRoomName = generateRoomWithoutSeparator();
-        let href = locationURL?.href ?? '';
+        let href = locationURL?.href ?? "";
 
-        href.endsWith('/') || (href += '/');
+        href.endsWith("/") || (href += "/");
 
         const roomURL = `${href}${newRoomName}`;
 
-        return dispatch(integration.updateCalendarEvent(
-                id, calendarId, roomURL))
-            .then(() => {
-                // make a copy of the array
-                const events
-                    = getState()['features/calendar-sync'].events.slice(0);
+        return dispatch(integration.updateCalendarEvent(id, calendarId, roomURL)).then(() => {
+            // make a copy of the array
+            const events = getState()["features/calendar-sync"].events.slice(0);
 
-                const eventIx = events.findIndex(
-                    e => e.id === id && e.calendarId === calendarId);
+            const eventIx = events.findIndex((e) => e.id === id && e.calendarId === calendarId);
 
-                // clone the event we will modify
-                const newEvent = Object.assign({}, events[eventIx]);
+            // clone the event we will modify
+            const newEvent = Object.assign({}, events[eventIx]);
 
-                newEvent.url = roomURL;
-                events[eventIx] = newEvent;
+            newEvent.url = roomURL;
+            events[eventIx] = newEvent;
 
-                return dispatch(setCalendarEvents(events));
-            });
+            return dispatch(setCalendarEvents(events));
+        });
     };
 }
 
@@ -276,17 +260,16 @@ export function updateCalendarEvent(id: string, calendarId: string) {
  * @returns {Function}
  */
 export function updateProfile(calendarType: string) {
-    return (dispatch: IStore['dispatch']) => {
+    return (dispatch: IStore["dispatch"]) => {
         const integration = _getCalendarIntegration(calendarType);
 
         if (!integration) {
-            return Promise.reject('No integration found');
+            return Promise.reject("No integration found");
         }
 
         // @ts-ignore
-        return dispatch(integration.getCurrentEmail())
-            .then((email: string) => {
-                dispatch(setCalendarProfileEmail(email));
-            });
+        return dispatch(integration.getCurrentEmail()).then((email: string) => {
+            dispatch(setCalendarProfileEmail(email));
+        });
     };
 }

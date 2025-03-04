@@ -1,4 +1,4 @@
-// @ts-expect-error
+
 import { API_ID } from '../../../modules/API/constants';
 import { getName as getAppName } from '../app/functions';
 import { IStore } from '../app/types';

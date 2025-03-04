@@ -1,17 +1,16 @@
-// @ts-expect-error
-import aliases from 'react-emoji-render/data/aliases';
+import aliases from "react-emoji-render/data/aliases";
 // eslint-disable-next-line lines-around-comment
-// @ts-expect-error
-import emojiAsciiAliases from 'react-emoji-render/data/asciiAliases';
 
-import { IReduxState } from '../app/types';
-import { getLocalizedDateFormatter } from '../base/i18n/dateUtil';
-import i18next from '../base/i18n/i18next';
-import { getParticipantById } from '../base/participants/functions';
-import { escapeRegexp } from '../base/util/helpers';
+import emojiAsciiAliases from "react-emoji-render/data/asciiAliases";
 
-import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from './constants';
-import { IMessage } from './types';
+import { IReduxState } from "../app/types";
+import { getLocalizedDateFormatter } from "../base/i18n/dateUtil";
+import i18next from "../base/i18n/i18next";
+import { getParticipantById } from "../base/participants/functions";
+import { escapeRegexp } from "../base/util/helpers";
+
+import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, TIMESTAMP_FORMAT } from "./constants";
+import { IMessage } from "./types";
 
 /**
  * An ASCII emoticon regexp array to find and replace old-style ASCII
@@ -37,29 +36,26 @@ const ASCII_EMOTICON_REGEXP_ARRAY: Array<[RegExp, string]> = [];
  */
 const SLACK_EMOJI_REGEXP_ARRAY: Array<[RegExp, string]> = [];
 
-(function() {
-    for (const [ key, value ] of Object.entries(aliases)) {
-
+(function () {
+    for (const [key, value] of Object.entries(aliases)) {
         // Add ASCII emoticons
         const asciiEmoticons = emojiAsciiAliases[key];
 
         if (asciiEmoticons) {
             const asciiEscapedValues = asciiEmoticons.map((v: string) => escapeRegexp(v));
 
-            const asciiRegexp = `(${asciiEscapedValues.join('|')})`;
+            const asciiRegexp = `(${asciiEscapedValues.join("|")})`;
 
             // Escape urls
-            const formattedAsciiRegexp = key === 'confused'
-                ? `(?=(${asciiRegexp}))(:(?!//).)`
-                : asciiRegexp;
+            const formattedAsciiRegexp = key === "confused" ? `(?=(${asciiRegexp}))(:(?!//).)` : asciiRegexp;
 
-            ASCII_EMOTICON_REGEXP_ARRAY.push([ new RegExp(formattedAsciiRegexp, 'g'), value as string ]);
+            ASCII_EMOTICON_REGEXP_ARRAY.push([new RegExp(formattedAsciiRegexp, "g"), value as string]);
         }
 
         // Add slack-type emojis
         const emojiRegexp = `\\B(${escapeRegexp(`:${key}:`)})\\B`;
 
-        SLACK_EMOJI_REGEXP_ARRAY.push([ new RegExp(emojiRegexp, 'g'), value as string ]);
+        SLACK_EMOJI_REGEXP_ARRAY.push([new RegExp(emojiRegexp, "g"), value as string]);
     }
 })();
 
@@ -73,11 +69,11 @@ const SLACK_EMOJI_REGEXP_ARRAY: Array<[RegExp, string]> = [];
 export function replaceNonUnicodeEmojis(message: string) {
     let replacedMessage = message;
 
-    for (const [ regexp, replaceValue ] of SLACK_EMOJI_REGEXP_ARRAY) {
+    for (const [regexp, replaceValue] of SLACK_EMOJI_REGEXP_ARRAY) {
         replacedMessage = replacedMessage.replace(regexp, replaceValue);
     }
 
-    for (const [ regexp, replaceValue ] of ASCII_EMOTICON_REGEXP_ARRAY) {
+    for (const [regexp, replaceValue] of ASCII_EMOTICON_REGEXP_ARRAY) {
         replacedMessage = replacedMessage.replace(regexp, replaceValue);
     }
 
@@ -91,7 +87,7 @@ export function replaceNonUnicodeEmojis(message: string) {
  * @returns {number} The number of unread messages.
  */
 export function getUnreadCount(state: IReduxState) {
-    const { lastReadMessage, messages } = state['features/chat'];
+    const { lastReadMessage, messages } = state["features/chat"];
     const messagesCount = messages.length;
 
     if (!messagesCount) {
@@ -101,7 +97,7 @@ export function getUnreadCount(state: IReduxState) {
     let reactionMessages = 0;
     let lastReadIndex;
 
-    if (navigator.product === 'ReactNative') {
+    if (navigator.product === "ReactNative") {
         // React native stores the messages in a reversed order.
         lastReadIndex = messages.indexOf(<IMessage>lastReadMessage);
 
@@ -132,7 +128,7 @@ export function getUnreadCount(state: IReduxState) {
  * @returns {boolean} The disabled flag.
  */
 export function areSmileysDisabled(state: IReduxState) {
-    const disableChatSmileys = state['features/base/config']?.disableChatSmileys === true;
+    const disableChatSmileys = state["features/base/config"]?.disableChatSmileys === true;
 
     return disableChatSmileys;
 }
@@ -144,8 +140,7 @@ export function areSmileysDisabled(state: IReduxState) {
  * @returns {string}
  */
 export function getFormattedTimestamp(message: IMessage) {
-    return getLocalizedDateFormatter(new Date(message.timestamp))
-        .format(TIMESTAMP_FORMAT);
+    return getLocalizedDateFormatter(new Date(message.timestamp)).format(TIMESTAMP_FORMAT);
 }
 
 /**
@@ -156,12 +151,11 @@ export function getFormattedTimestamp(message: IMessage) {
  */
 export function getMessageText(message: IMessage) {
     return message.messageType === MESSAGE_TYPE_ERROR
-        ? i18next.t('chat.error', {
-            error: message.message
-        })
+        ? i18next.t("chat.error", {
+              error: message.message,
+          })
         : message.message;
 }
-
 
 /**
  * Returns whether a message can be replied to.
@@ -171,12 +165,14 @@ export function getMessageText(message: IMessage) {
  * @returns {boolean}
  */
 export function getCanReplyToMessage(state: IReduxState, message: IMessage) {
-    const { knocking } = state['features/lobby'];
+    const { knocking } = state["features/lobby"];
     const participant = getParticipantById(state, message.id);
 
-    return Boolean(participant)
-        && (message.privateMessage || (message.lobbyChat && !knocking))
-        && message.messageType !== MESSAGE_TYPE_LOCAL;
+    return (
+        Boolean(participant) &&
+        (message.privateMessage || (message.lobbyChat && !knocking)) &&
+        message.messageType !== MESSAGE_TYPE_LOCAL
+    );
 }
 
 /**
@@ -186,7 +182,7 @@ export function getCanReplyToMessage(state: IReduxState, message: IMessage) {
  * @returns {string}
  */
 export function getPrivateNoticeMessage(message: IMessage) {
-    return i18next.t('chat.privateNotice', {
-        recipient: message.messageType === MESSAGE_TYPE_LOCAL ? message.recipient : i18next.t('chat.you')
+    return i18next.t("chat.privateNotice", {
+        recipient: message.messageType === MESSAGE_TYPE_LOCAL ? message.recipient : i18next.t("chat.you"),
     });
 }

@@ -1,11 +1,11 @@
-import NetInfo from '@react-native-community/netinfo';
-import type { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
+import type { NetInfoState, NetInfoSubscription } from "@react-native-community/netinfo";
+import NetInfo from "@react-native-community/netinfo";
 // eslint-disable-next-line lines-around-comment
-// @ts-expect-error
-import EventEmitter from 'events';
 
-import { ONLINE_STATE_CHANGED_EVENT } from './events';
-import type { NetworkInfo } from './types';
+import EventEmitter from "events";
+
+import { ONLINE_STATE_CHANGED_EVENT } from "./events";
+import type { NetworkInfo } from "./types";
 
 /**
  * The network info service implementation for iOS and Android. 'react-native-netinfo' seems to support windows as well,
@@ -29,7 +29,7 @@ export default class NetworkInfoService extends EventEmitter {
             isOnline: Boolean(netInfoState.isInternetReachable),
 
             details: netInfoState.details,
-            networkType: netInfoState.type
+            networkType: netInfoState.type,
         };
     }
 
@@ -48,7 +48,7 @@ export default class NetworkInfoService extends EventEmitter {
      * @returns {void}
      */
     start() {
-        this._subscription = NetInfo.addEventListener(netInfoState => {
+        this._subscription = NetInfo.addEventListener((netInfoState) => {
             super.emit(ONLINE_STATE_CHANGED_EVENT, NetworkInfoService._convertNetInfoState(netInfoState));
         });
     }

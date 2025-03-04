@@ -1,17 +1,12 @@
-// @ts-expect-error
-import { FEEDBACK_REQUEST_IN_PROGRESS } from '../../../modules/UI/UIErrors';
-import { IStore } from '../app/types';
-import { IJitsiConference } from '../base/conference/reducer';
-import { openDialog } from '../base/dialog/actions';
-import { extractFqnFromPath } from '../dynamic-branding/functions.any';
+import { FEEDBACK_REQUEST_IN_PROGRESS } from "../../../modules/UI/UIErrors";
+import { IStore } from "../app/types";
+import { IJitsiConference } from "../base/conference/reducer";
+import { openDialog } from "../base/dialog/actions";
+import { extractFqnFromPath } from "../dynamic-branding/functions.any";
 
-import {
-    CANCEL_FEEDBACK,
-    SUBMIT_FEEDBACK_ERROR,
-    SUBMIT_FEEDBACK_SUCCESS
-} from './actionTypes';
-import FeedbackDialog from './components/FeedbackDialog.web';
-import { sendFeedbackToJaaSRequest, shouldSendJaaSFeedbackMetadata } from './functions.web';
+import { CANCEL_FEEDBACK, SUBMIT_FEEDBACK_ERROR, SUBMIT_FEEDBACK_SUCCESS } from "./actionTypes";
+import FeedbackDialog from "./components/FeedbackDialog.web";
+import { sendFeedbackToJaaSRequest, shouldSendJaaSFeedbackMetadata } from "./functions.web";
 
 /**
  * Caches the passed in feedback in the redux store.
@@ -29,7 +24,7 @@ export function cancelFeedback(score: number, message: string) {
     return {
         type: CANCEL_FEEDBACK,
         message,
-        score
+        score,
     };
 }
 
@@ -52,37 +47,38 @@ export function maybeOpenFeedbackDialog(conference: IJitsiConference, title?: st
         wasDialogShown: boolean;
     };
 
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']): Promise<R> => {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]): Promise<R> => {
         const state = getState();
-        const { feedbackPercentage = 100 } = state['features/base/config'];
+        const { feedbackPercentage = 100 } = state["features/base/config"];
 
         if (config.iAmRecorder) {
             // Intentionally fall through the if chain to prevent further action
             // from being taken with regards to showing feedback.
-        } else if (state['features/base/dialog'].component === FeedbackDialog) {
+        } else if (state["features/base/dialog"].component === FeedbackDialog) {
             // Feedback is currently being displayed.
 
             return Promise.reject(FEEDBACK_REQUEST_IN_PROGRESS);
-        } else if (state['features/feedback'].submitted) {
+        } else if (state["features/feedback"].submitted) {
             // Feedback has been submitted already.
 
             return Promise.resolve({
                 feedbackSubmitted: true,
                 showThankYou: true,
-                wasDialogShown: false
+                wasDialogShown: false,
             });
-        } else if (shouldSendJaaSFeedbackMetadata(state)
-                && feedbackPercentage > Math.random() * 100) {
-            return new Promise(resolve => {
-                dispatch(openFeedbackDialog(conference, title, () => {
-                    const { submitted } = getState()['features/feedback'];
+        } else if (shouldSendJaaSFeedbackMetadata(state) && feedbackPercentage > Math.random() * 100) {
+            return new Promise((resolve) => {
+                dispatch(
+                    openFeedbackDialog(conference, title, () => {
+                        const { submitted } = getState()["features/feedback"];
 
-                    resolve({
-                        feedbackSubmitted: submitted,
-                        showThankYou: false,
-                        wasDialogShown: true
-                    });
-                }));
+                        resolve({
+                            feedbackSubmitted: submitted,
+                            showThankYou: false,
+                            wasDialogShown: true,
+                        });
+                    })
+                );
             });
         }
 
@@ -92,7 +88,7 @@ export function maybeOpenFeedbackDialog(conference: IJitsiConference, title?: st
         return Promise.resolve({
             feedbackSubmitted: false,
             showThankYou: true,
-            wasDialogShown: false
+            wasDialogShown: false,
         });
     };
 }
@@ -112,7 +108,7 @@ export function openFeedbackDialog(conference?: IJitsiConference, title?: string
     return openDialog(FeedbackDialog, {
         conference,
         onClose,
-        title
+        title,
     });
 }
 
@@ -125,15 +121,15 @@ export function openFeedbackDialog(conference?: IJitsiConference, title?: string
  * @returns {Promise}
  */
 export function sendJaasFeedbackMetadata(conference: IJitsiConference, feedback: Object) {
-    return (_dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return (_dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
 
         if (!shouldSendJaaSFeedbackMetadata(state)) {
             return Promise.resolve();
         }
 
-        const { jaasFeedbackMetadataURL } = state['features/base/config'];
-        const { jwt, user, tenant } = state['features/base/jwt'];
+        const { jaasFeedbackMetadataURL } = state["features/base/config"];
+        const { jwt, user, tenant } = state["features/base/jwt"];
         const meetingFqn = extractFqnFromPath();
         const feedbackData = {
             ...feedback,
@@ -141,7 +137,7 @@ export function sendJaasFeedbackMetadata(conference: IJitsiConference, feedback:
             userId: user?.id,
             meetingFqn,
             jwt,
-            tenant
+            tenant,
         };
 
         return sendFeedbackToJaaSRequest(jaasFeedbackMetadataURL, feedbackData);
@@ -159,26 +155,26 @@ export function sendJaasFeedbackMetadata(conference: IJitsiConference, feedback:
  * feedback is being left.
  * @returns {Function}
  */
-export function submitFeedback(
-        score: number,
-        message: string,
-        conference: IJitsiConference) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+export function submitFeedback(score: number, message: string, conference: IJitsiConference) {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
         const promises = [];
 
         if (shouldSendJaaSFeedbackMetadata(state)) {
-            promises.push(dispatch(sendJaasFeedbackMetadata(conference, {
-                score,
-                message
-            })));
+            promises.push(
+                dispatch(
+                    sendJaasFeedbackMetadata(conference, {
+                        score,
+                        message,
+                    })
+                )
+            );
         }
 
-        return Promise.allSettled(promises)
-        .then(results => {
-            const rejected = results.find((result): result is PromiseRejectedResult => result?.status === 'rejected');
+        return Promise.allSettled(promises).then((results) => {
+            const rejected = results.find((result): result is PromiseRejectedResult => result?.status === "rejected");
 
-            if (typeof rejected === 'undefined') {
+            if (typeof rejected === "undefined") {
                 dispatch({ type: SUBMIT_FEEDBACK_SUCCESS });
 
                 return Promise.resolve();
@@ -188,7 +184,7 @@ export function submitFeedback(
 
             dispatch({
                 type: SUBMIT_FEEDBACK_ERROR,
-                error
+                error,
             });
 
             return Promise.reject(error);

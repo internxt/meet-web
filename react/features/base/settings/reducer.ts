@@ -1,13 +1,12 @@
-// @ts-expect-error
-import { jitsiLocalStorage } from '@jitsi/js-utils';
-import _ from 'lodash';
+import { jitsiLocalStorage } from "@jitsi/js-utils";
+import _ from "lodash";
 
-import { APP_WILL_MOUNT } from '../app/actionTypes';
-import PersistenceRegistry from '../redux/PersistenceRegistry';
-import ReducerRegistry from '../redux/ReducerRegistry';
-import { assignIfDefined } from '../util/helpers';
+import { APP_WILL_MOUNT } from "../app/actionTypes";
+import PersistenceRegistry from "../redux/PersistenceRegistry";
+import ReducerRegistry from "../redux/ReducerRegistry";
+import { assignIfDefined } from "../util/helpers";
 
-import { SETTINGS_UPDATED } from './actionTypes';
+import { SETTINGS_UPDATED } from "./actionTypes";
 
 /**
  * The default/initial redux state of the feature {@code base/settings}.
@@ -45,10 +44,10 @@ const DEFAULT_STATE: ISettingsState = {
     userSelectedAudioOutputDeviceLabel: undefined,
     userSelectedCameraDeviceLabel: undefined,
     userSelectedNotifications: {
-        'notify.chatMessages': true
+        "notify.chatMessages": true,
     },
     userSelectedMicDeviceLabel: undefined,
-    userSelectedSkipPrejoin: undefined
+    userSelectedSkipPrejoin: undefined,
 };
 
 export interface ISettingsState {
@@ -91,7 +90,7 @@ export interface ISettingsState {
     visible?: boolean;
 }
 
-const STORE_NAME = 'features/base/settings';
+const STORE_NAME = "features/base/settings";
 
 /**
  * Sets up the persistence of the feature {@code base/settings}.
@@ -99,7 +98,7 @@ const STORE_NAME = 'features/base/settings';
 const filterSubtree: ISettingsState = {};
 
 // start with the default state
-Object.keys(DEFAULT_STATE).forEach(key => {
+Object.keys(DEFAULT_STATE).forEach((key) => {
     const key1 = key as keyof typeof filterSubtree;
 
     // @ts-ignore
@@ -117,14 +116,14 @@ PersistenceRegistry.register(STORE_NAME, filterSubtree, DEFAULT_STATE);
 
 ReducerRegistry.register<ISettingsState>(STORE_NAME, (state = DEFAULT_STATE, action): ISettingsState => {
     switch (action.type) {
-    case APP_WILL_MOUNT:
-        return _initSettings(state);
+        case APP_WILL_MOUNT:
+            return _initSettings(state);
 
-    case SETTINGS_UPDATED:
-        return {
-            ...state,
-            ...action.settings
-        };
+        case SETTINGS_UPDATED:
+            return {
+                ...state,
+                ...action.settings,
+            };
     }
 
     return state;
@@ -146,8 +145,8 @@ function _initSettings(featureState: ISettingsState) {
     // FIXME: jibri uses old settings.js local storage values to set its display
     // name and email. Provide another way for jibri to set these values, update
     // jibri, and remove the old settings.js values.
-    const savedDisplayName = jitsiLocalStorage.getItem('displayname');
-    const savedEmail = jitsiLocalStorage.getItem('email');
+    const savedDisplayName = jitsiLocalStorage.getItem("displayname");
+    const savedEmail = jitsiLocalStorage.getItem("email");
 
     // The helper _.escape will convert null to an empty strings. The empty
     // string will be saved in settings. On app re-load, because an empty string
@@ -157,10 +156,13 @@ function _initSettings(featureState: ISettingsState) {
     const displayName = savedDisplayName === null ? undefined : _.escape(savedDisplayName);
     const email = savedEmail === null ? undefined : _.escape(savedEmail);
 
-    settings = assignIfDefined({
-        displayName,
-        email
-    }, settings);
+    settings = assignIfDefined(
+        {
+            displayName,
+            email,
+        },
+        settings
+    );
 
     return settings;
 }

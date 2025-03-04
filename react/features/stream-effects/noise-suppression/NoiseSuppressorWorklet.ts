@@ -1,9 +1,7 @@
-// @ts-expect-error
-import { createRNNWasmModuleSync } from '@jitsi/rnnoise-wasm';
+import { createRNNWasmModuleSync } from "@jitsi/rnnoise-wasm";
 
-import { leastCommonMultiple } from '../../base/util/math';
-import RnnoiseProcessor from '../rnnoise/RnnoiseProcessor';
-
+import { leastCommonMultiple } from "../../base/util/math";
+import RnnoiseProcessor from "../rnnoise/RnnoiseProcessor";
 
 /**
  * Audio worklet which will denoise targeted audio stream using rnnoise.
@@ -98,7 +96,6 @@ class NoiseSuppressorWorklet extends AudioWorkletProcessor {
      * false will terminate it.
      */
     process(inputs: Float32Array[][], outputs: Float32Array[][]) {
-
         // We expect the incoming track to be mono, if a stereo track is passed only on of its channels will get
         // denoised and sent pack.
         // TODO Technically we can denoise both channel however this might require a new rnnoise context, some more
@@ -119,8 +116,11 @@ class NoiseSuppressorWorklet extends AudioWorkletProcessor {
         // New raw samples were just added, start denoising frames, _denoisedBufferLength gives us
         // the position at which the previous denoise iteration ended, basically it takes into account
         // residue data.
-        for (; this._denoisedBufferLength + this._denoiseSampleSize <= this._inputBufferLength;
-            this._denoisedBufferLength += this._denoiseSampleSize) {
+        for (
+            ;
+            this._denoisedBufferLength + this._denoiseSampleSize <= this._inputBufferLength;
+            this._denoisedBufferLength += this._denoiseSampleSize
+        ) {
             // Create view of circular buffer so it can be modified in place, removing the need for
             // extra copies.
 
@@ -174,4 +174,4 @@ class NoiseSuppressorWorklet extends AudioWorkletProcessor {
     }
 }
 
-registerProcessor('NoiseSuppressorWorklet', NoiseSuppressorWorklet);
+registerProcessor("NoiseSuppressorWorklet", NoiseSuppressorWorklet);

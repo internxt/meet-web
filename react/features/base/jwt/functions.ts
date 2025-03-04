@@ -1,12 +1,11 @@
-// @ts-expect-error
-import jwtDecode from 'jwt-decode';
+import jwtDecode from "jwt-decode";
 
-import { IReduxState } from '../../app/types';
-import { getLocalParticipant } from '../participants/functions';
-import { parseURLParams } from '../util/parseURLParams';
+import { IReduxState } from "../../app/types";
+import { getLocalParticipant } from "../participants/functions";
+import { parseURLParams } from "../util/parseURLParams";
 
-import { JWT_VALIDATION_ERRORS, MEET_FEATURES } from './constants';
-import logger from './logger';
+import { JWT_VALIDATION_ERRORS, MEET_FEATURES } from "./constants";
+import logger from "./logger";
 
 /**
  * Retrieves the JSON Web Token (JWT), if any, defined by a specific
@@ -19,7 +18,7 @@ import logger from './logger';
  */
 export function parseJWTFromURLParams(url: URL | typeof window.location = window.location) {
     // @ts-ignore
-    return parseURLParams(url, true, 'search').jwt;
+    return parseURLParams(url, true, "search").jwt;
 }
 
 /**
@@ -29,7 +28,7 @@ export function parseJWTFromURLParams(url: URL | typeof window.location = window
  * @returns {string}
  */
 export function getJwtName(state: IReduxState) {
-    const { user } = state['features/base/jwt'];
+    const { user } = state["features/base/jwt"];
 
     return user?.name;
 }
@@ -44,7 +43,7 @@ export function getJwtName(state: IReduxState) {
  * @returns {bolean}
  */
 export function isJwtFeatureEnabled(state: IReduxState, feature: string, ifNoToken = false, ifNotInFeatures = false) {
-    const { jwt } = state['features/base/jwt'];
+    const { jwt } = state["features/base/jwt"];
 
     if (!jwt) {
         return ifNoToken;
@@ -53,15 +52,15 @@ export function isJwtFeatureEnabled(state: IReduxState, feature: string, ifNoTok
     const { features } = getLocalParticipant(state) || {};
 
     // If `features` is undefined, act as if everything is enabled.
-    if (typeof features === 'undefined') {
+    if (typeof features === "undefined") {
         return true;
     }
 
-    if (typeof features[feature as keyof typeof features] === 'undefined') {
+    if (typeof features[feature as keyof typeof features] === "undefined") {
         return ifNotInFeatures;
     }
 
-    return String(features[feature as keyof typeof features]) === 'true';
+    return String(features[feature as keyof typeof features]) === "true";
 }
 
 /**
@@ -72,7 +71,7 @@ export function isJwtFeatureEnabled(state: IReduxState, feature: string, ifNoTok
  * @returns {boolean} - Whether the timestamp is indeed a valid UNIX timestamp or not.
  */
 function isValidUnixTimestamp(timestamp: number | string) {
-    return typeof timestamp === 'number' && timestamp * 1000 === new Date(timestamp * 1000).getTime();
+    return typeof timestamp === "number" && timestamp * 1000 === new Date(timestamp * 1000).getTime();
 }
 
 /**
@@ -101,17 +100,10 @@ export function validateJwt(jwt: string) {
             return errors;
         }
 
-        const {
-            aud,
-            context,
-            exp,
-            iss,
-            nbf,
-            sub
-        } = payload;
+        const { aud, context, exp, iss, nbf, sub } = payload;
 
         // JaaS only
-        if (sub?.startsWith('vpaas-magic-cookie')) {
+        if (sub?.startsWith("vpaas-magic-cookie")) {
             const { kid } = header;
 
             // if Key ID is missing, we return the error immediately without further validations.
@@ -121,15 +113,15 @@ export function validateJwt(jwt: string) {
                 return errors;
             }
 
-            if (kid.substring(0, kid.indexOf('/')) !== sub) {
+            if (kid.substring(0, kid.indexOf("/")) !== sub) {
                 errors.push({ key: JWT_VALIDATION_ERRORS.KID_MISMATCH });
             }
 
-            if (aud !== 'jitsi') {
+            if (aud !== "jitsi") {
                 errors.push({ key: JWT_VALIDATION_ERRORS.AUD_INVALID });
             }
 
-            if (iss !== 'chat') {
+            if (iss !== "chat") {
                 errors.push({ key: JWT_VALIDATION_ERRORS.ISS_INVALID });
             }
 
@@ -156,32 +148,32 @@ export function validateJwt(jwt: string) {
             const { features } = context;
             const meetFeatures = Object.values(MEET_FEATURES);
 
-            Object.keys(features).forEach(feature => {
+            Object.keys(features).forEach((feature) => {
                 if (meetFeatures.includes(feature)) {
                     const featureValue = features[feature];
 
                     // cannot use truthy or falsy because we need the exact value and type check.
                     if (
-                        featureValue !== true
-                        && featureValue !== false
-                        && featureValue !== 'true'
-                        && featureValue !== 'false'
+                        featureValue !== true &&
+                        featureValue !== false &&
+                        featureValue !== "true" &&
+                        featureValue !== "false"
                     ) {
                         errors.push({
                             key: JWT_VALIDATION_ERRORS.FEATURE_VALUE_INVALID,
-                            args: { feature }
+                            args: { feature },
                         });
                     }
                 } else {
                     errors.push({
                         key: JWT_VALIDATION_ERRORS.FEATURE_INVALID,
-                        args: { feature }
+                        args: { feature },
                     });
                 }
             });
         }
     } catch (e: any) {
-        logger.error(`Unspecified JWT error${e?.message ? `: ${e.message}` : ''}`);
+        logger.error(`Unspecified JWT error${e?.message ? `: ${e.message}` : ""}`);
     }
 
     return errors;
@@ -207,7 +199,6 @@ export function getJwtExpirationDate(jwt: string | undefined) {
     }
 }
 
-
 /**
  * Extracts and returns the expiration date of jwt.
  *
@@ -231,17 +222,10 @@ export function isJwtValid(jwt: string | undefined) {
             return false;
         }
 
-        const {
-            aud,
-            context,
-            exp,
-            iss,
-            nbf,
-            sub
-        } = payload;
+        const { aud, context, exp, iss, nbf, sub } = payload;
 
         // JaaS only
-        if (sub?.startsWith('vpaas-magic-cookie')) {
+        if (sub?.startsWith("vpaas-magic-cookie")) {
             const { kid } = header;
 
             // if Key ID is missing, we return the error immediately without further validations.
@@ -249,15 +233,15 @@ export function isJwtValid(jwt: string | undefined) {
                 return false;
             }
 
-            if (kid.substring(0, kid.indexOf('/')) !== sub) {
+            if (kid.substring(0, kid.indexOf("/")) !== sub) {
                 return false;
             }
 
-            if (aud !== 'jitsi') {
+            if (aud !== "jitsi") {
                 return false;
             }
 
-            if (iss !== 'chat') {
+            if (iss !== "chat") {
                 return false;
             }
 

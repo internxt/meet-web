@@ -4,7 +4,7 @@ import debounce from 'lodash/debounce';
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import { AnyAction } from 'redux';
 
-// @ts-expect-error
+
 import { ENDPOINT_TEXT_MESSAGE_NAME } from '../../../../modules/API/constants';
 import { appNavigate } from '../../app/actions.native';
 import { IStore } from '../../app/types';
@@ -32,8 +32,7 @@ import {
     JITSI_CONNECTION_URL_KEY
 } from '../../base/connection/constants';
 import { getURLWithoutParams } from '../../base/connection/utils';
-import {
-    JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
+import { JitsiConferenceEvents } from "../../base/lib-jitsi-meet";
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
 import { toggleCameraFacingMode } from '../../base/media/actions';
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../base/media/constants';

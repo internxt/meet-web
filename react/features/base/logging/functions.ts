@@ -1,8 +1,7 @@
-// @ts-expect-error
-import Logger, { getLogger as _getLogger } from '@jitsi/logger';
-import _ from 'lodash';
+import Logger, { getLogger as _getLogger } from "@jitsi/logger";
+import _ from "lodash";
 
-import LogTransport from './LogTransport';
+import LogTransport from "./LogTransport";
 
 /**
  * Options for building the logger. We disable the callee info on RN because it's
@@ -18,7 +17,7 @@ const DEFAULT_RN_OPTS = { disableCallerInfo: true };
  * @returns {Object} - The logger object.
  */
 export function getLogger(id: string) {
-    const opts = navigator.product === 'ReactNative' ? DEFAULT_RN_OPTS : DEFAULT_OPTS;
+    const opts = navigator.product === "ReactNative" ? DEFAULT_RN_OPTS : DEFAULT_OPTS;
 
     return _getLogger(id, undefined, opts);
 }
@@ -27,13 +26,13 @@ export function getLogger(id: string) {
  * Initializes native logging. This operations must be done as early as possible.
  */
 export const _initLogging = _.once(() => {
-    if (navigator.product !== 'ReactNative') {
+    if (navigator.product !== "ReactNative") {
         return;
     }
 
     // Lazy load it to avoid cycles in early web bootstrap code.
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { default: JitsiMeetJS } = require('../lib-jitsi-meet/_');
+    const { default: JitsiMeetJS } = require("../lib-jitsi-meet/_");
 
     Logger.setGlobalOptions(DEFAULT_RN_OPTS);
     JitsiMeetJS.setGlobalLogOptions(DEFAULT_RN_OPTS);

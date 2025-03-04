@@ -5,7 +5,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { findWindows } from 'windows-iana';
 import { IanaName } from 'windows-iana/dist/enums';
 
-// @ts-expect-error
+
 import { createDeferred } from '../../../../modules/util/helpers';
 import { IStore } from '../../app/types';
 import { parseURLParams } from '../../base/util/parseURLParams';

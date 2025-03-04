@@ -1,39 +1,34 @@
-// @ts-expect-error
-import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from '../../../../modules/UI/UIErrors';
-import { IReduxState, IStore } from '../../app/types';
-import { showModeratedNotification } from '../../av-moderation/actions';
-import { shouldShowModeratedNotification } from '../../av-moderation/functions';
-import { setNoiseSuppressionEnabled } from '../../noise-suppression/actions';
-import { showNotification } from '../../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
-import { stopReceiver } from '../../remote-control/actions';
-import { setScreenAudioShareState, setScreenshareAudioTrack } from '../../screen-share/actions';
-import { isAudioOnlySharing, isScreenVideoShared } from '../../screen-share/functions';
-import { toggleScreenshotCaptureSummary } from '../../screenshot-capture/actions';
-import { isScreenshotCaptureEnabled } from '../../screenshot-capture/functions';
-import { AudioMixerEffect } from '../../stream-effects/audio-mixer/AudioMixerEffect';
-import { getCurrentConference } from '../conference/functions';
-import { openDialog } from '../dialog/actions';
-import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
-import { setScreenshareMuted } from '../media/actions';
-import { MEDIA_TYPE, VIDEO_TYPE } from '../media/constants';
+import { AUDIO_ONLY_SCREEN_SHARE_NO_TRACK } from "../../../../modules/UI/UIErrors";
+import { IReduxState, IStore } from "../../app/types";
+import { showModeratedNotification } from "../../av-moderation/actions";
+import { shouldShowModeratedNotification } from "../../av-moderation/functions";
+import { setNoiseSuppressionEnabled } from "../../noise-suppression/actions";
+import { showNotification } from "../../notifications/actions";
+import { NOTIFICATION_TIMEOUT_TYPE } from "../../notifications/constants";
+import { stopReceiver } from "../../remote-control/actions";
+import { setScreenAudioShareState, setScreenshareAudioTrack } from "../../screen-share/actions";
+import { isAudioOnlySharing, isScreenVideoShared } from "../../screen-share/functions";
+import { toggleScreenshotCaptureSummary } from "../../screenshot-capture/actions";
+import { isScreenshotCaptureEnabled } from "../../screenshot-capture/functions";
+import { AudioMixerEffect } from "../../stream-effects/audio-mixer/AudioMixerEffect";
+import { getCurrentConference } from "../conference/functions";
+import { openDialog } from "../dialog/actions";
+import { JitsiTrackErrors, JitsiTrackEvents } from "../lib-jitsi-meet";
+import { setScreenshareMuted } from "../media/actions";
+import { MEDIA_TYPE, VIDEO_TYPE } from "../media/constants";
 
-import {
-    addLocalTrack,
-    replaceLocalTrack,
-    toggleCamera
-} from './actions.any';
-import AllowToggleCameraDialog from './components/web/AllowToggleCameraDialog';
+import { addLocalTrack, replaceLocalTrack, toggleCamera } from "./actions.any";
+import AllowToggleCameraDialog from "./components/web/AllowToggleCameraDialog";
 import {
     createLocalTracksF,
     getLocalDesktopTrack,
     getLocalJitsiAudioTrack,
     getLocalVideoTrack,
-    isToggleCameraEnabled
-} from './functions';
-import { IShareOptions, IToggleScreenSharingOptions } from './types';
+    isToggleCameraEnabled,
+} from "./functions";
+import { IShareOptions, IToggleScreenSharingOptions } from "./types";
 
-export * from './actions.any';
+export * from "./actions.any";
 
 /**
  * Signals that the local participant is ending screensharing or beginning the screensharing flow.
@@ -43,11 +38,8 @@ export * from './actions.any';
  * @param {Object} shareOptions - The options to be passed for capturing screenshare.
  * @returns {Function}
  */
-export function toggleScreensharing(
-        enabled?: boolean,
-        audioOnly = false,
-        shareOptions: IShareOptions = {}) {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+export function toggleScreensharing(enabled?: boolean, audioOnly = false, shareOptions: IShareOptions = {}) {
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         // check for A/V Moderation when trying to start screen sharing
         if ((enabled || enabled === undefined) && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, getState())) {
             dispatch(showModeratedNotification(MEDIA_TYPE.SCREENSHARE));
@@ -55,14 +47,17 @@ export function toggleScreensharing(
             return Promise.reject();
         }
 
-        return _toggleScreenSharing({
-            enabled,
-            audioOnly,
-            shareOptions
-        }, {
-            dispatch,
-            getState
-        });
+        return _toggleScreenSharing(
+            {
+                enabled,
+                audioOnly,
+                shareOptions,
+            },
+            {
+                dispatch,
+                getState,
+            }
+        );
     };
 }
 
@@ -74,34 +69,36 @@ export function toggleScreensharing(
  * @param {Object} store - The redux store.
  * @returns {void}
  */
-function _handleScreensharingError(
-        error: Error | AUDIO_ONLY_SCREEN_SHARE_NO_TRACK,
-        { dispatch }: IStore): void {
+function _handleScreensharingError(error: Error | AUDIO_ONLY_SCREEN_SHARE_NO_TRACK, { dispatch }: IStore): void {
     if (error.name === JitsiTrackErrors.SCREENSHARING_USER_CANCELED) {
         return;
     }
     let descriptionKey, titleKey;
 
     if (error.name === JitsiTrackErrors.PERMISSION_DENIED) {
-        descriptionKey = 'dialog.screenSharingPermissionDeniedError';
-        titleKey = 'dialog.screenSharingFailedTitle';
+        descriptionKey = "dialog.screenSharingPermissionDeniedError";
+        titleKey = "dialog.screenSharingFailedTitle";
     } else if (error.name === JitsiTrackErrors.CONSTRAINT_FAILED) {
-        descriptionKey = 'dialog.cameraConstraintFailedError';
-        titleKey = 'deviceError.cameraError';
+        descriptionKey = "dialog.cameraConstraintFailedError";
+        titleKey = "deviceError.cameraError";
     } else if (error.name === JitsiTrackErrors.SCREENSHARING_GENERIC_ERROR) {
-        descriptionKey = 'dialog.screenSharingFailed';
-        titleKey = 'dialog.screenSharingFailedTitle';
+        descriptionKey = "dialog.screenSharingFailed";
+        titleKey = "dialog.screenSharingFailedTitle";
     } else if (error === AUDIO_ONLY_SCREEN_SHARE_NO_TRACK) {
-        descriptionKey = 'notify.screenShareNoAudio';
-        titleKey = 'notify.screenShareNoAudioTitle';
+        descriptionKey = "notify.screenShareNoAudio";
+        titleKey = "notify.screenShareNoAudioTitle";
     }
 
-    dispatch(showNotification({
-        titleKey,
-        descriptionKey
-    }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
+    dispatch(
+        showNotification(
+            {
+                titleKey,
+                descriptionKey,
+            },
+            NOTIFICATION_TIMEOUT_TYPE.MEDIUM
+        )
+    );
 }
-
 
 /**
  * Applies the AudioMixer effect on the local audio track if applicable. If there is no local audio track, the desktop
@@ -128,7 +125,6 @@ async function _maybeApplyAudioMixerEffect(desktopAudioTrack: any, state: IRedux
     }
 }
 
-
 /**
  * Toggles screen sharing.
  *
@@ -138,12 +134,8 @@ async function _maybeApplyAudioMixerEffect(desktopAudioTrack: any, state: IRedux
  * @returns {void}
  */
 async function _toggleScreenSharing(
-        {
-            enabled,
-            audioOnly = false,
-            shareOptions = {}
-        }: IToggleScreenSharingOptions,
-        store: IStore
+    { enabled, audioOnly = false, shareOptions = {} }: IToggleScreenSharingOptions,
+    store: IStore
 ): Promise<void> {
     const { dispatch, getState } = store;
     const state = getState();
@@ -151,36 +143,34 @@ async function _toggleScreenSharing(
     const screenSharing = isScreenVideoShared(state);
     const conference = getCurrentConference(state);
     const localAudio = getLocalJitsiAudioTrack(state);
-    const localScreenshare = getLocalDesktopTrack(state['features/base/tracks']);
+    const localScreenshare = getLocalDesktopTrack(state["features/base/tracks"]);
 
     // Toggle screenshare or audio-only share if the new state is not passed. Happens in the following two cases.
     // 1. ShareAudioDialog passes undefined when the user hits continue in the share audio demo modal.
     // 2. Toggle screenshare called from the external API.
-    const enable = audioOnly
-        ? enabled ?? !audioOnlySharing
-        : enabled ?? !screenSharing;
-    const screensharingDetails: { sourceType?: string; } = {};
+    const enable = audioOnly ? enabled ?? !audioOnlySharing : enabled ?? !screenSharing;
+    const screensharingDetails: { sourceType?: string } = {};
 
     if (enable) {
         let tracks;
 
         // Spot proxy stream.
         if (shareOptions.desktopStream) {
-            tracks = [ shareOptions.desktopStream ];
+            tracks = [shareOptions.desktopStream];
         } else {
-            const { _desktopSharingSourceDevice } = state['features/base/config'];
+            const { _desktopSharingSourceDevice } = state["features/base/config"];
 
             if (!shareOptions.desktopSharingSources && _desktopSharingSourceDevice) {
                 shareOptions.desktopSharingSourceDevice = _desktopSharingSourceDevice;
             }
 
             const options = {
-                devices: [ VIDEO_TYPE.DESKTOP ],
-                ...shareOptions
+                devices: [VIDEO_TYPE.DESKTOP],
+                ...shareOptions,
             };
 
             try {
-                tracks = await createLocalTracksF(options) as any[];
+                tracks = (await createLocalTracksF(options)) as any[];
             } catch (error) {
                 _handleScreensharingError(error as any, store);
 
@@ -188,8 +178,8 @@ async function _toggleScreenSharing(
             }
         }
 
-        const desktopAudioTrack = tracks.find(track => track.getType() === MEDIA_TYPE.AUDIO);
-        const desktopVideoTrack = tracks.find(track => track.getType() === MEDIA_TYPE.VIDEO);
+        const desktopAudioTrack = tracks.find((track) => track.getType() === MEDIA_TYPE.AUDIO);
+        const desktopVideoTrack = tracks.find((track) => track.getType() === MEDIA_TYPE.VIDEO);
 
         if (audioOnly) {
             // Dispose the desktop track for audio-only screensharing.
@@ -223,24 +213,29 @@ async function _toggleScreenSharing(
 
             // Handle the case where screen share was stopped from the browsers 'screen share in progress' window.
             if (audioOnly) {
-                desktopAudioTrack?.on(
-                    JitsiTrackEvents.LOCAL_TRACK_STOPPED,
-                    () => dispatch(toggleScreensharing(undefined, true)));
+                desktopAudioTrack?.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, () =>
+                    dispatch(toggleScreensharing(undefined, true))
+                );
             }
         }
 
         // Show notification about more bandwidth usage in audio-only mode if the user starts screensharing. This
         // doesn't apply to audio-only screensharing.
-        const { enabled: bestPerformanceMode } = state['features/base/audio-only'];
+        const { enabled: bestPerformanceMode } = state["features/base/audio-only"];
 
         if (bestPerformanceMode && !audioOnly) {
-            dispatch(showNotification({
-                titleKey: 'notify.screenSharingAudioOnlyTitle',
-                descriptionKey: 'notify.screenSharingAudioOnlyDescription'
-            }, NOTIFICATION_TIMEOUT_TYPE.LONG));
+            dispatch(
+                showNotification(
+                    {
+                        titleKey: "notify.screenSharingAudioOnlyTitle",
+                        descriptionKey: "notify.screenSharingAudioOnlyDescription",
+                    },
+                    NOTIFICATION_TIMEOUT_TYPE.LONG
+                )
+            );
         }
     } else {
-        const { desktopAudioTrack } = state['features/screen-share'];
+        const { desktopAudioTrack } = state["features/screen-share"];
 
         dispatch(stopReceiver());
 
@@ -276,7 +271,7 @@ async function _toggleScreenSharing(
  * @returns {void}
  */
 export function setCameraFacingMode(facingMode: string | undefined) {
-    return async (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+    return async (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
 
         if (!isToggleCameraEnabled(state)) {
@@ -289,7 +284,7 @@ export function setCameraFacingMode(facingMode: string | undefined) {
             return;
         }
 
-        const tracks = state['features/base/tracks'];
+        const tracks = state["features/base/tracks"];
         const localVideoTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
 
         if (!tracks || !localVideoTrack) {
@@ -314,6 +309,6 @@ export function setCameraFacingMode(facingMode: string | undefined) {
 export function openAllowToggleCameraDialog(onAllow: Function, initiatorId: string) {
     return openDialog(AllowToggleCameraDialog, {
         onAllow,
-        initiatorId
+        initiatorId,
     });
 }

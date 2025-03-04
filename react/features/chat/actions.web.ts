@@ -1,11 +1,10 @@
-// @ts-expect-error
-import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
-import { IStore } from '../app/types';
+import VideoLayout from "../../../modules/UI/videolayout/VideoLayout";
+import { IStore } from "../app/types";
 
-import { OPEN_CHAT } from './actionTypes';
-import { closeChat } from './actions.any';
+import { OPEN_CHAT } from "./actionTypes";
+import { closeChat } from "./actions.any";
 
-export * from './actions.any';
+export * from "./actions.any";
 
 /**
  * Displays the chat panel.
@@ -18,10 +17,10 @@ export * from './actions.any';
  * }}
  */
 export function openChat(participant?: Object, _disablePolls?: boolean) {
-    return function(dispatch: IStore['dispatch']) {
+    return function (dispatch: IStore["dispatch"]) {
         dispatch({
             participant,
-            type: OPEN_CHAT
+            type: OPEN_CHAT,
         });
     };
 }
@@ -32,8 +31,8 @@ export function openChat(participant?: Object, _disablePolls?: boolean) {
  * @returns {Function}
  */
 export function toggleChat() {
-    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
-        const isOpen = getState()['features/chat'].isOpen;
+    return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
+        const isOpen = getState()["features/chat"].isOpen;
 
         if (isOpen) {
             dispatch(closeChat());

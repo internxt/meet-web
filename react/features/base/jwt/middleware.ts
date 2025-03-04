@@ -1,19 +1,18 @@
-// @ts-expect-error
-import jwtDecode from 'jwt-decode';
-import { AnyAction } from 'redux';
+import jwtDecode from "jwt-decode";
+import { AnyAction } from "redux";
 
-import { IStore } from '../../app/types';
-import { SET_CONFIG } from '../config/actionTypes';
-import { SET_LOCATION_URL } from '../connection/actionTypes';
-import { participantUpdated } from '../participants/actions';
-import { getLocalParticipant } from '../participants/functions';
-import { IParticipant } from '../participants/types';
-import MiddlewareRegistry from '../redux/MiddlewareRegistry';
+import { IStore } from "../../app/types";
+import { SET_CONFIG } from "../config/actionTypes";
+import { SET_LOCATION_URL } from "../connection/actionTypes";
+import { participantUpdated } from "../participants/actions";
+import { getLocalParticipant } from "../participants/functions";
+import { IParticipant } from "../participants/types";
+import MiddlewareRegistry from "../redux/MiddlewareRegistry";
 
-import { SET_JWT } from './actionTypes';
-import { setJWT } from './actions';
-import { parseJWTFromURLParams } from './functions';
-import logger from './logger';
+import { SET_JWT } from "./actionTypes";
+import { setJWT } from "./actions";
+import { parseJWTFromURLParams } from "./functions";
+import logger from "./logger";
 
 /**
  * Middleware to parse token data upon setting a new room URL.
@@ -22,16 +21,16 @@ import logger from './logger';
  * @private
  * @returns {Function}
  */
-MiddlewareRegistry.register(store => next => action => {
+MiddlewareRegistry.register((store) => (next) => (action) => {
     switch (action.type) {
-    case SET_CONFIG:
-    case SET_LOCATION_URL:
-        // XXX The JSON Web Token (JWT) is not the only piece of state that we
-        // have decided to store in the feature jwt
-        return _setConfigOrLocationURL(store, next, action);
+        case SET_CONFIG:
+        case SET_LOCATION_URL:
+            // XXX The JSON Web Token (JWT) is not the only piece of state that we
+            // have decided to store in the feature jwt
+            return _setConfigOrLocationURL(store, next, action);
 
-    case SET_JWT:
-        return _setJWT(store, next, action);
+        case SET_JWT:
+            return _setJWT(store, next, action);
     }
 
     return next(action);
@@ -49,15 +48,21 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {void}
  */
 function _overwriteLocalParticipant(
-        { dispatch, getState }: IStore,
-        { avatarURL, email, id: jwtId, name, features }:
-        { avatarURL?: string; email?: string; features?: any; id?: string; name?: string; }) {
+    { dispatch, getState }: IStore,
+    {
+        avatarURL,
+        email,
+        id: jwtId,
+        name,
+        features,
+    }: { avatarURL?: string; email?: string; features?: any; id?: string; name?: string }
+) {
     let localParticipant;
 
     if ((avatarURL || email || name || features) && (localParticipant = getLocalParticipant(getState))) {
         const newProperties: IParticipant = {
             id: localParticipant.id,
-            local: true
+            local: true,
         };
 
         if (avatarURL) {
@@ -98,10 +103,9 @@ function _overwriteLocalParticipant(
 function _setConfigOrLocationURL({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     const result = next(action);
 
-    const { locationURL } = getState()['features/base/connection'];
+    const { locationURL } = getState()["features/base/connection"];
 
-    dispatch(
-        setJWT(locationURL ? parseJWTFromURLParams(locationURL) : undefined));
+    dispatch(setJWT(locationURL ? parseJWTFromURLParams(locationURL) : undefined));
 
     return result;
 }
@@ -150,12 +154,10 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
 
                     const newUser = user ? { ...user } : {};
 
-                    _overwriteLocalParticipant(
-                        store, { ...newUser,
-                            features: context.features });
+                    _overwriteLocalParticipant(store, { ...newUser, features: context.features });
 
                     // eslint-disable-next-line max-depth
-                    if (context.user && context.user.role === 'visitor') {
+                    if (context.user && context.user.role === "visitor") {
                         action.preferVisitor = true;
                     }
                 } else if (jwtPayload.name || jwtPayload.picture || jwtPayload.email) {
@@ -163,16 +165,16 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
                     _overwriteLocalParticipant(store, {
                         avatarURL: jwtPayload.picture,
                         name: jwtPayload.name,
-                        email: jwtPayload.email
+                        email: jwtPayload.email,
                     });
                 }
             }
-        } else if (typeof APP === 'undefined') {
+        } else if (typeof APP === "undefined") {
             // The logic of restoring JWT overrides make sense only on mobile.
             // On Web it should eventually be restored from storage, but there's
             // no such use case yet.
 
-            const { user } = store.getState()['features/base/jwt'];
+            const { user } = store.getState()["features/base/jwt"];
 
             user && _undoOverwriteLocalParticipant(store, user);
         }
@@ -196,15 +198,15 @@ function _setJWT(store: IStore, next: Function, action: AnyAction) {
  * @returns {void}
  */
 function _undoOverwriteLocalParticipant(
-        { dispatch, getState }: IStore,
-        { avatarURL, name, email }: { avatarURL?: string; email?: string; name?: string; }) {
+    { dispatch, getState }: IStore,
+    { avatarURL, name, email }: { avatarURL?: string; email?: string; name?: string }
+) {
     let localParticipant;
 
-    if ((avatarURL || name || email)
-            && (localParticipant = getLocalParticipant(getState))) {
+    if ((avatarURL || name || email) && (localParticipant = getLocalParticipant(getState))) {
         const newProperties: IParticipant = {
             id: localParticipant.id,
-            local: true
+            local: true,
         };
 
         if (avatarURL === localParticipant.avatarURL) {
@@ -236,9 +238,21 @@ function _undoOverwriteLocalParticipant(
  *     hidden-from-recorder: ?boolean
  * }}
  */
-function _user2participant({ avatar, avatarUrl, email, id, name, 'hidden-from-recorder': hiddenFromRecorder }:
-    { avatar?: string; avatarUrl?: string; email: string; 'hidden-from-recorder': string | boolean;
-    id: string; name: string; }) {
+function _user2participant({
+    avatar,
+    avatarUrl,
+    email,
+    id,
+    name,
+    "hidden-from-recorder": hiddenFromRecorder,
+}: {
+    avatar?: string;
+    avatarUrl?: string;
+    email: string;
+    "hidden-from-recorder": string | boolean;
+    id: string;
+    name: string;
+}) {
     const participant: {
         avatarURL?: string;
         email?: string;
@@ -247,22 +261,22 @@ function _user2participant({ avatar, avatarUrl, email, id, name, 'hidden-from-re
         name?: string;
     } = {};
 
-    if (typeof avatarUrl === 'string') {
+    if (typeof avatarUrl === "string") {
         participant.avatarURL = avatarUrl.trim();
-    } else if (typeof avatar === 'string') {
+    } else if (typeof avatar === "string") {
         participant.avatarURL = avatar.trim();
     }
-    if (typeof email === 'string') {
+    if (typeof email === "string") {
         participant.email = email.trim();
     }
-    if (typeof id === 'string') {
+    if (typeof id === "string") {
         participant.id = id.trim();
     }
-    if (typeof name === 'string') {
+    if (typeof name === "string") {
         participant.name = name.trim();
     }
 
-    if (hiddenFromRecorder === 'true' || hiddenFromRecorder === true) {
+    if (hiddenFromRecorder === "true" || hiddenFromRecorder === true) {
         participant.hiddenFromRecorder = true;
     }
 
