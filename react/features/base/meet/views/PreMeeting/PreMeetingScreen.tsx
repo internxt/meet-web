@@ -113,12 +113,12 @@ interface IProps extends WithTranslation {
     /**
      * Click handler for the small icon. Opens video options.
      */
-    onVideoOptionsClick: Function;
+    onVideoOptionsClick?: Function;
 
     /**
      * Click handler for the small icon. Opens audio options.
      */
-    onAudioOptionsClick: Function;
+    onAudioOptionsClick?: Function;
 
     dispatch: Function;
 
