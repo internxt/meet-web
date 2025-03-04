@@ -67,33 +67,33 @@ const options: i18next.InitOptions = {
     backend: <HttpBackendOptions>{
         loadPath: (lng: string[], ns: string[]) => {
             switch (ns[0]) {
-            case 'countries':
-            case 'main':
-                return 'lang/{{ns}}-{{lng}}.json';
-            default:
-                return 'lang/{{ns}}.json';
+                case "countries":
+                case "main":
+                    return "lang/{{ns}}-{{lng}}.json";
+                default:
+                    return "lang/{{ns}}.json";
             }
-        }
+        },
     },
-    defaultNS: 'main',
+    defaultNS: "main",
     fallbackLng: DEFAULT_LANGUAGE,
     interpolation: {
-        escapeValue: false // not needed for react as it escapes by default
+        escapeValue: false, // not needed for react as it escapes by default
     },
-    load: 'languageOnly',
-    ns: [ 'main', 'languages', 'countries', 'translation-languages' ],
+    load: "languageOnly",
+    ns: ["main", "languages", "countries", "translation-languages"],
     react: {
         // re-render when a new resource bundle is added
-        . Fixed in i18next 19.6.1.
-        bindI18nStore: 'added',
-        useSuspense: false
+        // @ts-expect-error. Fixed in i18next 19.6.1.
+        bindI18nStore: "added",
+        useSuspense: false,
     },
     returnEmptyString: false,
     returnNull: false,
 
     // XXX i18next modifies the array lngWhitelist so make sure to clone
     // LANGUAGES.
-    whitelist: LANGUAGES.slice()
+    whitelist: LANGUAGES.slice(),
 };
 
 i18next
