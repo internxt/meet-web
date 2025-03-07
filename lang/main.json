@@ -20,6 +20,12 @@
             "videoParticipants": {
                 "you": "You"
             }
+        },
+        "invite": {
+            "invitePeople": "Invite people",
+            "copyLink": "Copy Link",
+            "meetingFull": "Meeting is full",
+            "participants": "participants"
         }
     },
     "addPeople": {
