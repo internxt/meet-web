@@ -142,6 +142,8 @@ interface IProps extends WithTranslation {
      * Flag to indicate if there was an error creating the room.
      */
     createRoomError?: boolean;
+
+    createConference?: Function;
 }
 
 const PreMeetingScreen = ({
@@ -163,6 +165,7 @@ const PreMeetingScreen = ({
     userName,
     joinRoomError,
     createRoomError,
+    createConference,
 }: IProps) => {
     const { classes } = useStyles();
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
@@ -299,9 +302,12 @@ const PreMeetingScreen = ({
                         setUserName={setName}
                         setIsNameInputFocused={setIsNameInputFocused}
                         participants={allParticipants}
-                        translate={t}
-                        joinConference={joinConference}
+                        joinConference={() => {
+                            createConference && createConference();
+                            joinConference && joinConference();
+                        }}
                         disableJoinButton={disableJoinButton}
+                        isCreatingConference={!!createConference}
                     />
                 )}
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}
