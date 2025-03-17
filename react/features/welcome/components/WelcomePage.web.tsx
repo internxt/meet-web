@@ -2,19 +2,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { isMobileBrowser } from '../../base/environment/utils';
-import { translate, translateToHTML } from '../../base/i18n/functions';
-import Icon from '../../base/icons/components/Icon';
-import { IconWarning } from '../../base/icons/svg';
-import Watermarks from '../../base/react/components/web/Watermarks';
+import { translate } from "../../base/i18n/functions";
+import Icon from "../../base/icons/components/Icon";
+import { IconWarning } from "../../base/icons/svg";
 import getUnsafeRoomText from '../../base/util/getUnsafeRoomText.web';
 import CalendarList from '../../calendar-sync/components/CalendarList.web';
-import RecentList from '../../recent-list/components/RecentList.web';
-import SettingsButton from '../../settings/components/web/SettingsButton';
-import { SETTINGS_TABS } from '../../settings/constants';
+import RecentList from "../../recent-list/components/RecentList.web";
 
-import { Button } from "@internxt/ui";
 import { AbstractWelcomePage, IProps, _mapStateToProps } from "./AbstractWelcomePage";
-import Login from './LoginPage';
+import MeetLandingPage from "./HomePage";
 import Tabs from "./Tabs";
 
 /**
@@ -22,7 +18,7 @@ import Tabs from "./Tabs";
  *
  * @type {string}
  */
-export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
+export const ROOM_NAME_VALIDATE_PATTERN_STR = "^[^?&:\u0022\u0027%#]+$";
 
 /**
  * The Web container rendering the welcome page.
@@ -201,7 +197,12 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
 
         return (
             <>
-                {this.state.inxtToken ? (
+                <MeetLandingPage
+                    updateInxtToken={this._updateInxtToken}
+                    translate={t}
+                    startNewMeeting={this._onFormSubmit}
+                />
+                {/* {this.state.inxtToken ? (
                     <div className={`welcome ${contentClassName} ${footerClassName}`} id="welcome_page">
                         <div className="header" style={{ minHeight: "100vh" }}>
                             <div className="header-image" />
@@ -229,24 +230,9 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                                 <h1 className="header-text-title">{t("welcomepage.headerTitle")}</h1>
                                 <span className="header-text-subtitle">{t("welcomepage.headerSubtitle")}</span>
                                 <div id="enter_room" style={{ justifyContent: "center" }}>
-                                    <Button
-                                        variant="primary"
-                                        onClick={this._onFormSubmit}
-                                        type="submit"
-                                    >
+                                    <Button variant="primary" onClick={this._onFormSubmit} type="submit">
                                         {t("welcomepage.startMeeting")}
                                     </Button>
-                                    {/* <button
-                                        aria-disabled="false"
-                                        aria-label="Start meeting"
-                                        className="welcome-page-button"
-                                        id="enter_room_button"
-                                        onClick={this._onFormSubmit}
-                                        tabIndex={0}
-                                        type="button"
-                                    >
-                                        {t("welcomepage.startMeeting")}
-                                    </button> */}
                                 </div>
                                 {this._titleHasNotAllowCharacter && (
                                     <div className="not-allow-title-character-div" role="alert">
@@ -269,8 +255,13 @@ class WelcomePage extends AbstractWelcomePage<IProps> {
                         </div>
                     </div>
                 ) : (
-                    <Login _updateInxtToken={this._updateInxtToken} />
-                )}
+                    <MeetLandingPage
+                        updateInxtToken={this._updateInxtToken}
+                        translate={t}
+                        startNewMeeting={this._onFormSubmit}
+                    />
+                    // <Login _updateInxtToken={this._updateInxtToken} />
+                )} */}
             </>
         );
     }
