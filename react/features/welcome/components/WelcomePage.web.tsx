@@ -9,8 +9,8 @@ import getUnsafeRoomText from '../../base/util/getUnsafeRoomText.web';
 import CalendarList from '../../calendar-sync/components/CalendarList.web';
 import RecentList from "../../recent-list/components/RecentList.web";
 
+import MeetLandingPage from "../../base/meet/views/Home/HomePage";
 import { AbstractWelcomePage, IProps, _mapStateToProps } from "./AbstractWelcomePage";
-import MeetLandingPage from "./HomePage";
 import Tabs from "./Tabs";
 
 /**
