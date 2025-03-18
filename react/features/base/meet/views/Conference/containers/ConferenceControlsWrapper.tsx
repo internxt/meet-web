@@ -1,15 +1,16 @@
 import { CircleButton } from "@internxt/ui";
-import { UserPlus, X } from "@phosphor-icons/react";
+import { Shield, UserPlus, X } from "@phosphor-icons/react";
 import React, { useState } from "react";
+import { WithTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { IReduxState } from "../../../../../app/types";
+import { toggleSecurityDialog } from "../../../../../security/actions";
 import { leaveConference } from "../../../../conference/actions";
+import { getInviteURL } from "../../../../connection/functions";
+import { translate } from "../../../../i18n/functions";
 import MediaControlsWrapper from "../../../general/containers/MediaControlsWrapper";
 import InviteUser from "../components/InviteUser";
 import { VideoParticipantType } from "../types";
-import { getInviteURL } from "../../../../connection/functions";
-import { translate } from "../../../../i18n/functions";
-import { WithTranslation } from "react-i18next";
 import { getParticipantsWithTracks } from "../utils";
 
 interface ConferenceControlsProps extends WithTranslation {
@@ -46,6 +47,9 @@ const ConferenceControls = ({ dispatch, participants, _inviteUrl, t }: Conferenc
                     </CircleButton>
                     <CircleButton variant="cancel" onClick={() => dispatch(leaveConference())}>
                         <X size={22} color="white" />
+                    </CircleButton>
+                    <CircleButton variant="default" onClick={() => dispatch(toggleSecurityDialog())}>
+                        <Shield size={22} color={"white"} weight="fill" />
                     </CircleButton>
                 </div>
             </div>

@@ -262,7 +262,7 @@ class Conference extends AbstractConference<IProps, any> {
                         {_showPrejoin || _showLobby || (
                             <>
                                 {/* <StageFilmstrip /> */}
-                                {/*  <ScreenshareFilmstrip />*/}
+                                {/* <ScreenshareFilmstrip /> */}
                                 {/* right screen tools component */}
                                 {/* <MainFilmstrip /> */}
                             </>
