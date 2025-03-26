@@ -35,7 +35,8 @@ import ConferenceInfo from "./ConferenceInfo";
 import { default as Notice } from "./Notice";
 
 import ConferenceControlsWrapper from "../../../base/meet/views/Conference/containers/ConferenceControlsWrapper";
-import VideoGalleryWrapper from "../../../base/meet/views/Conference/containers/VideoGalleryWrapper";
+import MainFilmstrip from "../../../filmstrip/components/web/MainFilmstrip";
+import LargeVideoWeb from "../../../large-video/components/LargeVideo.web";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -151,6 +152,9 @@ class Conference extends AbstractConference<IProps, any> {
     componentDidMount() {
         document.title = `${interfaceConfig.APP_NAME}`;
         this._start();
+        // setTimeout(() => {
+        //     VideoLayout.refreshLayout();
+        // }, 1000);
     }
 
     /**
@@ -224,15 +228,15 @@ class Conference extends AbstractConference<IProps, any> {
                     <div onTouchStart={this._onVidespaceTouchStart}>
                         <Header mode={videoMode} translate={t} onSetModeClicked={this._onSetVideoModeClicked} />
                         <div className="flex">
-                            {/* <LargeVideoWeb /> */}
-                            <VideoGalleryWrapper videoMode={videoMode} />
+                            <LargeVideoWeb />
+                            {/* <VideoGalleryWrapper videoMode={videoMode} /> */}
                         </div>
                         {_showPrejoin || _showLobby || (
                             <>
                                 {/* <StageFilmstrip /> */}
                                 {/*  <ScreenshareFilmstrip />*/}
                                 {/* right screen tools component */}
-                                {/* <MainFilmstrip /> */}
+                                <MainFilmstrip />
                             </>
                         )}
                     </div>

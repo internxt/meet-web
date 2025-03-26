@@ -12,6 +12,7 @@ import {
     isScreenShareParticipant,
 } from "../../../../participants/functions";
 import {
+    getAudioTrackByParticipant,
     getVideoTrackByParticipant,
     isParticipantAudioMuted,
     isParticipantVideoMuted,
@@ -39,30 +40,45 @@ const GalleryVideoWrapper = ({ videoMode, participants, t }: GalleryVideoWrapper
 function mapStateToProps(state: IReduxState, galleryProps: GalleryVideoWrapperProps) {
     const localParticipant = getLocalParticipant(state);
 
-    const remoteParticipantsMap = getRemoteParticipants(state); // change for getRemoteParticipantsSorted???
+    console.log("Estado de participantes:", state["features/base/participants"]);
+
+    const remoteParticipantsMap = getRemoteParticipants(state);
+    console.log("Mapa de participantes remotos:", remoteParticipantsMap);
+
     const remoteParticipants = Array.from(remoteParticipantsMap.values());
+    console.log("Array de participantes remotos:", remoteParticipants);
+
     const allParticipants = localParticipant ? [localParticipant, ...remoteParticipants] : remoteParticipants;
+    console.log("Todos los participantes antes de filtrar:", allParticipants);
 
     const participantsWithTracks = allParticipants
         .filter((participant) => !isScreenShareParticipant(participant))
         .map((participant) => {
             const videoTrack = getVideoTrackByParticipant(state, participant);
+            const audioTrack = getAudioTrackByParticipant(state, participant);
             const isVideoMuted = isParticipantVideoMuted(participant, state);
             const isAudioMuted = isParticipantAudioMuted(participant, state);
             const displayName = getParticipantDisplayName(state, participant.id);
+
+            console.log(`Mapping participant ${participant.id}, video track:`, videoTrack);
+
             return {
                 id: participant.id,
                 name: displayName,
                 videoEnabled: !isVideoMuted && videoTrack !== undefined,
                 audioMuted: isAudioMuted,
-                videoTrack: videoTrack?.jitsiTrack,
+                videoTrack: videoTrack,
+                audioTrack: audioTrack,
                 local: participant.local || false,
                 hidden: false,
                 dominantSpeaker: participant.dominantSpeaker || false,
                 raisedHand: hasRaisedHand(participant),
+                pinned: participant.pinned,
             };
         })
         .filter((participant) => !participant.hidden);
+
+    console.log("Participantes finales con tracks:", participantsWithTracks);
 
     return {
         videoMode: galleryProps.videoMode || "gallery",

@@ -180,6 +180,27 @@ export function getLocalJitsiAudioTrack(state: IReduxState) {
     return track?.jitsiTrack;
 }
 
+
+/**
+ * Returns audio track for specified participant.
+ *
+ * @param {IReduxState} state - The redux state.
+ * @param {IParticipant} participant - Participant Object.
+ * @returns {(Track|undefined)}
+ */
+export function getAudioTrackByParticipant(
+        state: IReduxState,
+        participant?: IParticipant) {
+
+    if (!participant) {
+        return;
+    }
+
+    const tracks = state['features/base/tracks'];
+
+    return getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, participant.id);
+}
+
 /**
  * Returns track of specified media type for specified participant.
  *

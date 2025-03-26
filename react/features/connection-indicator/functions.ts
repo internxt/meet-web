@@ -20,6 +20,7 @@ export function isTrackStreamingStatusActive(videoTrack?: ITrack) {
  * @returns {boolean} - Is streaming status inactive.
  */
 export function isTrackStreamingStatusInactive(videoTrack?: ITrack) {
+    console.log({ videoTrack });
     const streamingStatus = videoTrack?.streamingStatus;
 
     return streamingStatus === JitsiTrackStreamingStatus.INACTIVE;

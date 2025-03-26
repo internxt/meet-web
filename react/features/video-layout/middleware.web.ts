@@ -27,6 +27,7 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_WILL_INIT:
         // Reset VideoLayout. It's destroyed on CONFERENCE_WILL_LEAVE so re-initialize it.
+        console.log("CONFERENCE WILL INIT ------------");
         VideoLayout.initLargeVideo();
         VideoLayout.resizeVideoArea();
         break;
