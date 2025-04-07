@@ -1,28 +1,31 @@
 // @ts-expect-error
-import { jitsiLocalStorage } from '@jitsi/js-utils';
-import _ from 'lodash';
-import React, { Component, ComponentType, Fragment } from 'react';
-import { I18nextProvider } from 'react-i18next';
-import { Provider } from 'react-redux';
-import { compose, createStore } from 'redux';
-import Thunk from 'redux-thunk';
+import { jitsiLocalStorage } from "@jitsi/js-utils";
+import _ from "lodash";
+import React, { Component, ComponentType, Fragment } from "react";
+import { I18nextProvider } from "react-i18next";
+import { Provider } from "react-redux";
+import { compose, createStore } from "redux";
+import Thunk from "redux-thunk";
 
-import { IStore } from '../../../app/types';
-import i18next from '../../i18n/i18next';
-import MiddlewareRegistry from '../../redux/MiddlewareRegistry';
-import PersistenceRegistry from '../../redux/PersistenceRegistry';
-import ReducerRegistry from '../../redux/ReducerRegistry';
-import StateListenerRegistry from '../../redux/StateListenerRegistry';
-import SoundCollection from '../../sounds/components/SoundCollection';
-import { createDeferred } from '../../util/helpers';
-import { appWillMount, appWillUnmount } from '../actions';
-import logger from '../logger';
+import { IStore } from "../../../app/types";
+import i18next from "../../i18n/i18next";
+import MiddlewareRegistry from "../../redux/MiddlewareRegistry";
+import PersistenceRegistry from "../../redux/PersistenceRegistry";
+import ReducerRegistry from "../../redux/ReducerRegistry";
+import StateListenerRegistry from "../../redux/StateListenerRegistry";
+import SoundCollection from "../../sounds/components/SoundCollection";
+import { createDeferred } from "../../util/helpers";
+import { appWillMount, appWillUnmount } from "../actions";
+import logger from "../logger";
+import { LocalStorageManager } from "../../meet/LocalStorageManager";
+import { SdkManager } from "../../meet/services/sdk-manager.service";
+import { PaymentsService } from "../../meet/services/payments.service";
+import { setMeet } from "../../../meet/functions";
 
 /**
  * The type of the React {@code Component} state of {@link BaseApp}.
  */
 interface IState {
-
     /**
      * The {@code Route} rendered by the {@code BaseApp}.
      */
@@ -61,7 +64,7 @@ export default class BaseApp<P> extends Component<P, IState> {
 
         this.state = {
             route: {},
-            store: undefined
+            store: undefined,
         };
     }
 
@@ -69,7 +72,7 @@ export default class BaseApp<P> extends Component<P, IState> {
      * Initializes the app.
      *
      * @inheritdoc
-    */
+     */
     async componentDidMount() {
         /**
          * Make the mobile {@code BaseApp} wait until the {@code AsyncStorage}
@@ -84,11 +87,14 @@ export default class BaseApp<P> extends Component<P, IState> {
         try {
             await this._initStorage();
 
-            const setStatePromise = new Promise(resolve => {
-                this.setState({
-                    // @ts-ignore
-                    store: this._createStore()
-                }, resolve);
+            const setStatePromise = new Promise((resolve) => {
+                this.setState(
+                    {
+                        // @ts-ignore
+                        store: this._createStore(),
+                    },
+                    resolve
+                );
             });
 
             await setStatePromise;
@@ -96,10 +102,28 @@ export default class BaseApp<P> extends Component<P, IState> {
             await this._extraInit();
         } catch (err) {
             /* BaseApp should always initialize! */
-            logger.error(err);
         }
 
         this.state.store?.dispatch(appWillMount(this));
+
+        if (this.state.store?.getState()) {
+            const localStorage = new LocalStorageManager();
+            SdkManager.init(localStorage);
+        }
+
+        const userToken = localStorage.getItem("xNewToken");
+
+        if (userToken) {
+            try {
+                const meetObject = await PaymentsService.instance.checkMeetAvailability();
+                console.log("BaseApp meetObject", meetObject);
+                if (meetObject) {
+                    this.state.store?.dispatch(setMeet(meetObject));
+                }
+            } catch (error) {
+                console.error("Error checking meet availability:", error);
+            }
+        }
 
         // @ts-ignore
         this._init.resolve();
@@ -112,6 +136,7 @@ export default class BaseApp<P> extends Component<P, IState> {
      */
     componentWillUnmount() {
         this.state.store?.dispatch(appWillUnmount(this));
+        SdkManager.clean();
     }
 
     /**
@@ -136,7 +161,7 @@ export default class BaseApp<P> extends Component<P, IState> {
      * @returns {Promise}
      */
     _initStorage(): Promise<any> {
-        const _initializing = jitsiLocalStorage.getItem('_initializing');
+        const _initializing = jitsiLocalStorage.getItem("_initializing");
 
         return _initializing || Promise.resolve();
     }
@@ -157,18 +182,21 @@ export default class BaseApp<P> extends Component<P, IState> {
      * @returns {ReactElement}
      */
     render() {
-        const { route: { component, props }, store } = this.state;
+        const {
+            route: { component, props },
+            store,
+        } = this.state;
 
         if (store) {
             return (
-                <I18nextProvider i18n = { i18next }>
+                <I18nextProvider i18n={i18next}>
                     {/* @ts-ignore */}
-                    <Provider store = { store }>
+                    <Provider store={store}>
                         <Fragment>
-                            { this._createMainElement(component, props) }
+                            {this._createMainElement(component, props)}
                             <SoundCollection />
-                            { this._createExtraElement() }
-                            { this._renderDialogContainer() }
+                            {this._createExtraElement()}
+                            {this._renderDialogContainer()}
                         </Fragment>
                     </Provider>
                 </I18nextProvider>
@@ -235,7 +263,7 @@ export default class BaseApp<P> extends Component<P, IState> {
         // non-reactified parts of the code (conference.js for example).
         // Don't use in the react code!!!
         // FIXME: remove when the reactification is finished!
-        if (typeof APP !== 'undefined') {
+        if (typeof APP !== "undefined") {
             // @ts-ignore
             APP.store = store;
         }
@@ -249,11 +277,7 @@ export default class BaseApp<P> extends Component<P, IState> {
      * @param {Route} route - The Route to which to navigate.
      * @returns {Promise}
      */
-    _navigate(route: {
-        component?: ComponentType<any>;
-        href?: string;
-        props?: Object;
-    }): Promise<any> {
+    _navigate(route: { component?: ComponentType<any>; href?: string; props?: Object }): Promise<any> {
         if (_.isEqual(route, this.state.route)) {
             return Promise.resolve();
         }
@@ -270,7 +294,8 @@ export default class BaseApp<P> extends Component<P, IState> {
         // performed before setState completes, the app may not navigate to the
         // expected route. In order to mitigate the problem, _navigate was
         // changed to return a Promise.
-        return new Promise(resolve => { // @ts-ignore
+        return new Promise((resolve) => {
+            // @ts-ignore
             this.setState({ route }, resolve);
         });
     }
