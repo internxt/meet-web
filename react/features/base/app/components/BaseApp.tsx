@@ -106,17 +106,14 @@ export default class BaseApp<P> extends Component<P, IState> {
 
         this.state.store?.dispatch(appWillMount(this));
 
-        if (this.state.store?.getState()) {
-            const localStorage = new LocalStorageManager();
-            SdkManager.init(localStorage);
-        }
+        const localStorage = new LocalStorageManager();
+        SdkManager.init(localStorage);
 
-        const userToken = localStorage.getItem("xNewToken");
+        const userToken = localStorage.getNewToken();
 
         if (userToken) {
             try {
                 const meetObject = await PaymentsService.instance.checkMeetAvailability();
-                console.log("BaseApp meetObject", meetObject);
                 if (meetObject) {
                     this.state.store?.dispatch(setMeet(meetObject));
                 }

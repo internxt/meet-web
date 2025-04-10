@@ -6,7 +6,6 @@ export class LocalStorageManager {
         NEW_TOKEN: "xNewToken",
         MNEMONIC: "xMnemonic",
         USER: "xUser",
-        MEET: "xMeet",
     };
 
     /**
