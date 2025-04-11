@@ -80,4 +80,15 @@ export class SdkManager {
 
         return Drive.Users.client(DRIVE_API_URL, appDetails, apiSecurity);
     }
+
+    /** Meet SDK */
+    getMeet() {
+        const MEET_API_URL = ConfigService.instance.get("MEET_API_URL");
+
+        const appDetails = SdkManager.getAppDetails();
+        const apiSecurity = this.getNewApiSecurity();
+        console.log("[INXT LOG]: ", MEET_API_URL, appDetails, apiSecurity);
+
+        return Meet.client(MEET_API_URL, appDetails, apiSecurity);
+    }
 }
