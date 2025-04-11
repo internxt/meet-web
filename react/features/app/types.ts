@@ -1,23 +1,23 @@
-import { AnyAction } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from "redux";
+import { ThunkDispatch } from "redux-thunk";
 
-import { IAnalyticsState } from '../analytics/reducer';
-import { IAuthenticationState } from '../authentication/reducer';
-import { IAVModerationState } from '../av-moderation/reducer';
-import { IAppState } from '../base/app/reducer';
-import { IAudioOnlyState } from '../base/audio-only/reducer';
-import { IConferenceState } from '../base/conference/reducer';
-import { IConfigState } from '../base/config/reducer';
-import { IConnectionState } from '../base/connection/reducer';
-import { IDevicesState } from '../base/devices/types';
-import { IDialogState } from '../base/dialog/reducer';
-import { IFlagsState } from '../base/flags/reducer';
-import { IJwtState } from '../base/jwt/reducer';
-import { IKnownDomainsState } from '../base/known-domains/reducer';
-import { ILastNState } from '../base/lastn/reducer';
-import { ILibJitsiMeetState } from '../base/lib-jitsi-meet/reducer';
-import { ILoggingState } from '../base/logging/reducer';
-import { IMediaState } from '../base/media/reducer';
+import { IAnalyticsState } from "../analytics/reducer";
+import { IAuthenticationState } from "../authentication/reducer";
+import { IAVModerationState } from "../av-moderation/reducer";
+import { IAppState } from "../base/app/reducer";
+import { IAudioOnlyState } from "../base/audio-only/reducer";
+import { IConferenceState } from "../base/conference/reducer";
+import { IConfigState } from "../base/config/reducer";
+import { IConnectionState } from "../base/connection/reducer";
+import { IDevicesState } from "../base/devices/types";
+import { IDialogState } from "../base/dialog/reducer";
+import { IFlagsState } from "../base/flags/reducer";
+import { IJwtState } from "../base/jwt/reducer";
+import { IKnownDomainsState } from "../base/known-domains/reducer";
+import { ILastNState } from "../base/lastn/reducer";
+import { ILibJitsiMeetState } from "../base/lib-jitsi-meet/reducer";
+import { ILoggingState } from "../base/logging/reducer";
+import { IMediaState } from "../base/media/reducer";
 import { IJoinRoomErrorState } from "../base/meet/general/store/errors/reducer";
 import { INetInfoState } from "../base/net-info/reducer";
 import { IParticipantsState } from "../base/participants/reducer";
@@ -83,8 +83,8 @@ import { IVirtualBackground } from "../virtual-background/reducer";
 import { IVisitorsState } from "../visitors/reducer";
 import { IWebHid } from "../web-hid/reducer";
 import { IWhiteboardState } from "../whiteboard/reducer";
-import { IFilmstripState } from '../filmstrip/reducer';
-
+import { IFilmstripState } from "../filmstrip/reducer";
+import { MeetState } from "../meet/types";
 
 export interface IStore {
     dispatch: ThunkDispatch<IReduxState, void, AnyAction>;
@@ -175,6 +175,7 @@ export interface IReduxState {
     "features/videosipgw": IVideoSipGW;
     "features/virtual-background": IVirtualBackground;
     "features/visitors": IVisitorsState;
+    "features/meet": MeetState;
     "features/web-hid": IWebHid;
     "features/whiteboard": IWhiteboardState;
     "features/join-room-error": IJoinRoomErrorState;

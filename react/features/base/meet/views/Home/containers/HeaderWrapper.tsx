@@ -7,13 +7,14 @@ import Header from "../../PreMeeting/components/Header";
 import { useUserData } from "../../PreMeeting/hooks/useUserData";
 
 interface HeaderWrapperProps {
+    isMeetEnabled?: boolean;
     onNewMeeting?: () => void;
     onLogin: () => void;
     onSignUp?: () => void;
     translate: (key: string) => string;
 }
 
-const HeaderWrapper = ({ onNewMeeting, onLogin, onSignUp, translate }: HeaderWrapperProps) => {
+const HeaderWrapper = ({ onNewMeeting, onLogin, onSignUp, translate, isMeetEnabled }: HeaderWrapperProps) => {
     const [isCreatingMeeting, setIsCreatingMeeting] = useState(false);
     const userData = useUserData();
     const dispatch = useDispatch();
@@ -50,6 +51,7 @@ const HeaderWrapper = ({ onNewMeeting, onLogin, onSignUp, translate }: HeaderWra
                 onSignUp={handleSignUp}
                 isCreatingMeeting={isCreatingMeeting}
                 onOpenSettings={() => dispatch(openSettingsDialog(undefined, true))}
+                isMeetEnabled={isMeetEnabled}
                 className="z-50 py-3 flex-grow"
             />
         </div>
