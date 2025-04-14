@@ -1,8 +1,9 @@
-import { Auth, Drive } from "@internxt/sdk";
+import { Auth, Drive, Meet } from "@internxt/sdk";
 import { ApiSecurity, AppDetails } from "@internxt/sdk/dist/shared";
 import packageJson from "../../../../../package.json";
 import { ConfigService } from "./config.service";
 import LocalStorageManager from "../LocalStorageManager";
+import { meetLogger } from "../utils/Logger";
 
 export type SdkManagerApiSecurity = ApiSecurity & { newToken: string };
 /**
@@ -82,16 +83,6 @@ export class SdkManager {
         return Auth.client(DRIVE_NEW_API_URL, appDetails, apiSecurity);
     }
 
-    /** Payments SDK */
-    getPayments() {
-        const PAYMENTS_API_URL = ConfigService.instance.get("PAYMENTS_API_URL");
-
-        const apiSecurity = this.getNewApiSecurity();
-        const appDetails = SdkManager.getAppDetails();
-
-        return Drive.Payments.client(PAYMENTS_API_URL, appDetails, apiSecurity);
-    }
-
     /** Users SDK */
     getUsers() {
         const DRIVE_API_URL = ConfigService.instance.get("DRIVE_API_URL");
@@ -102,13 +93,23 @@ export class SdkManager {
         return Drive.Users.client(DRIVE_API_URL, appDetails, apiSecurity);
     }
 
+    /** Payments SDK */
+    getPayments() {
+        const PAYMENTS_API_URL = ConfigService.instance.get("PAYMENTS_API_URL");
+
+        const apiSecurity = this.getNewApiSecurity();
+        const appDetails = SdkManager.getAppDetails();
+
+        return Drive.Payments.client(PAYMENTS_API_URL, appDetails, apiSecurity);
+    }
+
     /** Meet SDK */
     getMeet() {
         const MEET_API_URL = ConfigService.instance.get("MEET_API_URL");
 
         const appDetails = SdkManager.getAppDetails();
         const apiSecurity = this.getNewApiSecurity();
-        console.log("[INXT LOG]: ", MEET_API_URL, appDetails, apiSecurity);
+        meetLogger.info("Meet SDK initialized");
 
         return Meet.client(MEET_API_URL, appDetails, apiSecurity);
     }

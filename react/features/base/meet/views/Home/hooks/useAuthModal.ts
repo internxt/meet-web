@@ -110,12 +110,6 @@ export function useAuthModal({ onClose, onLogin, translate }: UseAuthModalProps)
             throw new Error(translate("meet.auth.modal.error.invalidCredentials"));
         }
 
-        const meetToken = await createMeetToken(loginCredentials.newToken);
-
-        if (!meetToken?.token || !meetToken?.room) {
-            throw new Error(translate("meet.auth.modal.error.cannotCreateMeetings"));
-        }
-
         saveUserSession(loginCredentials);
 
         const meetObject = await checkMeetAvailability();

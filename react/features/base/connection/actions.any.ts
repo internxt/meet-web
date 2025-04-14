@@ -20,7 +20,8 @@ import {
 import { JITSI_CONNECTION_URL_KEY } from "./constants";
 import logger from "./logger";
 import { ConnectionFailedError, IIceServers } from "./types";
-import { get8x8AppId, get8x8Options, get8x8JWT } from "./options8x8";
+import { get8x8AppId, get8x8Options, create8x8Call, join8x8Call } from "./options8x8";
+import { meetLogger } from "../meet/utils/Logger";
 
 /**
  * The options that will be passed to the JitsiConnection instance.
@@ -218,11 +219,19 @@ export function _connectInternal(id?: string, password?: string) {
         const { locationURL } = state["features/base/connection"];
 
         const room = state["features/base/conference"].room || "";
-        const jwt = await get8x8JWT(room);
+        meetLogger.info(`Connecting to room: ${room}`);
+        const call = room
+            ? await join8x8Call(room, {
+                  name: "My ",
+                  lastname: "Internxt",
+                  anonymous: false,
+              })
+            : await create8x8Call();
         const appId = get8x8AppId();
-        const newOptions = get8x8Options(options, appId, room);
+        const newOptions = get8x8Options(options, appId, call.room);
+        meetLogger.info(`The options for the Meet connection: ${call}`, {});
 
-        const connection = new JitsiMeetJS.JitsiConnection(options.appId, jwt, newOptions);
+        const connection = new JitsiMeetJS.JitsiConnection(options.appId, call.token, newOptions);
 
         connection[JITSI_CONNECTION_URL_KEY] = locationURL;
 
@@ -276,7 +285,8 @@ export function _connectInternal(id?: string, password?: string) {
              * @private
              * @returns {void}
              */
-            function _onConnectionFailed(err: string, message: string, credentials: any, details: Object) { // eslint-disable-line max-params
+            function _onConnectionFailed(err: string, message: string, credentials: any, details: Object) {
+                // eslint-disable-line max-params
                 unsubscribe();
 
                 dispatch(

@@ -1,4 +1,9 @@
-import { CreateCallResponse } from "@internxt/sdk/dist/meet/types";
+import {
+    CreateCallResponse,
+    JoinCallPayload,
+    JoinCallResponse,
+    UsersInCallResponse,
+} from "@internxt/sdk/dist/meet/types";
 import { SdkManager } from "./sdk-manager.service";
 
 export class MeetService {
@@ -6,6 +11,16 @@ export class MeetService {
 
     public createCall = async (): Promise<CreateCallResponse> => {
         const meetClient = SdkManager.instance.getMeet();
-        return meetClient.createMeetCall();
+        return meetClient.createCall();
+    };
+
+    public joinCall = async (room: string, payload: JoinCallPayload): Promise<JoinCallResponse> => {
+        const meetClient = SdkManager.instance.getMeet();
+        return meetClient.joinCall(room, payload);
+    };
+
+    public getUsersCallInCall = async (room: string): Promise<UsersInCallResponse[]> => {
+        const meetClient = SdkManager.instance.getMeet();
+        return meetClient.getCurrentUsersInCall(room);
     };
 }
