@@ -185,6 +185,7 @@ const PreMeetingScreen = ({
     const dispatch = useDispatch();
     const { paxPerCall, enabled: isMeetEnabled } = useSelector(getMeet) ?? { paxPerCall: 0 };
 
+    const isInNewMeeting = window.location.href.includes("new-meeting");
     const showNameError = userName.length === 0 && !isNameInputFocused;
 
     const toolbarSection = useMemo(
@@ -295,7 +296,7 @@ const PreMeetingScreen = ({
                     onLogin={handleRedirectToLogin}
                     onLogout={onLogout}
                     onSignUp={handleRedirectToSignUp}
-                    onNewMeeting={handleNewMeeting}
+                    onNewMeeting={isInNewMeeting ? undefined : handleNewMeeting}
                     isCreatingMeeting={isCreatingMeeting}
                 />
                 <ErrorModals
