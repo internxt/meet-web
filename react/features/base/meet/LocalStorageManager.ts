@@ -6,12 +6,7 @@ export class LocalStorageManager {
         NEW_TOKEN: "xNewToken",
         MNEMONIC: "xMnemonic",
         USER: "xUser",
-
     };
-
-    private constructor() {
-
-    }
 
     /**
      * Gets the singleton instance
@@ -97,11 +92,10 @@ export class LocalStorageManager {
         return localStorage.getItem(key) !== null;
     }
 
-
     /**
      * Gets the authentication token
      */
-    public getToken(): string | null| undefined {
+    public getToken(): string | null | undefined {
         return this.get<string>(LocalStorageManager.KEYS.TOKEN);
     }
 
@@ -115,7 +109,7 @@ export class LocalStorageManager {
     /**
      * Gets the new token
      */
-    public getNewToken(): string | null| undefined {
+    public getNewToken(): string | null | undefined {
         return this.get<string>(LocalStorageManager.KEYS.NEW_TOKEN);
     }
 
@@ -129,7 +123,7 @@ export class LocalStorageManager {
     /**
      * Gets the mnemonic
      */
-    public getMnemonic(): string | null| undefined {
+    public getMnemonic(): string | null | undefined {
         return this.get<string>(LocalStorageManager.KEYS.MNEMONIC);
     }
 
@@ -143,7 +137,7 @@ export class LocalStorageManager {
     /**
      * Gets the user information
      */
-    public getUser<T = any>(): T | null| undefined {
+    public getUser<T = any>(): T | null | undefined {
         return this.get<T>(LocalStorageManager.KEYS.USER);
     }
 

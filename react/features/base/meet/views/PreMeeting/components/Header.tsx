@@ -75,6 +75,11 @@ interface RightContentProps {
      * Whether the new meeting button should be disabled
      */
     isCreatingMeeting?: boolean;
+
+    /**
+     * Whether creating a meeting is enabled for the user
+     */
+    isMeetEnabled?: boolean;
 }
 
 /**
@@ -94,6 +99,7 @@ const RightContent = React.memo(
         onLogout,
         onOpenSettings,
         isCreatingMeeting = false,
+        isMeetEnabled,
     }: RightContentProps): JSX.Element => {
         const [showMenu, setShowMenu] = useState(false);
 
@@ -123,8 +129,8 @@ const RightContent = React.memo(
         };
 
         return isLogged ? (
-            <div className="flex space-x-2 flex-row">
-                {onNewMeeting && (
+            <div className="flex space-x-2 flex-row items-center">
+                {isMeetEnabled && (
                     <Button
                         variant="primary"
                         onClick={onNewMeeting}
@@ -281,6 +287,11 @@ interface HeaderProps {
      * Whether a new meeting is being created
      */
     isCreatingMeeting?: boolean;
+
+    /**
+     * Whether creating a meeting is enabled for the user
+     */
+    isMeetEnabled?: boolean;
 }
 
 /**
@@ -298,6 +309,7 @@ const Header = ({
     onOpenSettings,
     className = "z-50 py-3",
     isCreatingMeeting = false,
+    isMeetEnabled,
 }: HeaderProps) => (
     <IntxHeader
         leftContent={<LeftContent />}
@@ -313,6 +325,7 @@ const Header = ({
                 onLogout={onLogout}
                 onOpenSettings={onOpenSettings}
                 isCreatingMeeting={isCreatingMeeting}
+                isMeetEnabled={isMeetEnabled}
             />
         }
         className={className}

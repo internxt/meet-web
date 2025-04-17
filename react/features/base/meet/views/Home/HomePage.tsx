@@ -3,6 +3,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useUserData } from "../PreMeeting/hooks/useUserData";
 import AuthModal from "./containers/AuthModal";
 import HeaderWrapper from "./containers/HeaderWrapper";
+import { useSelector } from "react-redux";
+import { getMeet } from "../../../../meet/functions";
 
 interface SimpleTooltipProps {
     text: string;
@@ -33,6 +35,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [showNewMeetingTooltip, setShowNewMeetingTooltip] = useState<boolean>(false);
     const [showScheduleTooltip, setShowScheduleTooltip] = useState<boolean>(false);
+    const { enabled: isMeetEnabled } = useSelector(getMeet);
 
     const userData = useUserData();
     const isLogged = !!userData;
@@ -133,7 +136,12 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
             }}
         >
             <AuthModal isOpen={isOpen} onClose={() => setIsOpen(false)} onLogin={onLogin} translate={translate} />
-            <HeaderWrapper onLogin={() => setIsOpen(true)} translate={translate} onNewMeeting={startMeeting} />
+            <HeaderWrapper
+                onLogin={() => setIsOpen(true)}
+                translate={translate}
+                onNewMeeting={startMeeting}
+                isMeetEnabled={isMeetEnabled}
+            />
             <div className="flex flex-col lg:flex-row mt-10">
                 <div className="flex w-full lg:w-1/2 px-4 md:px-10 lg:px-20 justify-center lg:justify-end">
                     <div className="w-full lg:w-120 px-2 md:px-4 lg:px-6 flex flex-col justify-start">
@@ -153,6 +161,7 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                                     onClick={handleStartMeeting}
                                     loading={isStartingMeeting}
                                     className="w-full sm:w-auto"
+                                    disabled={!isMeetEnabled}
                                 >
                                     {translate("meet.preMeeting.newMeeting")}
                                 </Button>
@@ -163,7 +172,12 @@ const HomePage: React.FC<HomePageProps> = ({ onLogin, translate, startNewMeeting
                             </div>
 
                             <div className="relative inline-block">
-                                <Button onClick={handleScheduleMeeting} variant="tertiary" className="w-full sm:w-auto">
+                                <Button
+                                    onClick={handleScheduleMeeting}
+                                    variant="tertiary"
+                                    className="w-full sm:w-auto"
+                                    disabled={!isMeetEnabled}
+                                >
                                     {translate("meet.landing.scheduleMeeting")}
                                 </Button>
 

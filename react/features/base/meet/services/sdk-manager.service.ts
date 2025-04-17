@@ -1,7 +1,8 @@
-import { Auth, Drive } from '@internxt/sdk';
-import { ApiSecurity, AppDetails } from '@internxt/sdk/dist/shared';
-import packageJson from '../../../../../package.json';
-import { ConfigService } from './config.service';
+import { Auth, Drive } from "@internxt/sdk";
+import { ApiSecurity, AppDetails } from "@internxt/sdk/dist/shared";
+import packageJson from "../../../../../package.json";
+import { ConfigService } from "./config.service";
+import LocalStorageManager from "../LocalStorageManager";
 
 export type SdkManagerApiSecurity = ApiSecurity & { newToken: string };
 /**
@@ -11,13 +12,14 @@ export type SdkManagerApiSecurity = ApiSecurity & { newToken: string };
 export class SdkManager {
     public static readonly instance: SdkManager = new SdkManager();
     private static apiSecurity?: SdkManagerApiSecurity;
+    private localStorage = LocalStorageManager;
 
     /**
      * Sets the security details needed to create SDK clients
      * @param apiSecurity Security properties to be setted
      **/
-    public static readonly init = (apiSecurity: SdkManagerApiSecurity) => {
-        SdkManager.apiSecurity = apiSecurity;
+    public static readonly init = (localStorage: typeof LocalStorageManager) => {
+        SdkManager.instance.localStorage = localStorage;
     };
 
     /**
@@ -41,6 +43,15 @@ export class SdkManager {
 
         return SdkManager.apiSecurity as SdkManagerApiSecurity;
     };
+
+    private getNewApiSecurity(): ApiSecurity {
+        return {
+            token: localStorage.getItem("xNewToken") ?? "",
+            unauthorizedCallback: async () => {
+                this.localStorage.clearCredentials();
+            },
+        };
+    }
 
     /**
      * Returns the application details from package.json
@@ -69,6 +80,16 @@ export class SdkManager {
         const appDetails = SdkManager.getAppDetails();
 
         return Auth.client(DRIVE_NEW_API_URL, appDetails, apiSecurity);
+    }
+
+    /** Payments SDK */
+    getPayments() {
+        const PAYMENTS_API_URL = ConfigService.instance.get("PAYMENTS_API_URL");
+
+        const apiSecurity = this.getNewApiSecurity();
+        const appDetails = SdkManager.getAppDetails();
+
+        return Drive.Payments.client(PAYMENTS_API_URL, appDetails, apiSecurity);
     }
 
     /** Users SDK */

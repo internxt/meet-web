@@ -5,6 +5,7 @@ import { get8x8BetaJWT } from "../../../../connection/options8x8";
 import { useLocalStorage } from "../../../LocalStorageManager";
 import { AuthService } from "../../../services/auth.service";
 import { AuthFormValues } from "../types";
+import { PaymentsService } from "../../../services/payments.service";
 
 interface UseAuthModalProps {
     onClose: () => void;
@@ -64,6 +65,10 @@ export function useAuthModal({ onClose, onLogin, translate }: UseAuthModalProps)
         [translate]
     );
 
+    const checkMeetAvailability = useCallback(async () => {
+        return await PaymentsService.instance.checkMeetAvailability();
+    }, []);
+
     const createMeetToken = useCallback(
         async (token: string) => {
             try {
@@ -112,6 +117,9 @@ export function useAuthModal({ onClose, onLogin, translate }: UseAuthModalProps)
         }
 
         saveUserSession(loginCredentials);
+
+        const meetObject = await checkMeetAvailability();
+
         onClose();
     };
 

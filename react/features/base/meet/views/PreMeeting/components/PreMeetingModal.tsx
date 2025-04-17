@@ -4,7 +4,6 @@ import MediaControlsWrapper from "../../../general/containers/MediaControlsWrapp
 import NameInputSection from "./NameInputSection";
 import ParticipantsList from "./ParticipantsList";
 import VideoPreviewSection from "./VideoPreviewSection";
-import { MAX_SIZE_PARTICIPANTS } from "../../../constants";
 import { useTranslation } from "react-i18next";
 
 interface PreMeetingModalProps {
@@ -67,6 +66,11 @@ interface PreMeetingModalProps {
      * Flag to indicate if conference is creating.
      */
     isCreatingConference?: boolean;
+
+    /**
+     * Total number of participants per call
+     */
+    paxPerCall?: number;
 }
 
 /**
@@ -85,8 +89,8 @@ const PreMeetingModal = ({
     disableJoinButton,
     flipX,
     isCreatingConference,
+    paxPerCall,
 }: PreMeetingModalProps) => {
-    const num = MAX_SIZE_PARTICIPANTS;
     const { t } = useTranslation();
     return (
         <TransparentModal
@@ -116,7 +120,7 @@ const PreMeetingModal = ({
                             <span className="text-xl font-semibold text-white">{t("meet.internxtMeet")}</span>
 
                             <span className="text-base font-normal text-white/75">
-                                {t("meet.preMeeting.upToParticipants", { num })}
+                                {t("meet.preMeeting.upToParticipants", { num: paxPerCall })}
                             </span>
                         </div>
                     </div>

@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useMemo, useState } from "react";
 import { WithTranslation } from "react-i18next";
-import { connect, useDispatch } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "tss-react/mui";
 import { IReduxState } from "../../../../app/types";
 import DeviceStatus from "../../../../prejoin/components/web/preview/DeviceStatus";
@@ -25,6 +25,7 @@ import Header from "./components/Header";
 import PreMeetingModal from "./components/PreMeetingModal";
 import { useParticipants } from "./hooks/useParticipants";
 import { useUserData } from "./hooks/useUserData";
+import { getMeet } from "../../../../meet/functions";
 
 interface IProps extends WithTranslation {
     /**
@@ -182,6 +183,7 @@ const PreMeetingScreen = ({
     const { allParticipants } = useParticipants();
     const storageManager = useLocalStorage();
     const dispatch = useDispatch();
+    const { paxPerCall, enabled: isMeetEnabled } = useSelector(getMeet) ?? { paxPerCall: 0 };
 
     const isInNewMeeting = window.location.href.includes("new-meeting");
     const showNameError = userName.length === 0 && !isNameInputFocused;
@@ -212,6 +214,10 @@ const PreMeetingScreen = ({
             dispatchUpdateSettings({
                 displayName: userData.name,
             });
+        }
+
+        if (!isMeetEnabled) {
+            dispatch(redirectToStaticPage("/"));
         }
     }, []);
 
@@ -320,6 +326,7 @@ const PreMeetingScreen = ({
                         disableJoinButton={disableJoinButton}
                         flipX={flipX}
                         isCreatingConference={!!createConference}
+                        paxPerCall={paxPerCall}
                     />
                 )}
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}

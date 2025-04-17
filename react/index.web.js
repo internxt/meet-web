@@ -1,39 +1,39 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 
-import { App } from './features/app/components/App.web';
-import { getLogger } from './features/base/logging/functions';
-import Platform from './features/base/react/Platform.web';
-import { getJitsiMeetGlobalNS } from './features/base/util/helpers';
-import DialInSummaryApp from './features/invite/components/dial-in-summary/web/DialInSummaryApp';
-import PrejoinApp from './features/prejoin/components/web/PrejoinApp';
-import WhiteboardApp from './features/whiteboard/components/web/WhiteboardApp';
+import { App } from "./features/app/components/App.web";
+import { getLogger } from "./features/base/logging/functions";
+import Platform from "./features/base/react/Platform.web";
+import { getJitsiMeetGlobalNS } from "./features/base/util/helpers";
+import DialInSummaryApp from "./features/invite/components/dial-in-summary/web/DialInSummaryApp";
+import PrejoinApp from "./features/prejoin/components/web/PrejoinApp";
+import WhiteboardApp from "./features/whiteboard/components/web/WhiteboardApp";
 
 import "../react/features/base/ui/styles/tailwind.css";
 
-const logger = getLogger('index.web');
+const logger = getLogger("index.web");
 
 // Add global loggers.
-window.addEventListener('error', ev => {
+window.addEventListener("error", (ev) => {
     logger.error(
         `UnhandledError: ${ev.message}`,
         `Script: ${ev.filename}`,
         `Line: ${ev.lineno}`,
         `Column: ${ev.colno}`,
-        'StackTrace: ', ev.error?.stack);
+        "StackTrace: ",
+        ev.error?.stack
+    );
 });
 
-window.addEventListener('unhandledrejection', ev => {
-    logger.error(
-        `UnhandledPromiseRejection: ${ev.reason}`,
-        'StackTrace: ', ev.reason?.stack);
+window.addEventListener("unhandledrejection", (ev) => {
+    logger.error(`UnhandledPromiseRejection: ${ev.reason}`, "StackTrace: ", ev.reason?.stack);
 });
 
 // Workaround for the issue when returning to a page with the back button and
 // the page is loaded from the 'back-forward' cache on iOS which causes nothing
 // to be rendered.
-if (Platform.OS === 'ios') {
-    window.addEventListener('pageshow', event => {
+if (Platform.OS === "ios") {
+    window.addEventListener("pageshow", (event) => {
         // Detect pages loaded from the 'back-forward' cache
         // (https://webkit.org/blog/516/webkit-page-cache-ii-the-unload-event/)
         if (event.persisted) {
@@ -50,30 +50,23 @@ const globalNS = getJitsiMeetGlobalNS();
 
 // Used for automated performance tests.
 globalNS.connectionTimes = {
-    'index.loaded': window.indexLoadedTime
+    "index.loaded": window.indexLoadedTime,
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
     const now = window.performance.now();
 
-    globalNS.connectionTimes['document.ready'] = now;
-    logger.log('(TIME) document ready:\t', now);
+    globalNS.connectionTimes["document.ready"] = now;
+    logger.log("(TIME) document ready:\t", now);
 });
 
 globalNS.entryPoints = {
     APP: App,
     PREJOIN: PrejoinApp,
     DIALIN: DialInSummaryApp,
-    WHITEBOARD: WhiteboardApp
+    WHITEBOARD: WhiteboardApp,
 };
 
-globalNS.renderEntryPoint = ({
-    Component,
-    props = {},
-    elementId = 'react'
-}) => {
-    ReactDOM.render(
-        <Component { ...props } />,
-        document.getElementById(elementId)
-    );
+globalNS.renderEntryPoint = ({ Component, props = {}, elementId = "react" }) => {
+    ReactDOM.render(<Component {...props} />, document.getElementById(elementId));
 };
