@@ -24,6 +24,7 @@ import { useLocalStorage } from "../../LocalStorageManager";
 import { ErrorModals, ErrorType } from "./components/ErrorModals";
 import Header from "./components/Header";
 import PreMeetingModal from "./components/PreMeetingModal";
+import SecureMeetingMessage from "./components/SecureMeetingMessage";
 import VideoEncodingToggle from "./containers/VideoEncodingToggle";
 import { useParticipants } from "./hooks/useParticipants";
 import { useUserData } from "./hooks/useUserData";
@@ -337,6 +338,9 @@ const PreMeetingScreen = ({
                         isCreatingConference={!!createConference}
                     />
                 )}
+                <div className="flex absolute bottom-7 right-7">
+                    <SecureMeetingMessage />
+                </div>
                 <div className={classes.videoEncodingToggleContainer}>
                     <VideoEncodingToggle />
                 </div>
