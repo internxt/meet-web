@@ -22,12 +22,13 @@ import { withPixelLineHeight } from "../../../styles/functions.web";
 import MeetingButton from "../../general/containers/MeetingButton";
 import { setCreateRoomError } from "../../general/store/errors/actions";
 import { useLocalStorage } from "../../LocalStorageManager";
+import MeetingService from "../../services/meeting.service";
+import { MeetingUser } from "../../services/types/meeting.types";
 import { ErrorModals, ErrorType } from "./components/ErrorModals";
 import Header from "./components/Header";
 import PreMeetingModal from "./components/PreMeetingModal";
 import SecureMeetingMessage from "./components/SecureMeetingMessage";
 import VideoEncodingToggle from "./containers/VideoEncodingToggle";
-import { useParticipants } from "./hooks/useParticipants";
 import { useUserData } from "./hooks/useUserData";
 
 interface IProps extends WithTranslation {
@@ -156,6 +157,7 @@ interface IProps extends WithTranslation {
      */
     createConference?: Function;
 
+    room: string;
     /**
      * Flag to indicate if supports end to end encryption.
      */
@@ -183,13 +185,15 @@ const PreMeetingScreen = ({
     createRoomError,
     flipX,
     createConference,
+    room,
     isE2EESupported,
 }: IProps) => {
     const { classes } = useStyles();
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
     const [isCreatingMeeting, setIsCreatingMeeting] = useState(false);
+    const [meetingUsersData, setMeetingUsersData] = useState<MeetingUser[]>([]);
     const userData = useUserData();
-    const { allParticipants } = useParticipants();
+
     const storageManager = useLocalStorage();
     const dispatch = useDispatch();
 
@@ -219,7 +223,16 @@ const PreMeetingScreen = ({
         [showUnsafeRoomWarning, showDeviceStatus, showRecordingWarning]
     );
 
+    const getUsersInMeeting = async () => {
+        const meetingUsers = await MeetingService.getInstance().getCurrentUsersInCall(room);
+        setMeetingUsersData(meetingUsers);
+    };
+
     useEffect(() => {
+        if (meetingUsersData.length === 0) {
+            getUsersInMeeting();
+        }
+
         if (userData?.name) {
             dispatchUpdateSettings({
                 displayName: userData.name,
@@ -294,7 +307,7 @@ const PreMeetingScreen = ({
     };
 
     const navigateToHomePage = () => {
-        dispatch(appNavigate("/"));
+        dispatch(redirectToStaticPage("/"));
     };
 
     return (
@@ -339,7 +352,7 @@ const PreMeetingScreen = ({
                         showNameError={showNameError}
                         setUserName={setName}
                         setIsNameInputFocused={setIsNameInputFocused}
-                        participants={allParticipants}
+                        participants={meetingUsersData}
                         joinConference={async () => {
                             createConference && (await createConference());
                             joinConference && joinConference();
@@ -390,6 +403,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const userName = getDisplayName(state);
     const { localFlipX } = state["features/base/settings"];
 
+    const room = state["features/base/conference"].room ?? "";
     const joinRoomError = state["features/meet-room"]?.joinRoomError ?? false;
     const createRoomError = state["features/meet-room"]?.createRoomError ?? false;
 
@@ -411,6 +425,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
         joinRoomError,
         createRoomError,
         flipX: localFlipX,
+        room,
         isE2EESupported,
     };
 }
