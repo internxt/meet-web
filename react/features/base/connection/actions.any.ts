@@ -22,8 +22,8 @@ import {
 } from './actionTypes';
 import { JITSI_CONNECTION_URL_KEY } from './constants';
 import logger from './logger';
-import { ConnectionFailedError, IIceServers } from './types';
-import { get8x8AppId, get8x8Options, get8x8JWT } from './options8x8';
+import { get8x8AppId, get8x8JWT, get8x8Options } from "./options8x8";
+import { ConnectionFailedError, IIceServers } from "./types";
 
 /**
  * The options that will be passed to the JitsiConnection instance.
@@ -155,7 +155,9 @@ export function constructOptions(state: IReduxState) {
             options.websocketKeepAliveUrl = appendURLParam(options.websocketKeepAliveUrl, 'room', roomName ?? '');
         }
         if (options.conferenceRequestUrl) {
-            options.conferenceRequestUrl = appendURLParam(options.conferenceRequestUrl, 'room', roomName ?? '');
+            // COMMENTED appendURLParam to force use of xmpp protocol instead of http to join a conference
+            // because its http request is not working
+            options.conferenceRequestUrl = undefined; //appendURLParam(options.conferenceRequestUrl, "room", roomName ?? "");
         }
     }
 
