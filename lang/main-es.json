@@ -760,7 +760,7 @@
                 "cancelButton": "Cancelar",
                 "copyButton": "Copiar",
                 "copiedButton": "¡Copiado!",
-                "joinNow": "Unirse ahora"
+                "joinNow": "Entrar a la reunión"
             }
         },
         "meeting": {
@@ -786,7 +786,8 @@
             "participants": "Participantes",
             "participant": "Participante",
             "upToParticipants": "Hasta {{num}} participantes",
-            "upgrade": "Actualizar"
+            "upgrade": "Actualizar",
+            "upgradeMessage": "Meet no está disponible con tu plan. \nActualiza ahora para empezar a realizar reuniones privadas."
         },
         "joinRoomErrorDialog": {
             "joinRoomError": "No se pudo unir a la reunión",
@@ -845,6 +846,7 @@
         "invitedTwoMembers": "{{first}} y {{second}} han sido invitados",
         "joinMeeting": "Unirse",
         "kickParticipant": "{{kicker}} sacó a {{kicked}}",
+        "kickParticipant2": "{{kicked}} ha sido expulsado",
         "leftOneMember": "{{name}} abandonó la reunión",
         "leftThreePlusMembers": "{{name}} y muchos otros abandonaron la reunión",
         "leftTwoMembers": "{{first}} y {{second}} abandonaron la reunión",
@@ -908,7 +910,11 @@
         "videoUnmuteBlockedDescription": "Las operaciones de desactivar la cámara y compartir pantalla hansido bloqueadas temporalmente debido a límites del sistema.",
         "videoUnmuteBlockedTitle": "¡Desactivar cámara y compartir pantalla bloqueados!",
         "viewLobby": "Ver lobby",
-        "waitingParticipants": "{{waitingParticipants}} personas"
+        "waitingParticipants": "{{waitingParticipants}} personas",
+        "encryptionKeySyncFailed": "La sincronización de la clave de cifrado ha fallado. Se recomienda salir de la reunión y vuelva a unirse para restaurar la comunicación segura.",
+        "encryptionKeySyncFailedTitle": "Error de Sincronización de Cifrado",
+        "encryptionKeySyncRestored": "La sincronización de claves para el cifrado se ha restaurado con éxito. Su comunicación segura está ahora activa.",
+        "encryptionKeySyncRestoredTitle": "Cifrado Restaurado"
     },
     "participantsPane": {
         "actions": {

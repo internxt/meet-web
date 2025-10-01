@@ -813,7 +813,7 @@
                 "cancelButton": "Cancel",
                 "copyButton": "Copy",
                 "copiedButton": "Copied!",
-                "joinNow": "Join now"
+                "joinNow": "Join meeting"
             }
         },
         "meeting": {
@@ -839,7 +839,8 @@
             "participants": "Participants",
             "participant": "Participant",
             "upToParticipants": "Up to {{num}} participants",
-            "upgrade": "Upgrade"
+            "upgrade": "Upgrade",
+            "upgradeMessage": "Meet is not available with your plan. \nUpgrade now to start private meetings."
         },
         "joinRoomErrorDialog": {
             "joinRoomError": "Unable to join meeting",
@@ -899,6 +900,7 @@
         "invitedTwoMembers": "{{first}} and {{second}} have been invited",
         "joinMeeting": "Join",
         "kickParticipant": "{{kicked}} was kicked by {{kicker}}",
+        "kickParticipant2": "{{kicked}} was kicked",
         "leftOneMember": "{{name}} left the meeting",
         "leftThreePlusMembers": "{{name}} and many others left the meeting",
         "leftTwoMembers": "{{first}} and {{second}} left the meeting",
@@ -967,7 +969,11 @@
         "viewVisitors": "View visitors",
         "waitingParticipants": "{{waitingParticipants}} people",
         "whiteboardLimitDescription": "Please save your progress, as the user limit will soon be reached and the whiteboard will close.",
-        "whiteboardLimitTitle": "Whiteboard usage"
+        "whiteboardLimitTitle": "Whiteboard usage",
+        "encryptionKeySyncFailed": "The encryption key synchronization has failed. It is recommended that you leave the meeting and rejoin to restore secure communication.",
+        "encryptionKeySyncFailedTitle": "Encryption Sync Failed",
+        "encryptionKeySyncRestored": "The encryption key synchronization has been successfully restored. Your secure communication is now active.",
+        "encryptionKeySyncRestoredTitle": "Encryption Restored"
     },
     "participantsPane": {
         "actions": {
