@@ -42,7 +42,7 @@ const VideoParticipant = ({ participant, className = "", flipX, translate }: Vid
                     className={clsx("w-full h-full object-cover", flipX && local && "scale-x-[-1]")}
                     key={`video-${id}`}
                     // Set to false due to decoding issues and video lag
-                    encodeVideo={false}
+                    encodeVideo={true}
                 />
             ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gray-800">
