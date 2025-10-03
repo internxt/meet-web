@@ -775,7 +775,7 @@ const ConnectionStatsTable = ({
                 {_renderStatistics()}
                 <div className = { classes.actions }>
                     {isLocalVideo && enableSaveLogs ? _renderSaveLogs() : null}
-                    {!disableShowMoreStats && ConfigService.instance.isDevelopment() && _renderShowMoreLink()}
+                    {!disableShowMoreStats && _renderShowMoreLink()}
                 </div>
                 {shouldShowMore ? _renderAdditionalStats() : null}
             </div>
