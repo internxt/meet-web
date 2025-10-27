@@ -73,7 +73,7 @@ var config = {
         // Prefer SCTP (WebRTC data channels over the media path) over a colibri websocket.
         // If SCTP is available in the backend it will be used instead of a WS. Defaults to
         // false (SCTP is used only if available and no WS are available).
-        // preferSctp: false
+        preferSctp: true
     },
 
     // Testing / experimental features.
@@ -592,11 +592,11 @@ var config = {
     // not a real ICE restart), the client maintains the TCC sequence number
     // counter, but the bridge resets it. The bridge sends media packets with
     // TCC sequence numbers starting from 0.
-    // enableIceRestart: false,
+    enableIceRestart: true,
 
     // Enables forced reload of the client when the call is migrated as a result of
     // the bridge going down.
-    // enableForcedReload: true,
+    enableForcedReload: true,
 
     // Use TURN/UDP servers for the jitsi-videobridge connection (by default
     // we filter out TURN/UDP because it is usually not needed since the
