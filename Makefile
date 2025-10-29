@@ -2,6 +2,7 @@ BUILD_DIR = build
 CLEANCSS = ./node_modules/.bin/cleancss
 DEPLOY_DIR = libs
 LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet
+ONNX_DIR= node_modules/onnxruntime-web
 TF_WASM_DIR = node_modules/@tensorflow/tfjs-backend-wasm/dist/
 RNNOISE_WASM_DIR = node_modules/@jitsi/rnnoise-wasm/dist
 EXCALIDRAW_DIR = node_modules/@jitsi/excalidraw/dist/excalidraw-assets
@@ -44,8 +45,8 @@ deploy-init:
 	cp	$(LIBJITSIMEET_DIR)/wasm/RTC/channels.wasm \
 		$(LIBJITSIMEET_DIR)/wasm/RTC/channels.js \
 		$(DEPLOY_DIR)
-	cp -r $(LIBJITSIMEET_DIR)/wasm/ONNX \
-	$(DEPLOY_DIR)
+	cp -r $(ONNX_DIR)/dist \
+		$(DEPLOY_DIR)
 
 deploy-appbundle:
 	cp \
