@@ -2,7 +2,7 @@ import { AnyAction } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { IReduxState } from "../../../../../app/types";
 import { LocalStorageManager } from "../../../LocalStorageManager";
-import { AUTH_ACTIONS } from "../../../middlewares";
+import { AUTH_ACTIONS } from "../../../middlewares/meeting.constants";
 import { User } from "../user/types";
 
 /**

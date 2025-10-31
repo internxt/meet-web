@@ -8,28 +8,7 @@ import { LocalStorageManager, STORAGE_KEYS } from "../LocalStorageManager";
 import { AuthService } from "../services/auth.service";
 import { PaymentsService } from "../services/payments.service";
 import { isAvatarExpired } from "../services/utils/avatar.utils";
-
-/**
- * Constants for auth-related action types.
- */
-export const AUTH_ACTIONS = {
-    LOGIN_SUCCESS: "features/authentication/LOGIN_SUCCESS",
-    LOGOUT: "features/authentication/LOGOUT",
-    REFRESH_TOKEN_SUCCESS: "features/authentication/REFRESH_TOKEN_SUCCESS",
-    INITIALIZE_AUTH: "features/authentication/INITIALIZE",
-};
-
-/**
- * Minimum interval between configuration checks (in ms).
- * Default: 1 hour
- */
-const CONFIG_CHECK_INTERVAL = 60 * 60 * 1000;
-
-/**
- * Minimum interval between user data refresh (in ms).
- * Default: 30 minutes
- */
-const USER_REFRESH_INTERVAL = 30 * 60 * 1000;
+import { AUTH_ACTIONS, CONFIG_CHECK_INTERVAL, USER_REFRESH_INTERVAL } from "./meeting.constants";
 
 /**
  * Middleware for automatically managing meeting configuration and user data.

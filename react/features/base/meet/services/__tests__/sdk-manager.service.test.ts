@@ -41,26 +41,17 @@ vi.mock("@internxt/sdk", () => ({
     },
 }));
 
-const mockLocalStorage = {
-    getItem: vi.fn().mockImplementation((key) => {
-        if (key === "xNewToken") return "mock-new-token";
-        return null;
-    }),
-    clearCredentials: vi.fn(),
-};
-
-Object.defineProperty(global, "localStorage", {
-    value: mockLocalStorage,
-    writable: true,
-});
-
-// @ts-ignore - Ignore TypeScript error for test purposes
-SdkManager.instance.localStorage = mockLocalStorage;
 
 describe("SdkManager", () => {
+    const mockToken =  "mock-new-token";
+   
     beforeEach(() => {
         SdkManager.clean();
         vi.clearAllMocks();
+        vi.spyOn(localStorage, "getItem").mockImplementation((key) => {
+        if (key === "xNewToken") return mockToken;
+        return null;
+        });
     });
 
     describe("Initialization", () => {
@@ -150,7 +141,7 @@ describe("SdkManager", () => {
         });
 
         it("When getting payments client, then the correct client is returned with proper configuration", () => {
-            const getItemSpy = vi.spyOn(global.localStorage, "getItem");
+            const getItemSpy = vi.spyOn(localStorage, "getItem");
 
             const paymentsClient = SdkManager.instance.getPayments();
             expect(paymentsClient).toBeDefined();
@@ -167,7 +158,7 @@ describe("SdkManager", () => {
         });
 
         it("When getting meet client, then the correct client is returned with proper configuration", () => {
-            const getItemSpy = vi.spyOn(global.localStorage, "getItem");
+            const getItemSpy = vi.spyOn(localStorage, "getItem");
 
             const meetClient = SdkManager.instance.getMeet();
             expect(meetClient).toBeDefined();
@@ -196,10 +187,12 @@ describe("SdkManager", () => {
         });
 
         it("Tests the unauthorizedCallback in getNewTokenApiSecurity", () => {
+            const sdkManager = SdkManager.instance;
+            const spy = vi.spyOn((sdkManager as any).localStorage, 'clearCredentials');
             SdkManager.instance.getPayments();
             const securityArg = (Drive.Payments.client as any).mock.calls[0][2];
             securityArg.unauthorizedCallback();
-            expect(mockLocalStorage.clearCredentials).toHaveBeenCalled();
+            expect(spy).toHaveBeenCalled();
         });
     });
 });
