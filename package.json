@@ -98,7 +98,7 @@
         "react-hook-form": "^7.54.2",
         "react-i18next": "10.11.4",
         "react-linkify": "1.0.0-alpha",
-        "react-native": "0.72.9",
+        "react-native": "0.82.1",
         "react-native-background-timer": "2.4.1",
         "react-native-calendar-events": "2.2.0",
         "react-native-default-preference": "1.4.4",
