@@ -54,31 +54,29 @@ export function openLogoutDialog() {
         const { jwt } = state["features/base/jwt"];
         const _room = state["features/base/conference"].room ?? "";
 
-        dispatch(
-            openDialog(LogoutDialog, {
-                onLogout() {
-                    if (isTokenAuthEnabled(config) && config.tokenAuthUrlAutoRedirect && jwt) {
-                        // user is logging out remove auto redirect indication
-                        dispatch(setTokenAuthUrlSuccess(false));
+        dispatch(openDialog('LogoutDialog', LogoutDialog, {
+            onLogout() {
+                if (isTokenAuthEnabled(config) && config.tokenAuthUrlAutoRedirect && jwt) {
+                    // user is logging out remove auto redirect indication
+                    dispatch(setTokenAuthUrlSuccess(false));
+                }
+
+                if (logoutUrl && browser.isElectron()) {
+                    const url = appendURLHashParam(logoutUrl, "electron", "true");
+
+                    window.open(url, "_blank");
+
+                    if (_room) dispatch(hangup(true, _room));
+                } else {
+                    if (logoutUrl) {
+                        window.location.href = logoutUrl;
+
+                        return;
                     }
-
-                    if (logoutUrl && browser.isElectron()) {
-                        const url = appendURLHashParam(logoutUrl, "electron", "true");
-
-                        window.open(url, "_blank");
-
-                        if (_room) dispatch(hangup(true, _room));
-                    } else {
-                        if (logoutUrl) {
-                            window.location.href = logoutUrl;
-
-                            return;
-                        }
-                        if (_room) conference?.room.xmpp.moderator.logout(() => dispatch(hangup(true, _room)));
-                    }
-                },
-            })
-        );
+                    if (_room) conference?.room.xmpp.moderator.logout(() => dispatch(hangup(true, _room)));
+                }
+            },
+        }));
     };
 }
 
@@ -92,7 +90,7 @@ export function openLogoutDialog() {
  * @returns {Function}
  */
 export function openSettingsDialog(defaultTab?: string, isDisplayedOnWelcomePage?: boolean) {
-    return openDialog(SettingsDialogWrapper, {
+    return openDialog("SettingsDialog", SettingsDialogWrapper, {
         defaultTab,
         isDisplayedOnWelcomePage,
     });
