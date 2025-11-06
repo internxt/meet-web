@@ -6,7 +6,8 @@ import { isChatDisabled } from './functions';
 const chat = {
     key: 'chat',
     Content: ChatButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 /**

@@ -6,7 +6,8 @@ import { isFileSharingEnabled } from './functions.any';
 const fileSharing = {
     key: 'filesharing',
     Content: FileSharingButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 /**

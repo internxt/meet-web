@@ -7,7 +7,8 @@ import PollsButton from './components/web/PollsButton';
 const polls = {
     key: 'polls',
     Content: PollsButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 /**
