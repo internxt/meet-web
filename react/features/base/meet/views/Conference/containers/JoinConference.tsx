@@ -33,13 +33,12 @@ import Header, { Mode } from "../components/Header";
 
 import { setConferenceViewMode } from "../../../../../filmstrip/actions.web";
 import { ViewMode } from "../../../../../filmstrip/reducer";
-import Toolbox from "../../../../../toolbox/components/web/Toolbox";
 import { DEFAULT_STATE } from "../../../../known-domains/reducer";
 import PersistenceRegistry from "../../../../redux/PersistenceRegistry";
 import { setCreateRoomError, setJoinRoomError } from "../../../general/store/errors/actions";
+import { isNewMeetingFlow } from "../../../services/sessionStorage.service";
 import ConferenceControlsWrapper from "./ConferenceControlsWrapper";
 import VideoGalleryWrapper from "./VideoGalleryWrapper";
-
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -137,7 +136,7 @@ class Conference extends AbstractConference<IProps, any> {
         this._onVidespaceTouchStart = this._onVidespaceTouchStart.bind(this);
     }
 
-    componentDidMount() {
+    override componentDidMount() {
         PersistenceRegistry.register(
             "features/prejoin",
             {
@@ -150,13 +149,25 @@ class Conference extends AbstractConference<IProps, any> {
         this.props.dispatch(setJoinRoomError(false));
     }
 
+    override componentDidUpdate(prevProps: IProps) {
+        const isComingFromNewMeetingFlow = isNewMeetingFlow();
+        const hasRoomChanged = prevProps._roomName !== this.props._roomName;
+        const hasValidRoom = this.props._roomName && this.props._roomName !== "new-meeting";
+
+        const shouldAutoConnect = isComingFromNewMeetingFlow && hasRoomChanged && hasValidRoom;
+
+        if (shouldAutoConnect) {
+            this.props.dispatch(init(true));
+        }
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      * @returns {ReactElement}
      */
-    render() {
+    override render() {
         const {
             _isAnyOverlayVisible,
             _layoutClassName,
@@ -167,7 +178,6 @@ class Conference extends AbstractConference<IProps, any> {
             viewMode,
             t,
         } = this.props;
-
         return (
             <>
                 <Chat />
@@ -301,14 +311,14 @@ class Conference extends AbstractConference<IProps, any> {
     _start() {
         APP.UI.start();
 
-        APP.UI.registerListeners();
+        // APP.UI.registerListeners();
         APP.UI.bindEvents();
 
         FULL_SCREEN_EVENTS.forEach((name) => document.addEventListener(name, this._onFullScreenChange));
 
         const { dispatch, t } = this.props;
 
-        dispatch(init());
+        dispatch(init(true));
 
         maybeShowSuboptimalExperienceNotification(dispatch, t);
     }
