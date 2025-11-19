@@ -25,6 +25,7 @@ export type ToolbarButton = 'camera' |
     'embedmeeting' |
     'etherpad' |
     'feedback' |
+    'filesharing' |
     'filmstrip' |
     'fullscreen' |
     'hangup' |
@@ -39,6 +40,7 @@ export type ToolbarButton = 'camera' |
     'noisesuppression' |
     'overflowmenu' |
     'participants-pane' |
+    'polls' |
     'profile' |
     'raisehand' |
     'reactions' |
