@@ -150,7 +150,10 @@ class MessageContainer extends Component<IProps, IState> {
      */
     override componentDidMount() {
         if (this.props.messages.length > 0) {
-            this.scrollToElement(false, null);
+            // Delay scroll to match chat opening animation, then scroll smoothly
+            setTimeout(() => {
+                this.scrollToElement(true, null); 
+            }, 300); 
             this._createBottomListObserver();
         }
     }
