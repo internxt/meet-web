@@ -51,6 +51,5 @@ jobs:
 
                     Includes upstream workflows (token has workflow permission)." \
                       --base main \
-                      --head upstream-sync \
-                      --label "enhancement"
+                      --head upstream-sync
                   fi
