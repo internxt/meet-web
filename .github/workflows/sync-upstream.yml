@@ -85,4 +85,4 @@ jobs:
                   destination_branch: "main"
                   pr_title: "sync: Merge upstream changes"
                   pr_body: "Automated sync from upstream."
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  github_token: ${{ secrets.WORKFLOW_TOKEN }}
