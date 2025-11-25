@@ -1,76 +1,78 @@
 name: Sync with Upstream
 
 on:
-  schedule:
-    # Run at 00:00 UTC on the 1st of every month
-    - cron: '0 0 1 * *'
-  workflow_dispatch: # Allows manual trigger from GitHub Actions UI
+    schedule:
+        # Run at 00:00 UTC on the 1st of every month
+        - cron: "0 0 1 * *"
+    workflow_dispatch: # Allows manual trigger from GitHub Actions UI
+    pull_request:
+        branches: [main]
 
 jobs:
-  sync-upstream:
-    runs-on: ubuntu-latest
+    sync-upstream:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+                  token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Configure Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+            - name: Configure Git
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Add upstream remote
-        run: |
-          git remote add upstream https://github.com/jitsi/jitsi-meet.git || true
-          git fetch upstream
+            - name: Add upstream remote
+              run: |
+                  git remote add upstream https://github.com/jitsi/jitsi-meet.git || true
+                  git fetch upstream
 
-      - name: Create sync branch
-        id: create_branch
-        run: |
-          BRANCH_NAME="sync-upstream-$(date +%Y-%m-%d)"
-          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
-          git checkout -b "$BRANCH_NAME"
+            - name: Create sync branch
+              id: create_branch
+              run: |
+                  BRANCH_NAME="sync-upstream-$(date +%Y-%m-%d)"
+                  echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+                  git checkout -b "$BRANCH_NAME"
 
-      - name: Merge upstream changes
-        id: merge
-        continue-on-error: true
-        run: |
-          git merge upstream/master --no-edit || echo "merge_conflict=true" >> $GITHUB_OUTPUT
+            - name: Merge upstream changes
+              id: merge
+              continue-on-error: true
+              run: |
+                  git merge upstream/master --no-edit || echo "merge_conflict=true" >> $GITHUB_OUTPUT
 
-      - name: Push sync branch
-        run: |
-          git push origin ${{ steps.create_branch.outputs.branch_name }}
+            - name: Push sync branch
+              run: |
+                  git push origin ${{ steps.create_branch.outputs.branch_name }}
 
-      - name: Create Pull Request
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          CONFLICT_NOTE=""
-          if [ "${{ steps.merge.outputs.merge_conflict }}" == "true" ]; then
-            CONFLICT_NOTE="⚠️ **Warning:** This PR contains merge conflicts that need to be resolved manually."
-          fi
+            - name: Create Pull Request
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  CONFLICT_NOTE=""
+                  if [ "${{ steps.merge.outputs.merge_conflict }}" == "true" ]; then
+                    CONFLICT_NOTE="⚠️ **Warning:** This PR contains merge conflicts that need to be resolved manually."
+                  fi
 
-          gh pr create \
-            --title "sync: merge upstream changes from jitsi/jitsi-meet" \
-            --body "## Upstream Sync - $(date +%Y-%m-%d)
+                  gh pr create \
+                    --title "sync: merge upstream changes from jitsi/jitsi-meet" \
+                    --body "## Upstream Sync - $(date +%Y-%m-%d)
 
-          This PR synchronizes the fork with the upstream repository [jitsi/jitsi-meet](https://github.com/jitsi/jitsi-meet).
+                  This PR synchronizes the fork with the upstream repository [jitsi/jitsi-meet](https://github.com/jitsi/jitsi-meet).
 
-          $CONFLICT_NOTE
+                  $CONFLICT_NOTE
 
-          ### Changes
-          This PR includes all changes from the upstream repository since the last sync.
+                  ### Changes
+                  This PR includes all changes from the upstream repository since the last sync.
 
-          ### Review Checklist
-          - [ ] Review all changes from upstream
-          - [ ] Ensure no conflicts with Internxt-specific customizations
-          - [ ] Run tests to verify compatibility
-          - [ ] Check that all custom features still work correctly
+                  ### Review Checklist
+                  - [ ] Review all changes from upstream
+                  - [ ] Ensure no conflicts with Internxt-specific customizations
+                  - [ ] Run tests to verify compatibility
+                  - [ ] Check that all custom features still work correctly
 
-          ---
-          🤖 This PR was automatically created by the [sync-upstream workflow](.github/workflows/sync-upstream.yml)" \
-            --base main \
-            --head ${{ steps.create_branch.outputs.branch_name }}
+                  ---
+                  🤖 This PR was automatically created by the [sync-upstream workflow](.github/workflows/sync-upstream.yml)" \
+                    --base main \
+                    --head ${{ steps.create_branch.outputs.branch_name }}
