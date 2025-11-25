@@ -12,56 +12,45 @@ on:
         branches: [main]
 
 jobs:
-    sync-upstream:
+    sync:
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout fork
+            - name: Checkout repository
               uses: actions/checkout@v4
               with:
+                  token: ${{ secrets.WORKFLOW_TOKEN }}
                   fetch-depth: 0
-                  ref: main # Aseguramos que partimos de main
+
+            - name: Configure git identity
+              run: |
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git config user.name "github-actions[bot]"
 
             - name: Add upstream remote
               run: |
                   git remote add upstream https://github.com/jitsi/jitsi-meet.git || true
                   git fetch upstream
 
-            - name: Create sync branch WITHOUT upstream workflows
+            - name: Create and push sync branch
               run: |
-                  # Creamos la rama desde upstream/master, pero excluyendo workflows desde el inicio
                   git checkout -B upstream-sync upstream/master
-
-                  # Borramos workflows inmediatamente (antes de cualquier commit)
-                  rm -rf .github/workflows/
-
-                  # Añadimos solo nuestros workflows locales (si existen) para preservarlos
-                  if [ -d .github/workflows/ ]; then
-                    echo "Preserving local workflows"
-                  else
-                    mkdir -p .github/workflows/
-                    echo "# Preserved local workflows" > .github/workflows/sync-upstream.yml  # Placeholder para no dejar vacío
-                  fi
-
-                  # Commit de los cambios (borrado + preservación)
-                  git add .github/workflows/ || true
-                  git commit -m "chore(sync): remove upstream workflows and preserve ours" || echo "No changes to commit"
-
-            - name: Push sync branch (force)
-              run: |
                   git push -f origin upstream-sync
 
-            - name: Check if sync PR already exists
-              id: check_pr
+            - name: Create or update Pull Request
+              env:
+                  GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
               run: |
-                  if gh pr list --state open --head upstream-sync | grep -q upstream-sync; then
-                    echo "exists=true" >> $GITHUB_OUTPUT
+                  if gh pr list --head upstream-sync --state open --json number | jq -e 'length > 0' > /dev/null; then
+                    echo "PR already exists → nothing to do"
                   else
-                    echo "exists=false" >> $GITHUB_OUTPUT
-                  fi
+                    gh pr create \
+                      --title "chore(sync): monthly sync with jitsi/jitsi-meet" \
+                      --body "Automated monthly sync from upstream jitsi/jitsi-meet
 
-            - name: Create Pull Request
-              if: steps.check_pr.outputs.exists == 'false'
-              run: |
-                  gh pr create \
-                    --title "chore(sync): monthly update from upstream jitsi/jitsi-meet" \
-                    --body "Automated sync with upstream (commit: \$(git rev-parse --short upstream/master)).
+                    Upstream commit: $(git rev-parse --short upstream/master)
+
+                    Includes upstream workflows (token has workflow permission)." \
+                      --base main \
+                      --head upstream-sync \
+                      --label "automated,sync"
+                  fi
