@@ -35,10 +35,6 @@ jobs:
               run: |
                   git checkout -B upstream-sync upstream/master
 
-            - name: Push upstream-sync branch to fork
-              run: |
-                  git push -f origin upstream-sync
-
             - name: Create Pull Request
               run: |
                   gh pr create \
