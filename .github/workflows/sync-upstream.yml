@@ -1,13 +1,9 @@
 name: Sync Upstream
 
-permissions:
-    contents: write
-    pull-requests: write
-
 on:
     workflow_dispatch:
     schedule:
-        - cron: "0 0 1 * *" # Día 1 de cada mes a las 00:00 UTC
+        - cron: "0 0 1 * *"
     pull_request:
         branches: [main]
 
@@ -26,30 +22,56 @@ jobs:
                   git config user.email "github-actions[bot]@users.noreply.github.com"
                   git config user.name "github-actions[bot]"
 
-            - name: Add upstream remote
+            - name: Fetch upstream + origin/main (correctamente)
               run: |
                   git remote add upstream https://github.com/jitsi/jitsi-meet.git || true
-                  git fetch upstream
+                  git fetch upstream --tags
+                  git fetch origin --tags
 
-            - name: Create and push sync branch
+            # COMPARACIÓN CORRECTA: usamos los refs remotos directamente
+            - name: Check if there are new commits in upstream
+              id: check_diff
+              run: |
+                  MAIN_SHA=$(git rev-parse origin/main)
+                  UPSTREAM_SHA=$(git rev-parse upstream/master)
+
+                  echo "origin/main  → $MAIN_SHA"
+                  echo "upstream/master → $UPSTREAM_SHA"
+
+                  if [ "$MAIN_SHA" = "$UPSTREAM_SHA" ]; then
+                    echo "already_synced=true" >> $GITHUB_OUTPUT
+                    echo "No hay cambios nuevos en upstream"
+                  else
+                    echo "already_synced=false" >> $GITHUB_OUTPUT
+                    echo "diff_exists=true" >> $GITHUB_OUTPUT
+                    echo "¡HAY CAMBIOS! (o conflictos) → se creará el PR"
+                  fi
+
+            - name: Create and push upstream-sync branch
+              if: steps.check_diff.outputs.diff_exists == 'true'
               run: |
                   git checkout -B upstream-sync upstream/master
                   git push -f origin upstream-sync
 
-            - name: Create or update Pull Request
+            - name: Create Pull Request (solo si hay cambios)
+              if: steps.check_diff.outputs.diff_exists == 'true'
               env:
                   GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
               run: |
-                  if gh pr list --head upstream-sync --state open --json number | jq -e 'length > 0' > /dev/null; then
-                    echo "PR already exists → nothing to do"
-                  else
-                    gh pr create \
-                      --title "chore(sync): monthly sync with jitsi/jitsi-meet" \
-                      --body "Automated monthly sync from upstream jitsi/jitsi-meet
+                  gh pr create \
+                    --title "chore(sync): monthly sync with upstream jitsi/jitsi-meet" \
+                    --body "Automated monthly sync from upstream
 
                     Upstream commit: $(git rev-parse --short upstream/master)
+                    Your main commit: $(git rev-parse --short origin/main)
+                    Date: $(date -u)
 
+                    This PR may contain **merge conflicts** that need manual resolution.
                     Includes upstream workflows (token has workflow permission)." \
-                      --base main \
-                      --head upstream-sync
-                  fi
+                    --base main \
+                    --head upstream-sync
+
+            - name: Already up to date
+              if: steps.check_diff.outputs.already_synced == 'true'
+              run: |
+                  echo "Fork ya está completamente actualizado con upstream/master → nada que hacer"
