@@ -35,7 +35,15 @@ jobs:
               run: |
                   git checkout -B upstream-sync upstream/master
 
+            - name: Push upstream-sync branch to fork
+              env:
+                  GITHUB_TOKEN: ${{secrets.WORKFLOW_TOKEN}}
+              run: |
+                  git push -f origin upstream-sync
+
             - name: Create Pull Request
+              env:
+                  GITHUB_TOKEN: ${{secrets.WORKFLOW_TOKEN}}
               run: |
                   gh pr create \
                     --base main \
