@@ -21,7 +21,7 @@ jobs:
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0
-                  token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+                  token: ${{ secrets.WORKFLOW_TOKEN }}
 
             - name: Configure Git
               run: |
@@ -52,7 +52,7 @@ jobs:
 
             - name: Create Pull Request
               env:
-                  GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+                  GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
               run: |
                   CONFLICT_NOTE=""
                   if [ "${{ steps.merge.outputs.merge_conflict }}" == "true" ]; then
