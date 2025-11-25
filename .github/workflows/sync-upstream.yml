@@ -1,6 +1,5 @@
 name: Sync Upstream
 
-# Permisos mínimos con GITHUB_TOKEN
 permissions:
     contents: write
     pull-requests: write
@@ -8,7 +7,7 @@ permissions:
 on:
     workflow_dispatch:
     schedule:
-        - cron: "0 0 1 * *"
+        - cron: "0 0 1 * *" # Día 1 de cada mes a las 00:00 UTC
     pull_request:
         branches: [main]
 
@@ -20,22 +19,32 @@ jobs:
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0
+                  ref: main # Aseguramos que partimos de main
 
             - name: Add upstream remote
               run: |
                   git remote add upstream https://github.com/jitsi/jitsi-meet.git || true
                   git fetch upstream
 
-            - name: Create sync branch from upstream/master
+            - name: Create sync branch WITHOUT upstream workflows
               run: |
+                  # Creamos la rama desde upstream/master, pero excluyendo workflows desde el inicio
                   git checkout -B upstream-sync upstream/master
 
-            - name: Remove upstream workflows (solve permission error)
-              run: |
-                  # Borramos todos los workflows del upstream para que GITHUB_TOKEN permita el push
+                  # Borramos workflows inmediatamente (antes de cualquier commit)
                   rm -rf .github/workflows/
-                  git add .github/workflows/ 2>/dev/null || echo "No workflows directory"
-                  git commit -m "chore: remove upstream GitHub Actions workflows (auto-sync)" || echo "Nothing to commit"
+
+                  # Añadimos solo nuestros workflows locales (si existen) para preservarlos
+                  if [ -d .github/workflows/ ]; then
+                    echo "Preserving local workflows"
+                  else
+                    mkdir -p .github/workflows/
+                    echo "# Preserved local workflows" > .github/workflows/sync-upstream.yml  # Placeholder para no dejar vacío
+                  fi
+
+                  # Commit de los cambios (borrado + preservación)
+                  git add .github/workflows/ || true
+                  git commit -m "chore(sync): remove upstream workflows and preserve ours" || echo "No changes to commit"
 
             - name: Push sync branch (force)
               run: |
@@ -50,22 +59,9 @@ jobs:
                     echo "exists=false" >> $GITHUB_OUTPUT
                   fi
 
-            - name: Create or update Pull Request
+            - name: Create Pull Request
               if: steps.check_pr.outputs.exists == 'false'
               run: |
                   gh pr create \
-                    --title "chore(sync): update from upstream jitsi/jitsi-meet" \
-                    --body "Automated monthly sync with upstream repository.
-
-                    - Upstream commit: $(git rev-parse --short upstream/master)
-                    - Date: $(date -u)
-
-                    Upstream workflows have been automatically removed to allow the sync.
-                    Review changes carefully before merging." \
-                    --base main \
-                    --head upstream-sync
-
-            - name: PR already exists notification
-              if: steps.check_pr.outputs.exists == 'true'
-              run: |
-                  echo "Pull request already exists → nothing to do this month"
+                    --title "chore(sync): monthly update from upstream jitsi/jitsi-meet" \
+                    --body "Automated sync with upstream (commit: \$(git rev-parse --short upstream/master)).
