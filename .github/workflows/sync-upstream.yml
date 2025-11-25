@@ -52,5 +52,4 @@ jobs:
                     Includes upstream workflows (token has workflow permission)." \
                       --base main \
                       --head upstream-sync \
-                      --label "automated,sync"
                   fi
