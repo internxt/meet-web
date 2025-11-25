@@ -28,7 +28,7 @@ jobs:
 
             - name: Add upstream remote
               run: |
-                  git remote add upstream https://github.com/OWNER/REPO_ORIGINAL.git
+                  git remote add upstream https://github.com/jitsi/jitsi-meet.git
                   git fetch upstream
 
             - name: Create sync branch
