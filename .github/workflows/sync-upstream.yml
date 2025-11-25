@@ -33,7 +33,32 @@ jobs:
                   git remote add upstream https://github.com/jitsi/jitsi-meet.git || true
                   git fetch upstream
 
+            - name: Detect upstream default branch
+              id: detect_branch
+              run: |
+                  UPSTREAM_BRANCH=$(git remote show upstream | grep "HEAD branch" | cut -d ":" -f 2 | xargs)
+                  echo "upstream_branch=$UPSTREAM_BRANCH" >> $GITHUB_OUTPUT
+                  echo "Detected upstream branch: $UPSTREAM_BRANCH"
+
+            - name: Check for upstream changes
+              id: check_changes
+              run: |
+                  UPSTREAM_BRANCH="${{ steps.detect_branch.outputs.upstream_branch }}"
+                  git fetch origin main
+                  CHANGES=$(git rev-list --count origin/main..upstream/$UPSTREAM_BRANCH)
+                  echo "changes_count=$CHANGES" >> $GITHUB_OUTPUT
+                  echo "Number of commits to sync: $CHANGES"
+
+                  if [ "$CHANGES" -eq 0 ]; then
+                    echo "has_changes=false" >> $GITHUB_OUTPUT
+                    echo "✅ Repository is already up to date with upstream"
+                  else
+                    echo "has_changes=true" >> $GITHUB_OUTPUT
+                    echo "📦 Found $CHANGES commits to sync"
+                  fi
+
             - name: Create sync branch
+              if: steps.check_changes.outputs.has_changes == 'true'
               id: create_branch
               run: |
                   BRANCH_NAME="sync-upstream-$(date +%Y-%m-%d)"
@@ -41,16 +66,29 @@ jobs:
                   git checkout -b "$BRANCH_NAME"
 
             - name: Merge upstream changes
+              if: steps.check_changes.outputs.has_changes == 'true'
               id: merge
               continue-on-error: true
               run: |
-                  git merge upstream/master --no-edit || echo "merge_conflict=true" >> $GITHUB_OUTPUT
+                  UPSTREAM_BRANCH="${{ steps.detect_branch.outputs.upstream_branch }}"
+                  if git merge upstream/$UPSTREAM_BRANCH --no-edit; then
+                    echo "merge_success=true" >> $GITHUB_OUTPUT
+                    echo "✅ Merge successful"
+                  else
+                    echo "merge_conflict=true" >> $GITHUB_OUTPUT
+                    echo "⚠️ Merge conflicts detected"
+                    git merge --abort
+                    git merge upstream/$UPSTREAM_BRANCH --no-commit --no-ff
+                    git commit -m "sync: merge upstream changes from jitsi/jitsi-meet (with conflicts)"
+                  fi
 
             - name: Push sync branch
+              if: steps.check_changes.outputs.has_changes == 'true'
               run: |
                   git push origin ${{ steps.create_branch.outputs.branch_name }}
 
             - name: Create Pull Request
+              if: steps.check_changes.outputs.has_changes == 'true'
               env:
                   GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
               run: |
@@ -59,11 +97,16 @@ jobs:
                     CONFLICT_NOTE="⚠️ **Warning:** This PR contains merge conflicts that need to be resolved manually."
                   fi
 
+                  CHANGES_COUNT="${{ steps.check_changes.outputs.changes_count }}"
+                  UPSTREAM_BRANCH="${{ steps.detect_branch.outputs.upstream_branch }}"
+
                   gh pr create \
                     --title "sync: merge upstream changes from jitsi/jitsi-meet" \
                     --body "## Upstream Sync - $(date +%Y-%m-%d)
 
                   This PR synchronizes the fork with the upstream repository [jitsi/jitsi-meet](https://github.com/jitsi/jitsi-meet).
+
+                  **📦 Commits to sync:** $CHANGES_COUNT from \`upstream/$UPSTREAM_BRANCH\`
 
                   $CONFLICT_NOTE
 
@@ -80,3 +123,8 @@ jobs:
                   🤖 This PR was automatically created by the [sync-upstream workflow](.github/workflows/sync-upstream.yml)" \
                     --base main \
                     --head ${{ steps.create_branch.outputs.branch_name }}
+
+            - name: No changes summary
+              if: steps.check_changes.outputs.has_changes == 'false'
+              run: |
+                  echo "✅ No sync needed - repository is already up to date with upstream"
