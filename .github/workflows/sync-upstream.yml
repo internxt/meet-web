@@ -16,81 +16,33 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Checkout repository
+            - name: Checkout fork repo
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0
-                  token: ${{ secrets.WORKFLOW_TOKEN }}
 
-            - name: Configure Git
+            - name: Setup GitHub CLI
               run: |
-                  git config user.name "github-actions[bot]"
-                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  sudo apt-get install -y gh
+                  echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
             - name: Add upstream remote
               run: |
-                  git remote add upstream https://github.com/jitsi/jitsi-meet.git || true
+                  git remote add upstream https://github.com/OWNER/REPO_ORIGINAL.git
                   git fetch upstream
 
-            - name: Detect upstream default branch
-              id: detect_upstream_branch
-              run: |
-                  UPSTREAM_BRANCH=$(git remote show upstream | grep "HEAD branch" | cut -d ":" -f 2 | xargs)
-                  echo "upstream_branch=$UPSTREAM_BRANCH" >> $GITHUB_OUTPUT
-                  echo "Detected upstream branch: $UPSTREAM_BRANCH"
-
-            - name: Detect fork default branch
-              id: detect_fork_branch
-              run: |
-                  FORK_BRANCH=$(git remote show origin | grep "HEAD branch" | cut -d ":" -f 2 | xargs)
-                  echo "fork_branch=$FORK_BRANCH" >> $GITHUB_OUTPUT
-                  echo "Detected fork branch: $FORK_BRANCH"
-
-            - name: Check for upstream changes
-              id: check_changes
-              run: |
-                  UPSTREAM_BRANCH="${{ steps.detect_upstream_branch.outputs.upstream_branch }}"
-                  FORK_BRANCH="${{ steps.detect_fork_branch.outputs.fork_branch }}"
-                  git fetch origin $FORK_BRANCH
-                  CHANGES=$(git rev-list --count origin/$FORK_BRANCH..upstream/$UPSTREAM_BRANCH || echo "0")
-                  echo "changes_count=$CHANGES" >> $GITHUB_OUTPUT
-                  if [ "$CHANGES" -eq 0 ]; then
-                    echo "has_changes=false" >> $GITHUB_OUTPUT
-                  else
-                    echo "has_changes=true" >> $GITHUB_OUTPUT
-                  fi
-
-            - name: Stop if no changes
-              if: steps.check_changes.outputs.has_changes == 'false'
-              run: echo "✅ No upstream changes — Nothing to do."
-
             - name: Create sync branch
-              if: steps.check_changes.outputs.has_changes == 'true'
-              id: create_branch
               run: |
-                  BRANCH="sync-upstream-$(date +%Y-%m-%d)"
-                  echo "branch=$BRANCH" >> $GITHUB_OUTPUT
-                  git checkout -b "$BRANCH"
+                  git checkout -B upstream-sync upstream/main
 
-            - name: Merge upstream changes
-              if: steps.check_changes.outputs.has_changes == 'true'
+            - name: Push upstream-sync branch to fork
               run: |
-                  UPSTREAM_BRANCH="${{ steps.detect_upstream_branch.outputs.upstream_branch }}"
-                  git merge upstream/$UPSTREAM_BRANCH --no-edit || true
-                  git add .
-                  git commit -m "sync: merge upstream changes" || true
+                  git push -f origin upstream-sync
 
-            - name: Push branch to fork
-              if: steps.check_changes.outputs.has_changes == 'true'
+            - name: Create Pull Request
               run: |
-                  git push origin ${{ steps.create_branch.outputs.branch }}
-
-            - name: Open Pull Request in fork
-              if: steps.check_changes.outputs.has_changes == 'true'
-              uses: repo-sync/pull-request@v2
-              with:
-                  source_branch: ${{ steps.create_branch.outputs.branch }}
-                  destination_branch: main
-                  pr_title: "sync: Merge upstream changes"
-                  pr_body: "Automated sync from upstream."
-                  github_token: ${{ secrets.WORKFLOW_TOKEN }}
+                  gh pr create \
+                    --base main \
+                    --head upstream-sync \
+                    --title "Sync with upstream main" \
+                    --body "This PR syncs the fork with upstream main. Conflicts may be present and require manual resolution."
