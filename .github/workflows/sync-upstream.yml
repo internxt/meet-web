@@ -55,10 +55,6 @@ jobs:
                     echo "📦 Found $CHANGES commits to sync"
                   fi
 
-            - name: Wait for branch to become available
-              if: steps.check_changes.outputs.has_changes == 'true'
-              run: sleep 5
-
             - name: Create sync branch
               if: steps.check_changes.outputs.has_changes == 'true'
               id: create_branch
@@ -89,10 +85,9 @@ jobs:
               run: |
                   git push origin ${{ steps.create_branch.outputs.branch_name }}
 
-            - name: Create Pull Request
+            - name: Prepare PR body from template
               if: steps.check_changes.outputs.has_changes == 'true'
-              env:
-                  GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+              id: pr_body
               run: |
                   CONFLICT_NOTE=""
                   if [ "${{ steps.merge.outputs.merge_conflict }}" == "true" ]; then
@@ -102,27 +97,55 @@ jobs:
                   CHANGES_COUNT="${{ steps.check_changes.outputs.changes_count }}"
                   UPSTREAM_BRANCH="${{ steps.detect_branch.outputs.upstream_branch }}"
 
+                  # Create PR body
+                  cat > /tmp/pr_body.md << 'EOFTEMPLATE'
+                  ## Description
+
+                  Synchronizes the fork with upstream [jitsi/jitsi-meet](https://github.com/jitsi/jitsi-meet).
+
+                  **📦 Commits to sync:** CHANGES_COUNT_PLACEHOLDER from `upstream/UPSTREAM_BRANCH_PLACEHOLDER`
+
+                  CONFLICT_NOTE_PLACEHOLDER
+
+                  ## Related Issues
+
+                  N/A - Automated upstream synchronization
+
+                  ## Related Pull Requests
+
+                  - [jitsi/jitsi-meet](https://github.com/jitsi/jitsi-meet/commits/UPSTREAM_BRANCH_PLACEHOLDER)
+
+                  ## Checklist
+
+                  - [ ] Changes have been tested locally.
+                  - [ ] No new warnings or errors have been introduced.
+                  - [ ] SonarCloud issues have been reviewed and addressed.
+                  - [ ] Ensure no conflicts with Internxt-specific customizations.
+                  - [ ] Verify all custom features still work correctly.
+                  - [ ] QA Passed
+
+                  ## How Has This Been Tested?
+
+                  Run `npm run lint:ci && npm run tsc:ci && make dev` and test Internxt-specific features.
+
+                  ## Additional Notes
+
+                  🤖 Automatically created by the [sync-upstream workflow](.github/workflows/sync-upstream.yml).
+
+                  # Replace placeholders
+                  sed -i "s/CHANGES_COUNT_PLACEHOLDER/$CHANGES_COUNT/g" /tmp/pr_body.md
+                  sed -i "s/UPSTREAM_BRANCH_PLACEHOLDER/$UPSTREAM_BRANCH/g" /tmp/pr_body.md
+                  sed -i "s/SYNC_DATE_PLACEHOLDER/$(date +%Y-%m-%d)/g" /tmp/pr_body.md
+                  sed -i "s/CONFLICT_NOTE_PLACEHOLDER/$CONFLICT_NOTE/g" /tmp/pr_body.md
+
+            - name: Create Pull Request
+              if: steps.check_changes.outputs.has_changes == 'true'
+              env:
+                  GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+              run: |
                   gh pr create \
                     --title "sync: merge upstream changes from jitsi/jitsi-meet" \
-                    --body "## Upstream Sync - $(date +%Y-%m-%d)
-
-                  This PR synchronizes the fork with the upstream repository [jitsi/jitsi-meet](https://github.com/jitsi/jitsi-meet).
-
-                  **📦 Commits to sync:** $CHANGES_COUNT from \`upstream/$UPSTREAM_BRANCH\`
-
-                  $CONFLICT_NOTE
-
-                  ### Changes
-                  This PR includes all changes from the upstream repository since the last sync.
-
-                  ### Review Checklist
-                  - [ ] Review all changes from upstream
-                  - [ ] Ensure no conflicts with Internxt-specific customizations
-                  - [ ] Run tests to verify compatibility
-                  - [ ] Check that all custom features still work correctly
-
-                  ---
-                  🤖 This PR was automatically created by the [sync-upstream workflow](.github/workflows/sync-upstream.yml)" \
+                    --body-file /tmp/pr_body.md \
                     --base main \
                     --head ${{ steps.create_branch.outputs.branch_name }}
 
