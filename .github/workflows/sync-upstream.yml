@@ -33,7 +33,7 @@ jobs:
 
             - name: Create sync branch
               run: |
-                  git checkout -B upstream-sync upstream/main
+                  git checkout -B upstream-sync upstream/master
 
             - name: Push upstream-sync branch to fork
               run: |
