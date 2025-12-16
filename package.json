@@ -73,7 +73,7 @@
         "dropbox": "10.7.0",
         "filesize": "^11.0.2",
         "focus-visible": "5.1.0",
-        "glob": "11.0.3",
+        "glob": "11.1.0",
         "grapheme-splitter": "1.0.4",
         "hash-wasm": "=4.11.0",
         "i18n-iso-countries": "6.8.0",
