@@ -168,6 +168,13 @@ StateListenerRegistry.register(
                  }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
              });
 
+             conference.on(JitsiConferenceEvents.E2EE_CRYPTO_FAILED, () => {
+                 dispatch(showWarningNotification({
+                     titleKey: 'notify.cryptoTitle',
+                     descriptionKey: 'notify.cryptoFailed'
+                 }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+             });
+
              conference.on(JitsiConferenceEvents.E2EE_KEY_SYNC_AFTER_TIMEOUT, () => {
                  dispatch(showNotification({
                      titleKey: 'notify.encryptionKeySyncRestoredTitle',
