@@ -169,6 +169,7 @@ StateListenerRegistry.register(
              });
 
              conference.on(JitsiConferenceEvents.E2EE_CRYPTO_FAILED, () => {
+                 logger.debug(`E2EE: crypto failure detected`);
                  dispatch(showWarningNotification({
                      titleKey: 'notify.cryptoTitle',
                      descriptionKey: 'notify.cryptoFailed'
