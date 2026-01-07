@@ -1,6 +1,6 @@
 # Internxt Meet
 
-[![node](https://img.shields.io/badge/node-20-iron)](https://nodejs.org/download/release/latest-iron/)
+[![node](https://img.shields.io/badge/node-22-green)](https://nodejs.org/download/release/latest-v22.x/)
 [![React](https://img.shields.io/badge/React-18-blue)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green)](LICENSE)
@@ -24,7 +24,7 @@ Our development standards include:
 
 ### Prerequisites
 
-- Node.js 20.x or higher
+- Node.js 22.x or higher
 - yarn 1.x or higher
 
 ### Installation
