@@ -73,7 +73,7 @@
         "dropbox": "10.7.0",
         "filesize": "^11.0.2",
         "focus-visible": "5.1.0",
-        "glob": "11.0.3",
+        "glob": "11.1.0",
         "grapheme-splitter": "1.0.4",
         "hash-wasm": "=4.11.0",
         "i18n-iso-countries": "6.8.0",
@@ -236,7 +236,7 @@
         "webpack": "5.95.0",
         "webpack-bundle-analyzer": "4.4.2",
         "webpack-cli": "5.1.4",
-        "webpack-dev-server": "5.1.0"
+        "webpack-dev-server": "5.2.1"
     },
     "overrides": {
         "@xmldom/xmldom": "0.8.7"
