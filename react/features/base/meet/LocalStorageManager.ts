@@ -15,7 +15,6 @@ export class LocalStorageManager {
     private static _instance: LocalStorageManager;
 
     private static readonly KEYS = {
-        TOKEN: "xToken",
         NEW_TOKEN: "xNewToken",
         MNEMONIC: "xMnemonic",
         USER: "xUser",
@@ -107,20 +106,6 @@ export class LocalStorageManager {
      */
     public has(key: string): boolean {
         return localStorage.getItem(key) !== null;
-    }
-
-    /**
-     * Gets the authentication token
-     */
-    public getToken(): string | null | undefined {
-        return this.get<string>(LocalStorageManager.KEYS.TOKEN);
-    }
-
-    /**
-     * Sets the authentication token
-     */
-    public setToken(token: string): void {
-        this.set(LocalStorageManager.KEYS.TOKEN, token);
     }
 
     /**
@@ -224,20 +209,12 @@ export class LocalStorageManager {
 
     /**
      * Saves the session credentials
-     * @param token Token
      * @param newToken New token
      * @param mnemonic Mnemonic
      * @param user User information
      * @param subscription User subscription (optional)
      */
-    public saveCredentials(
-        token: string,
-        newToken: string,
-        mnemonic: string,
-        user: User,
-        subscription?: UserSubscription
-    ): void {
-        this.setToken(token);
+    public saveCredentials(newToken: string, mnemonic: string, user: User, subscription?: UserSubscription): void {
         this.setNewToken(newToken);
         this.setMnemonic(mnemonic);
         this.setUser(user);
@@ -251,7 +228,6 @@ export class LocalStorageManager {
      * Removes the session credentials
      */
     public clearCredentials(): void {
-        this.remove(LocalStorageManager.KEYS.TOKEN);
         this.remove(LocalStorageManager.KEYS.NEW_TOKEN);
         this.remove(LocalStorageManager.KEYS.MNEMONIC);
         this.remove(LocalStorageManager.KEYS.USER);

@@ -7,13 +7,10 @@ import PlanBadge from "../../../general/components/PlanBadge";
 import TextButton from "../../../general/components/TextButton";
 import { isMeetingEnabled } from "../../../general/store/meeting/selectors";
 import { getPlanName } from "../../../services/utils/payments.utils";
+import SuitePopover from "./SuitePopover";
 
 const Divider = () => (
-    <div
-        className="border-t mx-3"
-        // To force dark gray-5 color
-        style={{ borderColor: "rgb(58 58 59)", borderWidth: "1px" }}
-    />
+    <div className="border-t border-b mx-3 dark:border-white/25" />
 );
 
 /**
@@ -99,6 +96,11 @@ interface RightContentProps {
      * Whether the Meet feature is enabled
      */
     isMeetEnabled: boolean;
+
+    /**
+     * Optional plan name
+     */
+    planName?: string | null;
 }
 
 /**
@@ -120,6 +122,7 @@ const RightContent = React.memo(
         onLogout,
         onOpenSettings,
         isMeetEnabled,
+        planName: planNameProp,
     }: RightContentProps): JSX.Element => {
         const [showMenu, setShowMenu] = useState(false);
 
@@ -148,14 +151,16 @@ const RightContent = React.memo(
             setShowMenu(!showMenu);
         };
 
-        const planName = getPlanName(subscription);
+        const planName = planNameProp ?? getPlanName(subscription);
         const showUpgrade = !isMeetEnabled;
 
         return isLogged ? (
             <div className="flex space-x-2 flex-row">
                 {meetingButton}
 
-                <div className="relative dark">
+                <SuitePopover />
+
+                <div className="relative">
                     <button
                         ref={avatarRef}
                         onClick={toggleMenu}
@@ -173,14 +178,12 @@ const RightContent = React.memo(
 
                     <div
                         ref={menuRef}
-                        className={`absolute dark right-0 mt-2 min-w-56 w-max max-w-80 rounded-md shadow-lg z-50 overflow-hidden transition-all duration-200 ease-in-out transform origin-top-right
-                            ${
-                                showMenu
+                        className={`absolute right-0 mt-2 min-w-56 w-max max-w-80 rounded-md shadow-lg z-50 overflow-hidden ` +
+                            `transition-all duration-200 ease-in-out transform origin-top-right dark:bg-gray-5 border-gray-5
+                            ${showMenu
                                     ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
                                     : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
                             }`}
-                        // To force dark gray-5 color
-                        style={{ backgroundColor: "rgb(44 44 48)", borderColor: "rgb(58 58 59)", borderWidth: "1px" }}
                     >
                         <div className="py-1">
                             {/* user info */}
@@ -249,8 +252,7 @@ const RightContent = React.memo(
             </div>
         ) : (
             <div className="flex space-x-2 flex-row">
-                {/* TODO: Change to secondary variant when dark mode works properly */}
-                <Button variant="tertiary" onClick={onLogin}>
+                <Button variant="secondary" onClick={onLogin}>
                     {translate("meet.login.login")}
                 </Button>
                 <Button variant="primary" onClick={onSignUp}>
@@ -339,6 +341,11 @@ interface HeaderProps {
      * Handler for navigate to home page
      */
     navigateToHomePage: () => void;
+
+    /**
+     * Optional plan name
+     */
+    planName?: string | null;
 }
 
 /**
@@ -357,6 +364,7 @@ const Header = ({
     onOpenSettings,
     className = "z-50 py-3",
     navigateToHomePage,
+    planName,
 }: HeaderProps) => {
     const isMeetEnabled = useSelector(isMeetingEnabled);
     return (
@@ -376,6 +384,7 @@ const Header = ({
                     onLogout={onLogout}
                     onOpenSettings={onOpenSettings}
                     isMeetEnabled={isMeetEnabled}
+                    planName={planName}
                 />
             }
             className={className}

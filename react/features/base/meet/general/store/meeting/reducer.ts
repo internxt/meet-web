@@ -1,5 +1,11 @@
 import ReducerRegistry from "../../../../redux/ReducerRegistry";
-import { MeetingActionTypes, SET_CURRENT_ROOM, UPDATE_MEETING_CONFIG } from "./actionTypes";
+import {
+    MeetingActionTypes,
+    SET_CURRENT_ROOM,
+    SET_PLAN_NAME,
+    SET_USER_TIER,
+    UPDATE_MEETING_CONFIG
+} from "./actionTypes";
 import { MeetingState } from "./types";
 
 /**
@@ -9,6 +15,8 @@ const DEFAULT_STATE: MeetingState = {
     enabled: false,
     paxPerCall: 0,
     currentRoomId: null,
+    planName: null,
+    userTier: null,
 };
 
 /**
@@ -37,6 +45,20 @@ export const meetingReducer = (state: MeetingState = DEFAULT_STATE, action: Meet
             return {
                 ...state,
                 currentRoomId: action.payload.roomId,
+            };
+        }
+
+        case SET_PLAN_NAME: {
+            return {
+                ...state,
+                planName: action.payload.planName,
+            };
+        }
+
+        case SET_USER_TIER: {
+            return {
+                ...state,
+                userTier: action.payload.userTier,
             };
         }
 

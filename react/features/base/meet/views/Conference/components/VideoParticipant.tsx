@@ -1,11 +1,9 @@
 import { Avatar } from "@internxt/ui";
 import { Hand, MicrophoneSlash } from "@phosphor-icons/react";
 import clsx from "clsx";
-import React, { useMemo } from "react";
+import React from "react";
 import ConnectionIndicator from "../../../../../connection-indicator/components/web/ConnectionIndicator";
 import Video from "../../../../media/components/web/Video";
-import { isSafari } from "../../../general/utils/safariDetector";
-import { ConfigService } from "../../../services/config.service";
 import { useVideoEncoding } from "../../PreMeeting/containers/VideoEncodingToggle";
 import { VideoParticipantType } from "../types";
 
@@ -14,35 +12,44 @@ export type VideoParticipantProps = {
     flipX?: boolean;
     className?: string;
     translate: (key: string) => string;
+    isScreenShare?: boolean;
+    backgroundColor?: string;
+    relativePositioning?: boolean;
 };
 
-const VideoParticipant = ({ participant, className = "", flipX, translate }: VideoParticipantProps) => {
+const VideoParticipant = ({
+    participant,
+    className = "",
+    flipX,
+    translate,
+    isScreenShare = false,
+    backgroundColor = "",
+    relativePositioning,
+}: VideoParticipantProps) => {
     const { id, name, videoEnabled, audioMuted, videoTrack, local, dominantSpeaker, raisedHand, avatarSource } =
         participant;
 
-    const { isEncodingEnabled } = useVideoEncoding();
-    // Encoding will not be used for now, it has decoding problems and video lag. We will leave it set to false.
-    const encodeVideo = useMemo(() => {
-        if (isSafari()) {
-            return false;
-        }
-
-        return ConfigService.instance.isDevelopment() ? isEncodingEnabled : true;
-    }, [isEncodingEnabled]);
-
     return (
         <div
-            className={`flex aspect-square min-w-40 items-center justify-center rounded-[20px] overflow-hidden bg-gray-90 sm:aspect-video ${className}
-            ${dominantSpeaker ? "ring-4 ring-white" : ""}`}
+            className={`${relativePositioning ? "relative" : ""} flex ${
+                isScreenShare ? "" : "aspect-square sm:aspect-video"
+            } min-w-40 ${className} items-center justify-center rounded-[20px] overflow-hidden ${
+                !!backgroundColor ? backgroundColor : "bg-gray-90 dark:bg-gray-5"
+            }
+            ${dominantSpeaker && !isScreenShare ? "ring-4 ring-white" : ""}`}
             data-testid={`participant-${id}`}
         >
             {videoEnabled ? (
                 <Video
-                    videoTrack={{ jitsiTrack: videoTrack }}
-                    className={clsx("w-full h-full object-cover", flipX && local && "scale-x-[-1]")}
+                    videoTrack={isScreenShare ? videoTrack : { jitsiTrack: videoTrack }}
+                    className={clsx(
+                        "w-full h-full",
+                        isScreenShare ? "object-contain" : "object-cover",
+                        flipX && local && !isScreenShare && "scale-x-[-1]"
+                    )}
                     key={`video-${id}`}
                     // Set to false due to decoding issues and video lag
-                    encodeVideo={false}
+                    encodeVideo={true}
                 />
             ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gray-800">
@@ -51,8 +58,8 @@ const VideoParticipant = ({ participant, className = "", flipX, translate }: Vid
             )}
 
             {/* status items */}
-            <div className="absolute bottom-2 left-2 px-3 py-2 bg-black/50 flex justify-bedtween items-center space-x-2 rounded-[20px]">
-                <div className="text-white truncate max-w-full">
+            <div className="absolute bottom-2 left-2 px-3 py-2 bg-black/70 backdrop-blur-sm flex justify-between items-center space-x-2 rounded-[20px]">
+                <div className="text-white text-sm font-medium truncate max-w-full">
                     {name} {local ? ` (${translate("meet.meeting.videoParticipants.you")})` : ""}
                 </div>
                 <div className="flex space-x-2 justify-center items-center">

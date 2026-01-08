@@ -14,7 +14,7 @@ import { User } from "../user/types";
 export const initializeAuth = (): ThunkAction<void, IReduxState, unknown, AnyAction> => {
     return (dispatch) => {
         const localStorageManager = LocalStorageManager.instance;
-        const token = localStorageManager.getToken();
+        const token = localStorageManager.getNewToken();
         const isUserAuthenticated = !!token;
 
         dispatch({
@@ -31,13 +31,12 @@ export const initializeAuth = (): ThunkAction<void, IReduxState, unknown, AnyAct
  * Action creator for successful login
  *
  * @param {object} credentials - User credentials from successful login
- * @param {string} credentials.token - User's authentication token
  * @param {string} credentials.newToken - User's new authentication token
  * @param {string} credentials.mnemonic - User's mnemonic
  * @param {object} credentials.user - User's information
  * @returns {object} Action object
  */
-export const loginSuccess = (credentials: { token: string; newToken: string; mnemonic: string; user: User }) => {
+export const loginSuccess = (credentials: { newToken: string; mnemonic: string; user: User }) => {
     return {
         type: AUTH_ACTIONS.LOGIN_SUCCESS,
         payload: {

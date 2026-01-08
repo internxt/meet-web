@@ -1,3 +1,5 @@
+import { Tier } from "@internxt/sdk/dist/drive/payments/types/tiers";
+
 /**
  * Updates the meeting configuration
  */
@@ -7,6 +9,16 @@ export const UPDATE_MEETING_CONFIG = "UPDATE_MEETING_CONFIG";
  * Sets the current active meeting room ID
  */
 export const SET_CURRENT_ROOM = "SET_CURRENT_ROOM";
+
+/**
+ * Sets the user's plan name
+ */
+export const SET_PLAN_NAME = "SET_PLAN_NAME";
+
+/**
+ * Sets the user's tier
+ */
+export const SET_USER_TIER = "SET_USER_TIER";
 
 /**
  * Action type definitions
@@ -26,4 +38,18 @@ interface SetCurrentRoomAction {
     };
 }
 
-export type MeetingActionTypes = UpdateMeetingConfigAction | SetCurrentRoomAction;
+interface SetPlanNameAction {
+    type: typeof SET_PLAN_NAME;
+    payload: {
+        planName: string | null;
+    };
+}
+
+interface SetUserTierAction {
+    type: typeof SET_USER_TIER;
+    payload: {
+        userTier: Tier | null;
+    };
+}
+
+export type MeetingActionTypes = UpdateMeetingConfigAction | SetCurrentRoomAction | SetPlanNameAction | SetUserTierAction;

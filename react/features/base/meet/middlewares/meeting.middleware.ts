@@ -1,7 +1,7 @@
 import { AnyAction, Dispatch, Middleware } from "redux";
 
 import MiddlewareRegistry from "../../redux/MiddlewareRegistry";
-import { updateMeetingConfig } from "../general/store/meeting/actions";
+import { setPlanName, setUserTier, updateMeetingConfig } from "../general/store/meeting/actions";
 import { MEETING_REDUCER } from "../general/store/meeting/reducer";
 import { updateUser } from "../general/store/user/actions";
 import { LocalStorageManager, STORAGE_KEYS } from "../LocalStorageManager";
@@ -83,7 +83,7 @@ export const meetingConfigMiddleware: Middleware = (store) => (next) => (action)
 };
 
 /**
- * Updates the user's meeting configuration
+ * Updates the user's meeting configuration and plan name
  *
  * @param dispatch - Redux dispatch function
  * @param force - Force update even if the interval hasn't passed
@@ -97,13 +97,18 @@ export const updateUserMeetingConfig = async (dispatch: Dispatch<AnyAction>, for
 
         if (force || hasExpiredVerificationInterval) {
             try {
-                const meetingConfig = await PaymentsService.instance.checkMeetAvailability();
-                const { enabled, paxPerCall } = meetingConfig;
+                const userTier = await PaymentsService.instance.getUserTier();
+
+                const { enabled, paxPerCall } = userTier.featuresPerService["meet"];
+                const planName = userTier.label;
+
                 dispatch(updateMeetingConfig({ enabled, paxPerCall }));
+                dispatch(setPlanName(planName));
+                dispatch(setUserTier(userTier));
 
                 LocalStorageManager.instance.set(STORAGE_KEYS.LAST_CONFIG_CHECK, now);
 
-                console.info("Meeting configuration updated successfully");
+                console.info("Meeting configuration and plan name updated successfully");
             } catch (error) {
                 console.error("Error checking meeting configuration", error);
             }
@@ -142,10 +147,11 @@ export const refreshUserData = async (dispatch: Dispatch<AnyAction>, force: bool
                     ...currentUser,
                     ...refreshResponse.user,
                     createdAt: currentUser.createdAt,
+                    privateKey: refreshResponse.user.keys.ecc.privateKey,
+                    publicKey: refreshResponse.user.keys.ecc.publicKey,
                 };
 
                 LocalStorageManager.instance.saveCredentials(
-                    refreshResponse.token,
                     refreshResponse.newToken,
                     updatedUser.mnemonic,
                     updatedUser
@@ -166,7 +172,7 @@ export const refreshUserData = async (dispatch: Dispatch<AnyAction>, force: bool
  * Checks if token should be refreshed (expires in next 24 hours)
  */
 const shouldRefreshToken = (): boolean => {
-    const userToken = LocalStorageManager.instance.getToken();
+    const userToken = LocalStorageManager.instance.getNewToken();
     if (!userToken) return true;
 
     try {
