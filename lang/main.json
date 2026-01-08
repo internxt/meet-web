@@ -1091,7 +1091,7 @@
         "encryptionKeySyncFailed": "The encryption key synchronization has failed. It is recommended that you leave the meeting and rejoin to restore secure communication.",
         "encryptionKeySyncFailedTitle": "Encryption Sync Failed",
         "cryptoFailedTitle": "Cryptographic operation failed",
-        "cryptoFailed": "Cryptographic operation has failed. You cannot access video or audio of the meeting. It is recommended that you restart the browser.",
+        "cryptoFailed": "Cryptographic operation has failed. You cannot access video or audio of the meeting. It is recommended that you restart the browser. If you are the meeting organizer, recreate it.",
         "encryptionKeySyncRestored": "The encryption key synchronization has been successfully restored. Your secure communication is now active.",
         "encryptionKeySyncRestoredTitle": "Encryption Restored"
     },
