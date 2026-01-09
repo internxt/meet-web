@@ -31,6 +31,7 @@ interface IProps extends AbstractProps {
  */
 const styles = (theme: Theme) => {
     return {
+        root: {},
         record: {
             background: theme.palette.actionDanger
         }
