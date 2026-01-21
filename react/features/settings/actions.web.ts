@@ -37,6 +37,7 @@ import {
     getProfileTabProps,
     getShortcutsTabProps,
 } from "./functions.web";
+import logger from "./logger";
 
 /**
  * Opens {@code LogoutDialog}.
@@ -52,44 +53,46 @@ export function openLogoutDialog() {
 
         const { conference } = state["features/base/conference"];
         const { jwt } = state["features/base/jwt"];
-        const _room = state["features/base/conference"].room ?? "";
+        const room = state["features/base/conference"].room ?? "";
 
-        dispatch(openDialog('LogoutDialog', LogoutDialog, {
-            onLogout() {
-                if (isTokenAuthEnabled(config) && config.tokenAuthUrlAutoRedirect && jwt) {
+        dispatch(
+            openDialog("LogoutDialog", LogoutDialog, {
+                onLogout: () => {
+                    if (isTokenAuthEnabled(config) && config.tokenAuthUrlAutoRedirect && jwt) {
+                        dispatch(setTokenAuthUrlSuccess(false));
+                    }
 
-                    // user is logging out remove auto redirect indication
-                    dispatch(setTokenAuthUrlSuccess(false));
-                }
-
-                if (logoutUrl && browser.isElectron()) {
-                    const url = appendURLHashParam(logoutUrl, 'electron', 'true');
-
-                    window.open(url, '_blank');
-                    dispatch(hangup(true));
-                } else {
                     if (logoutUrl) {
-                        window.location.href = logoutUrl;
+                        if (browser.isElectron()) {
+                            const url = appendURLHashParam(logoutUrl, "electron", "true");
+                            window.open(url, "_blank");
+
+                            if (room) {
+                                dispatch(hangup(true, room));
+                            } else {
+                                dispatch(hangup(true));
+                            }
+                        } else {
+                            window.location.href = logoutUrl;
+                        }
 
                         return;
                     }
 
-                    if (logoutUrl && browser.isElectron()) {
-                        const url = appendURLHashParam(logoutUrl, "electron", "true");
-
-                        window.open(url, "_blank");
-
-                        if (_room) dispatch(hangup(true, _room));
-                    } else {
-                        if (logoutUrl) {
-                            window.location.href = logoutUrl;
-
-                            return;
+                    if (room && conference) {
+                        if (conference.room?.xmpp?.moderator?.logout) {
+                            conference.room.xmpp.moderator.logout(() => {
+                                dispatch(hangup(true, room));
+                            });
+                        } else {
+                            dispatch(hangup(true, room));
                         }
-                        if (_room) conference?.room.xmpp.moderator.logout(() => dispatch(hangup(true, _room)));
+                    } else {
+                        logger.warn("No room available during logout");
+                        dispatch(hangup(true));
                     }
                 },
-            })
+            }),
         );
     };
 }

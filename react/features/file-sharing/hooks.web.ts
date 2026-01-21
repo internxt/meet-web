@@ -4,9 +4,10 @@ import FileSharingButton from './components/web/FileSharingButton';
 import { isFileSharingEnabled } from './functions.any';
 
 const fileSharing = {
-    key: 'filesharing',
+    key: "filesharing",
     Content: FileSharingButton,
-    group: 2
+    group: 2,
+    display: true,
 };
 
 /**

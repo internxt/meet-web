@@ -40,6 +40,7 @@ import ConferenceControlsWrapper from "../../../base/meet/views/Conference/conta
 import VideoGalleryWrapper from "../../../base/meet/views/Conference/containers/VideoGalleryWrapper";
 import { setConferenceViewMode } from "../../../filmstrip/actions.web";
 import { ViewMode } from "../../../filmstrip/reducer";
+import LargeVideoWeb from "../../../large-video/components/LargeVideo.web";
 import { showVisitorsQueue } from "../../../visitors/functions";
 
 /**
@@ -238,30 +239,27 @@ class Conference extends AbstractConference<IProps, any> {
         if (_reducedUI) {
             return (
                 <div
-                    id = 'layout_wrapper'
-                    onMouseEnter = { this._onMouseEnter }
-                    onMouseLeave = { this._onMouseLeave }
-                    onMouseMove = { this._onMouseMove }
-                    ref = { this._setBackground }>
+                    id="layout_wrapper"
+                    onMouseEnter={this._onMouseEnter}
+                    onMouseLeave={this._onMouseLeave}
+                    onMouseMove={this._onMouseMove}
+                    ref={this._setBackground}
+                >
                     <Chat />
                     <div
-                        className = { _layoutClassName }
-                        id = 'videoconference_page'
-                        onMouseMove = { isMobileBrowser() ? undefined : this._onShowToolbar }>
+                        className={_layoutClassName}
+                        id="videoconference_page"
+                        onMouseMove={isMobileBrowser() ? undefined : this._onShowToolbar}
+                    >
                         <ConferenceInfo />
                         <Notice />
-                        <div
-                            id = 'videospace'
-                            onTouchStart = { this._onVideospaceTouchStart }>
-                            <LargeVideo />
+                        <div id="videospace" onTouchStart={this._onVideospaceTouchStart}>
+                            <LargeVideoWeb />
                         </div>
-                        <span
-                            aria-level = { 1 }
-                            className = 'sr-only'
-                            role = 'heading'>
-                            { t('toolbar.accessibilityLabel.heading') }
+                        <span aria-level={1} className="sr-only" role="heading">
+                            {t("toolbar.accessibilityLabel.heading")}
                         </span>
-                        <Toolbox />
+                        {/* <Toolbox /> */}
                     </div>
                 </div>
             );
