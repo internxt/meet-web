@@ -157,7 +157,7 @@ StateListenerRegistry.register(
         if (conference) {
              conference.on(JitsiConferenceEvents.E2EE_SAS_AVAILABLE, (sas: object) => {
                if (ConfigService.instance.isDevelopment()) {
-                   dispatch(openDialog(ParticipantVerificationSASDialog, { sas }));
+                   dispatch(openDialog('ParticipantVerificationDialog', ParticipantVerificationSASDialog, { sas }));
                }
              });
 
@@ -167,6 +167,10 @@ StateListenerRegistry.register(
                      descriptionKey: 'notify.encryptionKeySyncFailed'
                  }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
              });
+            conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_READY, (pId: string, sas: object) => {
+                // Added our ParticipantVerificationSASDialog
+                dispatch(openDialog("ParticipantVerificationDialog", ParticipantVerificationSASDialog, { pId, sas }));
+            });
 
              conference.on(JitsiConferenceEvents.E2EE_CRYPTO_FAILED, () => {
                  logger.debug(`E2EE: crypto failure detected`);
