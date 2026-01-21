@@ -25,7 +25,7 @@ import {
     toggleChat
 } from '../../actions.web';
 import { CHAT_SIZE, ChatTabs, OPTION_GROUPCHAT, SMALL_WIDTH_THRESHOLD } from '../../constants';
-import { getChatMaxSize } from '../../functions';
+import { getChatMaxSize, getFocusedTab, isChatDisabled } from '../../functions';
 import { IChatProps as AbstractProps } from '../../types';
 
 import ChatHeader from './ChatHeader';
@@ -42,12 +42,17 @@ interface IProps extends AbstractProps {
     /**
      * The currently focused tab.
      */
-    _focusedTab: ChatTabs;
+    _focusedTab?: ChatTabs;
 
     /**
      * True if the CC tab is enabled and false otherwise.
      */
     _isCCTabEnabled: boolean;
+
+    /**
+     * True if chat is disabled.
+     */
+    _isChatDisabled: boolean;
 
     /**
      * True if file sharing tab is enabled.
@@ -73,6 +78,11 @@ interface IProps extends AbstractProps {
      * Whether the user is currently resizing the chat panel.
      */
     _isResizing: boolean;
+
+    /**
+     * The indicator which determines whether the UI is reduced.
+     */
+    _reducedUI: boolean;
 
     /**
      * Whether or not to block chat access with a nickname input form.
@@ -242,10 +252,12 @@ const Chat = ({
     _isOpen,
     _isPollsEnabled,
     _isCCTabEnabled,
+    _isChatDisabled,
     _isFileSharingTabEnabled,
     _focusedTab,
     _isResizing,
     _messages,
+    _reducedUI,
     _unreadMessagesCount,
     _unreadPollsCount,
     _unreadFilesCount,
@@ -254,6 +266,11 @@ const Chat = ({
     dispatch,
     t
 }: IProps) => {
+    // If no tabs are available, don't render the chat panel at all.
+    if (_isChatDisabled && !_isPollsEnabled && !_isCCTabEnabled && !_isFileSharingTabEnabled) {
+        return null;
+    }
+
     const { classes, cx } = useStyles({ _isResizing, width: _width });
     const [ isMouseDown, setIsMouseDown ] = useState(false);
     const [ mousePosition, setMousePosition ] = useState<number | null>(null);
@@ -313,8 +330,6 @@ const Chat = ({
 
         // Disable text selection during resize
         document.body.style.userSelect = 'none';
-
-        console.log('Chat resize: Mouse down', { clientX: e.clientX, initialWidth: _width });
     }, [ _width, dispatch ]);
 
     /**
@@ -330,8 +345,6 @@ const Chat = ({
             // Restore cursor and text selection
             document.body.style.cursor = '';
             document.body.style.userSelect = '';
-
-            console.log('Chat resize: Mouse up');
         }
     }, [ isMouseDown, dispatch ]);
 
@@ -342,7 +355,6 @@ const Chat = ({
      * @returns {void}
      */
     const onChatResize = useCallback(throttle((e: MouseEvent) => {
-        // console.log('Chat resize: Mouse move', { clientX: e.clientX, isMouseDown, mousePosition, _width });
         if (isMouseDown && mousePosition !== null && dragChatWidth !== null) {
             // For chat panel resizing on the left edge:
             // - Dragging left (decreasing X coordinate) should make the panel wider
@@ -471,9 +483,9 @@ const Chat = ({
             <>
                 {renderNotificationBanner()}
                 {/* {renderTabs()} */}
-                <div
-                    aria-labelledby={ChatTabs.CHAT}
-                    className={cx(
+                {!_isChatDisabled && (<div
+                    aria-labelledby = { ChatTabs.CHAT }
+                    className = { cx(
                         classes.chatPanel,
                         !_isPollsEnabled && !_isCCTabEnabled && !_isFileSharingTabEnabled && classes.chatPanelNoTabs,
                         _focusedTab !== ChatTabs.CHAT && "hide"
@@ -545,8 +557,18 @@ const Chat = ({
      * @returns {ReactElement}
      */
     function renderTabs() {
-        let tabs = [
-            {
+        // The only way focused tab will be undefined is when no tab is enabled. Therefore this function won't be
+        // executed because Chat component won't render anything. This should never happen but adding the check
+        // here to make TS happy (when passing the _focusedTab in the selected prop for Tabs).
+        if (!_focusedTab) {
+            return null;
+        }
+
+        let tabs = [];
+
+        // Only add chat tab if chat is not disabled.
+        if (!_isChatDisabled) {
+            tabs.push({
                 accessibilityLabel: t('chat.tabs.chat'),
                 countBadge:
                     _focusedTab !== ChatTabs.CHAT && _unreadMessagesCount > 0 ? _unreadMessagesCount : undefined,
@@ -554,8 +576,8 @@ const Chat = ({
                 controlsId: `${ChatTabs.CHAT}-panel`,
                 icon: IconMessage,
                 title: t('chat.tabs.chat')
-            }
-        ];
+            });
+        }
 
         if (_isPollsEnabled) {
             tabs.push({
@@ -612,6 +634,10 @@ const Chat = ({
         );
     }
 
+    if (_reducedUI) {
+        return null;
+    }
+
     return (
         _isOpen ? <div
             className = { classes.container }
@@ -626,6 +652,8 @@ const Chat = ({
             {_showNamePrompt
                 ? <DisplayNameForm
                     isCCTabEnabled = { _isCCTabEnabled }
+                    isChatDisabled = { _isChatDisabled }
+                    isFileSharingEnabled = { _isFileSharingTabEnabled }
                     isPollsEnabled = { _isPollsEnabled } />
                 : renderChat()}
             {/* <div
@@ -664,18 +692,21 @@ const Chat = ({
  * }}
  */
 function _mapStateToProps(state: IReduxState, _ownProps: any) {
-    const { isOpen, focusedTab, messages, unreadMessagesCount, unreadFilesCount, width, isResizing } = state['features/chat'];
+    const { isOpen, messages, unreadMessagesCount, unreadFilesCount, width, isResizing } = state['features/chat'];
     const { unreadPollsCount } = state['features/polls'];
     const _localParticipant = getLocalParticipant(state);
+    const { reducedUI } = state['features/base/responsive-ui'];
 
     return {
         _isModal: window.innerWidth <= SMALL_WIDTH_THRESHOLD,
         _isOpen: isOpen,
         _isPollsEnabled: !arePollsDisabled(state),
         _isCCTabEnabled: isCCTabEnabled(state),
+        _isChatDisabled: isChatDisabled(state),
         _isFileSharingTabEnabled: isFileSharingEnabled(state),
-        _focusedTab: focusedTab,
+        _focusedTab: getFocusedTab(state),
         _messages: messages,
+        _reducedUI: reducedUI,
         _unreadMessagesCount: unreadMessagesCount,
         _unreadPollsCount: unreadPollsCount,
         _unreadFilesCount: unreadFilesCount,
