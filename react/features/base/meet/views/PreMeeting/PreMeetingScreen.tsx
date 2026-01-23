@@ -20,7 +20,7 @@ import { updateSettings } from "../../../settings/actions";
 import { getDisplayName } from "../../../settings/functions.web";
 import { withPixelLineHeight } from "../../../styles/functions.web";
 import MeetingButton from "../../general/containers/MeetingButton";
-import { loginSuccess, logout } from "../../general/store/auth/actions";
+import { initializeAuth, loginSuccess, logout } from "../../general/store/auth/actions";
 import { setCreateRoomError } from "../../general/store/errors/actions";
 import { getPlanName as getPlanNameSelector } from "../../general/store/meeting/selectors";
 import { useLocalStorage } from "../../LocalStorageManager";
@@ -230,7 +230,7 @@ const PreMeetingScreen = ({
                 {skipPrejoinButton}
             </>
         ),
-        [_buttons, skipPrejoinButton]
+        [_buttons, skipPrejoinButton],
     );
 
     const warningsSection = useMemo(
@@ -241,7 +241,7 @@ const PreMeetingScreen = ({
                 {showRecordingWarning && <RecordingWarning />}
             </>
         ),
-        [showUnsafeRoomWarning, showDeviceStatus, showRecordingWarning]
+        [showUnsafeRoomWarning, showDeviceStatus, showRecordingWarning],
     );
 
     const getUsersInMeeting = async () => {
@@ -252,6 +252,8 @@ const PreMeetingScreen = ({
     };
 
     useEffect(() => {
+        dispatch(initializeAuth());
+
         if (meetingUsersData.length === 0) {
             getUsersInMeeting();
         }
@@ -332,14 +334,13 @@ const PreMeetingScreen = ({
                     }}
                     onLogout={onLogout}
                     meetingButton={
-                        isInNewMeeting ? (
-                            <MeetingButton
-                                onNewMeeting={handleNewMeeting}
-                                translate={t}
-                                loading={isCreatingMeeting}
-                                className="w-full sm:w-auto"
-                            />
-                        ) : null
+                        <MeetingButton
+                            onNewMeeting={handleNewMeeting}
+                            translate={t}
+                            loading={isCreatingMeeting}
+                            className="w-full sm:w-auto"
+                            displayUpgradeButton={isInNewMeeting}
+                        />
                     }
                     navigateToHomePage={navigateToHomePage}
                     onOpenSettings={() => dispatch(openSettingsDialog(undefined, true))}
@@ -414,7 +415,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { hiddenPremeetingButtons } = state["features/base/config"];
     const { toolbarButtons } = state["features/toolbox"];
     const premeetingButtons = (ownProps.thirdParty ? THIRD_PARTY_PREJOIN_BUTTONS : PREMEETING_BUTTONS).filter(
-        (b: any) => !(hiddenPremeetingButtons || []).includes(b)
+        (b: any) => !(hiddenPremeetingButtons || []).includes(b),
     );
     const { premeetingBackground } = state["features/dynamic-branding"];
     const userName = getDisplayName(state);
