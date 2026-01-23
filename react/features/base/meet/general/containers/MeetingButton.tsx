@@ -56,7 +56,7 @@ const DEFAULT_PROPS = {
 /**
  * Display New Meeting button or upgrade button based on user's meeting feature availability.
  */
-export const MeetingButton: React.FC<MeetingButtonProps> = ({
+const MeetingButton: React.FC<MeetingButtonProps> = ({
     onNewMeeting,
     translate,
     loading = DEFAULT_PROPS.loading,
