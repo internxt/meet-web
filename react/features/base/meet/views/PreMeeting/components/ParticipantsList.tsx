@@ -20,9 +20,9 @@ const ParticipantsList = ({ participants, translate }: ParticipantsListProps) =>
             </span>
             <div className="flex items-center">
                 <div className="flex -space-x-3">
-                    {participants.map((participant, index) => (
+                    {participants.map((participant) => (
                         <div
-                            key={index}
+                            key={participant.userId}
                             className="relative rounded-full bg-gray-90 dark:bg-gray-1 border border-white/15"
                         >
                             <Avatar
