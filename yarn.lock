@@ -4873,9 +4873,9 @@
     undici-types "~7.16.0"
 
 "@types/node@>=13.7.0":
-  version "25.0.3"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-25.0.3.tgz#79b9ac8318f373fbfaaf6e2784893efa9701f269"
-  integrity sha512-W609buLVRVmeW693xKfzHeIV6nJGGz98uCPfeXI1ELMLXVeKYZ9m15fAMSaUPBHYLGFsVRcMmSCksQOrZV9BYA==
+  version "25.0.10"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-25.0.10.tgz#4864459c3c9459376b8b75fd051315071c8213e7"
+  integrity sha512-zWW5KPngR/yvakJgGOmZ5vTBemDoSqF3AcV/LrO5u5wTWyEAVVh+IT39G4gtyAkh3CtTZs8aX/yRM82OfzHJRg==
   dependencies:
     undici-types "~7.16.0"
 
@@ -11080,9 +11080,9 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-"lib-jitsi-meet@https://github.com/internxt/lib-jitsi-meet/releases/download/v.0.0.18/lib-jitsi-meet-0.0.18.tgz":
-  version "0.0.18"
-  resolved "https://github.com/internxt/lib-jitsi-meet/releases/download/v.0.0.18/lib-jitsi-meet-0.0.18.tgz#e1ad788fe11fe6f4b7d97b3d7d0652bf017a332d"
+"lib-jitsi-meet@https://github.com/internxt/lib-jitsi-meet/releases/download/v.0.0.19/lib-jitsi-meet-0.0.19.tgz":
+  version "0.0.19"
+  resolved "https://github.com/internxt/lib-jitsi-meet/releases/download/v.0.0.19/lib-jitsi-meet-0.0.19.tgz#6c65ae06fc25e75a57922675ab1aaca450187911"
   dependencies:
     "@hexagon/base64" "^2.0.4"
     "@jitsi/js-utils" "^2.6.7"
