@@ -38,6 +38,7 @@ import { DEFAULT_STATE } from "../../../../known-domains/reducer";
 import PersistenceRegistry from "../../../../redux/PersistenceRegistry";
 import { setCreateRoomError, setJoinRoomError } from "../../../general/store/errors/actions";
 import { isNewMeetingFlow } from "../../../services/sessionStorage.service";
+import PrivateMeetingBanner from "../../../general/components/PrivateMeetingBanner";
 import ConferenceControlsWrapper from "./ConferenceControlsWrapper";
 import VideoGalleryWrapper from "./VideoGalleryWrapper";
 
@@ -102,6 +103,9 @@ interface IProps extends AbstractProps, WithTranslation {
 class Conference extends AbstractConference<IProps, any> {
     _originalOnMouseMove: Function;
     _originalOnShowToolbar: Function;
+    override state = {
+        isBannerVisible: true,
+    };
 
     _onSetVideoModeClicked = (newMode: Mode) => {
         this.props.dispatch(setConferenceViewMode(newMode));
@@ -192,6 +196,10 @@ class Conference extends AbstractConference<IProps, any> {
                         <Notice />
                         <div onTouchStart={this._onVidespaceTouchStart} className="flex-1 flex flex-col">
                             <Header mode={viewMode} translate={t} onSetModeClicked={this._onSetVideoModeClicked} />
+                            <PrivateMeetingBanner
+                                isVisible={this.state.isBannerVisible}
+                                onClose={() => this.setState({ isBannerVisible: false })}
+                            />
                             <div className="flex-1 flex justify-center items-center">
                                 {/* <LargeVideoWeb /> */}
                                 <VideoGalleryWrapper videoMode={viewMode} />
