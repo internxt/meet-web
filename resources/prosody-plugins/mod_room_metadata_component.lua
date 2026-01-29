@@ -151,7 +151,7 @@ function on_message(event)
     local room = get_room_from_jid(room_jid_match_rewrite(roomJid));
 
     if not room then
-        module:log('warn', 'No room found found for %s/%s',
+        module:log('warn', 'No room found for %s/%s',
                 session.jitsi_web_query_prefix, session.jitsi_web_query_room);
         return false;
     end
@@ -193,7 +193,7 @@ function on_message(event)
     if not table_equals(old_value, jsonData.data) then
         room.jitsiMetadata[jsonData.key] = jsonData.data;
 
-        module:log('info', 'Мetadata key "%s" updated by %s in room:%s,meeting_id:%s', jsonData.key, from, room.jid, room._data.meetingId);
+        module:log('info', 'Metadata key "%s" updated by %s in room:%s,meeting_id:%s', jsonData.key, from, room.jid, room._data.meetingId);
         broadcastMetadata(room, getMetadataJSON(room));
 
         -- fire and event for the change

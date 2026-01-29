@@ -96,6 +96,11 @@ function normalizeCurrentLanguage(language: string) {
         return;
     }
 
+    // First check if the language code exists as-is (e.g., 'zh-CN', 'fr-CA')
+    if (LANGUAGES.includes(language)) {
+        return language;
+    }
+
     const [ country, lang ] = language.split('-');
     const jitsiNormalized = `${country}${lang ?? ''}`;
 
@@ -157,12 +162,12 @@ export function getModeratorTabProps(stateful: IStateful) {
     } = state['features/base/conference'];
     const { followMeEnabled, followMeRecorderEnabled } = state['features/follow-me'];
     const { groupChatWithPermissions } = state['features/chat'];
-    const { disableReactionsModeration } = state['features/base/config'];
+    const { showChatPermissionsModeratorSetting, disableReactionsModeration } = state['features/base/config'];
     const followMeActive = isFollowMeActive(state);
     const followMeRecorderActive = isFollowMeRecorderActive(state);
     const showModeratorSettings = shouldShowModeratorSettings(state);
     const conferenceMetadata = conference?.getMetadataHandler()?.getMetadata();
-    const disableChatWithPermissions = !conferenceMetadata?.allownersEnabled;
+    const hideChatWithPermissions = !showChatPermissionsModeratorSetting || conferenceMetadata?.allownersEnabled;
     const isAudioModerationEnabled = isEnabledFromState(MEDIA_TYPE.AUDIO, state);
     const isVideoModerationEnabled = isEnabledFromState(MEDIA_TYPE.VIDEO, state);
 
@@ -172,12 +177,12 @@ export function getModeratorTabProps(stateful: IStateful) {
         videoModerationEnabled: isVideoModerationEnabled,
         chatWithPermissionsEnabled: Boolean(groupChatWithPermissions),
         showModeratorSettings: Boolean(conference && showModeratorSettings),
-        disableChatWithPermissions: Boolean(disableChatWithPermissions),
         disableReactionsModeration: Boolean(disableReactionsModeration),
         followMeActive: Boolean(conference && followMeActive),
         followMeEnabled: Boolean(conference && followMeEnabled),
         followMeRecorderActive: Boolean(conference && followMeRecorderActive),
         followMeRecorderEnabled: Boolean(conference && followMeRecorderEnabled),
+        hideChatWithPermissions: Boolean(hideChatWithPermissions),
         startReactionsMuted: Boolean(conference && startReactionsMuted),
         startAudioMuted: Boolean(conference && startAudioMutedPolicy),
         startVideoMuted: Boolean(conference && startVideoMutedPolicy)
