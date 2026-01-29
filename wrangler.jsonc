@@ -1,0 +1,7 @@
+{
+    "name": "meet-web",
+    "compatibility_date": "2026-01-29",
+    "assets": {
+        "not_found_handling": "single-page-application",
+    },
+}
