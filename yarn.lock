@@ -11082,7 +11082,7 @@ levn@^0.4.1:
 
 "lib-jitsi-meet@https://github.com/internxt/lib-jitsi-meet/releases/download/v.0.0.19/lib-jitsi-meet-0.0.19.tgz":
   version "0.0.19"
-  resolved "https://github.com/internxt/lib-jitsi-meet/releases/download/v.0.0.19/lib-jitsi-meet-0.0.19.tgz#28368321870dfc9528a926ab3b5d3abf3f733cef"
+  resolved "https://github.com/internxt/lib-jitsi-meet/releases/download/v.0.0.19/lib-jitsi-meet-0.0.19.tgz#d719d23bcef69d98f4b23e325fc61b13a8c101e7"
   dependencies:
     "@hexagon/base64" "^2.0.4"
     "@jitsi/js-utils" "^2.6.7"
