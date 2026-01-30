@@ -230,25 +230,6 @@ function getConfig(options = {}) {
                       }),
                   ]
                 : [],
-            splitChunks: {
-                chunks: "all",
-                maxInitialRequests: Infinity,
-                minSize: 20000,
-                cacheGroups: {
-                    vendor: {
-                        test: /[\\/]node_modules[\\/]/,
-                        name: "vendor",
-                        chunks: "all",
-                        priority: 10,
-                    },
-                    common: {
-                        name: "common",
-                        minChunks: 2,
-                        chunks: "all",
-                        priority: 5,
-                    },
-                },
-            },
         },
         output: {
             filename: `[name]${isProduction ? ".min" : ""}.js`,
