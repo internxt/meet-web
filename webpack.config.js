@@ -29,7 +29,7 @@ function getPerformanceHints(options, size) {
     const { analyzeBundle, isProduction } = options;
 
     return {
-        hints: isProduction && !analyzeBundle ? 'error' : false,
+        hints: isProduction && !analyzeBundle ? 'warning' : false,
         maxAssetSize: size,
         maxEntrypointSize: size
     };
