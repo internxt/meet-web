@@ -20,7 +20,7 @@ ifeq ($(OS),Windows_NT)
 	WEBPACK = .\node_modules\.bin\webpack --progress
 	WEBPACK_DEV_SERVER = .\node_modules\.bin\webpack serve --mode development --progress
 else
-	WEBPACK = ./node_modules/.bin/webpack-cli --progress
+	WEBPACK = ./node_modules/.bin/webpack --progress
 	WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack serve --mode development --progress
 endif
 
@@ -48,22 +48,17 @@ deploy-init:
 deploy-appbundle:
 	cp \
 		$(BUILD_DIR)/app.bundle.min.js \
-		$(BUILD_DIR)/app.bundle.min.js.map \
 		$(BUILD_DIR)/external_api.min.js \
-		$(BUILD_DIR)/external_api.min.js.map \
 		$(BUILD_DIR)/alwaysontop.min.js \
-		$(BUILD_DIR)/alwaysontop.min.js.map \
 		$(BUILD_DIR)/face-landmarks-worker.min.js \
-		$(BUILD_DIR)/face-landmarks-worker.min.js.map \
 		$(BUILD_DIR)/noise-suppressor-worklet.min.js \
-		$(BUILD_DIR)/noise-suppressor-worklet.min.js.map \
 		$(BUILD_DIR)/screenshot-capture-worker.min.js \
-		$(BUILD_DIR)/screenshot-capture-worker.min.js.map \
 		$(DEPLOY_DIR)
+	-cp $(BUILD_DIR)/*.min.js.map $(DEPLOY_DIR) 2>/dev/null
 	cp \
 		$(BUILD_DIR)/close3.min.js \
-		$(BUILD_DIR)/close3.min.js.map \
 		$(DEPLOY_DIR) || true
+	-cp $(BUILD_DIR)/close3.min.js.map $(DEPLOY_DIR) 2>/dev/null
 
 deploy-lib-jitsi-meet:
 	cp \

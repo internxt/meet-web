@@ -104,7 +104,10 @@ function devServerProxyBypass({ path }) {
 function getConfig(options = {}) {
     const { detectCircularDeps, isProduction } = options;
 
+    const parallelism = parseInt(process.env.WEBPACK_PARALLELISM, 10);
+
     return {
+        ...(parallelism > 0 ? { parallelism } : {}),
         devtool: isProduction ? false : "eval-source-map",
         mode: isProduction ? "production" : "development",
         module: {
@@ -190,7 +193,7 @@ function getConfig(options = {}) {
                     loader: "ts-loader",
                     options: {
                         configFile: "tsconfig.web.json",
-                        transpileOnly: !isProduction, // Skip type checking for dev builds.,
+                        transpileOnly: true,
                     },
                 },
                 {
