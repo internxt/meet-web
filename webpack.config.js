@@ -355,7 +355,24 @@ module.exports = (_env, argv) => {
                     process: "process/browser",
                 }),
                 new webpack.DefinePlugin({
-                    "process.env": JSON.stringify(dotenv.config().parsed),
+                    "process.env": (() => {
+                        dotenv.config();
+                        const keys = [
+                            "DRIVE_NEW_API_URL",
+                            "PAYMENTS_API_URL",
+                            "MEET_API_URL",
+                            "CRYPTO_SECRET",
+                            "MAGIC_IV",
+                            "MAGIC_SALT",
+                        ];
+                        const env = {};
+                        keys.forEach((key) => {
+                            if (process.env[key]) {
+                                env[key] = process.env[key];
+                            }
+                        });
+                        return JSON.stringify(env);
+                    })(),
                 }),
                 new webpack.ProvidePlugin({
                     Buffer: ["buffer", "Buffer"],
