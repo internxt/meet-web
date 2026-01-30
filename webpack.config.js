@@ -209,7 +209,7 @@ function getConfig(options = {}) {
             __filename: true,
         },
         optimization: {
-            concatenateModules: isProduction,
+            concatenateModules: false,
             minimizer: isProduction
                 ? [
                       new (require("terser-webpack-plugin"))({
