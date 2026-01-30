@@ -105,7 +105,7 @@ function getConfig(options = {}) {
     const { detectCircularDeps, isProduction } = options;
 
     return {
-        devtool: isProduction ? "source-map" : "eval-source-map",
+        devtool: isProduction ? false : "eval-source-map",
         mode: isProduction ? "production" : "development",
         module: {
             rules: [
