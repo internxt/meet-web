@@ -1,6 +1,7 @@
 BUILD_DIR = build
 CLEANCSS = ./node_modules/.bin/cleancss
 DEPLOY_DIR = libs
+DIST_DIR = dist
 ONNX_DIR= node_modules/onnxruntime-web
 LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet
 TF_WASM_DIR = node_modules/@tensorflow/tfjs-backend-wasm/dist/
@@ -111,3 +112,17 @@ source-package:
 	cp css/all.css source_package/meet/css && \
 	(cd source_package ; tar cjf ../meet.tar.bz2 meet) && \
 	rm -rf source_package
+
+deploy-cloudflare:
+	rm -rf $(DIST_DIR)
+	mkdir -p $(DIST_DIR)/css
+	cp index.html base.html body.html fonts.html head.html title.html plugin.head.html $(DIST_DIR)/
+	cp favicon.ico config.js interface_config.js manifest.json pwa-worker.js $(DIST_DIR)/
+	cp css/all.css $(DIST_DIR)/css/
+	cp -r libs $(DIST_DIR)/
+	cp -r images $(DIST_DIR)/
+	cp -r fonts $(DIST_DIR)/
+	cp -r sounds $(DIST_DIR)/
+	cp -r lang $(DIST_DIR)/
+	cp -r resources $(DIST_DIR)/
+	cp -r static $(DIST_DIR)/
