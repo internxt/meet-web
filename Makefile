@@ -20,7 +20,7 @@ ifeq ($(OS),Windows_NT)
 	WEBPACK = .\node_modules\.bin\webpack --progress
 	WEBPACK_DEV_SERVER = .\node_modules\.bin\webpack serve --mode development --progress
 else
-	WEBPACK = ./node_modules/.bin/webpack --progress
+	WEBPACK = ./node_modules/.bin/webpack-cli --progress
 	WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack serve --mode development --progress
 endif
 
