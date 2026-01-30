@@ -213,7 +213,7 @@ function getConfig(options = {}) {
             minimizer: false
                 ? [
                       new (require("terser-webpack-plugin"))({
-                          parallel: 2,
+                          parallel: 1,
                           terserOptions: {
                               compress: {
                                   passes: 1,
