@@ -212,24 +212,8 @@ function getConfig(options = {}) {
             __filename: true,
         },
         optimization: {
-            concatenateModules: false,
-            minimizer: false
-                ? [
-                      new (require("terser-webpack-plugin"))({
-                          parallel: 1,
-                          terserOptions: {
-                              compress: {
-                                  passes: 1,
-                              },
-                              mangle: true,
-                              format: {
-                                  comments: false,
-                              },
-                          },
-                          extractComments: false,
-                      }),
-                  ]
-                : [],
+            concatenateModules: isProduction,
+            minimize: isProduction,
         },
         output: {
             filename: `[name]${isProduction ? ".min" : ""}.js`,
@@ -379,7 +363,7 @@ module.exports = (_env, argv) => {
                 }),
             ],
 
-            performance: getPerformanceHints(perfHintOptions, 10 * 1024 * 1024),
+            performance: getPerformanceHints(perfHintOptions, 7 * 1024 * 1024),
         },
         {
             ...config,
