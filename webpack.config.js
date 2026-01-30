@@ -210,7 +210,7 @@ function getConfig(options = {}) {
         },
         optimization: {
             concatenateModules: false,
-            minimizer: isProduction
+            minimizer: false
                 ? [
                       new (require("terser-webpack-plugin"))({
                           parallel: 2,
