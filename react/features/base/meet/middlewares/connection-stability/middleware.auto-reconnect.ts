@@ -3,12 +3,14 @@ import { AnyAction } from "redux";
 import { IStore } from "../../../../app/types";
 import { hideNotification } from "../../../../notifications/actions";
 import { CONFERENCE_WILL_LEAVE } from "../../../conference/actionTypes";
-import { isLeavingConferenceManually, setLeaveConferenceManually } from "../../general/utils/conferenceState";
+import { conferenceLeft } from "../../../conference/actions.web";
+import { getCurrentConference } from "../../../conference/functions";
 import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED, CONNECTION_FAILED } from "../../../connection/actionTypes";
 import { connect } from "../../../connection/actions.web";
 import { setJWT } from "../../../jwt/actions";
 import MiddlewareRegistry from "../../../redux/MiddlewareRegistry";
 import { trackRemoved } from "../../../tracks/actions.any";
+import { isLeavingConferenceManually, setLeaveConferenceManually } from "../../general/utils/conferenceState";
 import { hideLoader, showLoader } from "../../loader";
 
 const RECONNECTION_NOTIFICATION_ID = "connection.reconnecting";
@@ -61,6 +63,21 @@ const triggerReconnection = (store: IStore) => {
     store.dispatch(connect());
 };
 
+const cleanupOldConference = (store: IStore) => {
+    const state = store.getState();
+    const oldConference = getCurrentConference(state);
+
+    if (oldConference) {
+        try {
+            (oldConference as any).removeAllListeners();
+        } catch (e) {
+            console.warn("[AUTO_RECONNECT] Error removing conference listeners:", e);
+        }
+
+        store.dispatch(conferenceLeft(oldConference));
+    }
+};
+
 const scheduleRetry = (store: IStore) => {
     reconnectionTimer = window.setTimeout(() => {
         if (!isLeavingConferenceManually() && isReconnecting) {
@@ -94,6 +111,7 @@ const attemptReconnection = async (store: IStore) => {
     try {
         clearRemoteTracks(store);
         clearExpiredJWT(store);
+        cleanupOldConference(store);
         await new Promise((resolve) => setTimeout(resolve, 100));
         triggerReconnection(store);
         scheduleRetry(store);

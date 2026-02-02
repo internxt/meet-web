@@ -26,6 +26,7 @@ MiddlewareRegistry.register(({ dispatch }: IStore) => {
                 case CONNECTION_WILL_CONNECT: {
                     setLeaveConferenceManually(false);
                     connectionState.hasConnectionListeners = false;
+                    connectionState.hasConferenceListeners = false;
 
                     const { connection } = action;
 
