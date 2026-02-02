@@ -237,7 +237,8 @@
         "webpack": "5.95.0",
         "webpack-bundle-analyzer": "4.4.2",
         "webpack-cli": "5.1.4",
-        "webpack-dev-server": "5.2.1"
+        "webpack-dev-server": "5.2.1",
+        "wrangler": "^4.0.0"
     },
     "overrides": {
         "@xmldom/xmldom": "0.8.7"
@@ -256,7 +257,6 @@
         "lint:lang": "for file in lang/*.json; do npx --yes jsonlint -q $file || exit 1; done",
         "lang-sort": "./resources/lang-sort.sh",
         "lint-fix": "eslint --ext .js,.ts,.tsx --max-warnings 0 --fix .",
-        "postinstall": "jetify",
         "validate": "npm ls",
         "tsc-test:web": "tsc --project tsconfig.web.json --listFilesOnly | grep -v node_modules | grep native",
         "tsc-test:native": "tsc --project tsconfig.native.json --listFilesOnly | grep -v node_modules | grep web",
