@@ -48,7 +48,7 @@ deploy-init:
 
 deploy-appbundle:
 	cp $(BUILD_DIR)/*.min.js $(DEPLOY_DIR)
-	-cp $(BUILD_DIR)/*.min.js.map $(DEPLOY_DIR) 2>/dev/null
+	-cp $(BUILD_DIR)/*.min.js.map $(DEPLOY_DIR)
 
 deploy-lib-jitsi-meet:
 	cp \
