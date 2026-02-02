@@ -618,6 +618,7 @@ export function createConference(overrideRoom?: string | String) {
             _room.domain = tmp.domain;
         }
 
+        logger.debug(`TEST: connection.initJitsiConference called for room: ${_room}`);
         const conference = connection.initJitsiConference(_room, getConferenceOptions(state));
 
         // @ts-ignore
