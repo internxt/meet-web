@@ -26,13 +26,13 @@ const PrivateMeetingBanner: React.FC<PrivateMeetingBannerProps> = ({ isVisible, 
     return (
         <div className="fixed inset-x-0 top-[72px] min-[920px]:top-4 z-[99] flex justify-center pointer-events-none">
             <div
-                className="pointer-events-auto flex items-center gap-2 bg-[#E5EEFB] border-[#E5EFFF] rounded-lg shadow-lg p-3"
+                className="pointer-events-auto flex min-w-[448px] items-center gap-2 bg-[#E5EEFB] border-[#E5EFFF] rounded-lg shadow-lg p-3"
                 role="status"
             >
                 <div className="flex-shrink-0">
                     <ShieldLockIcon />
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-grow flex-col">
                     <span className="text-base font-medium text-[#1C1C1C]">{t("meet.secureMeetingMessage.title")}</span>
                     <span className="text-sm text-gray-50 ">{t("meet.secureMeetingMessage.description")}</span>
                 </div>
