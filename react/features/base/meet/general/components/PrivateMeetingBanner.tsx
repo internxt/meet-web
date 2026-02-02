@@ -34,14 +34,14 @@ const PrivateMeetingBanner: React.FC<PrivateMeetingBannerProps> = ({ isVisible, 
                 </div>
                 <div className="flex flex-grow flex-col">
                     <span className="text-base font-medium text-[#1C1C1C]">{t("meet.secureMeetingMessage.title")}</span>
-                    <span className="text-sm text-gray-50 ">{t("meet.secureMeetingMessage.description")}</span>
+                    <span className="text-sm text-[#737373] ">{t("meet.secureMeetingMessage.description")}</span>
                 </div>
                 <button
                     onClick={onClose}
                     className="flex-shrink-0 p-1 rounded-md hover:bg-gray-80 transition-colors"
                     aria-label={t("dialog.close") ?? "Close"}
                 >
-                    <XIcon size={16} className="text-[#737373]" />
+                    <XIcon size={20} className="text-[#737373]" />
                 </button>
             </div>
         </div>
