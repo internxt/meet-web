@@ -1046,10 +1046,7 @@ export default {
 
     _createRoom(localTracks) {
         logger.debug('TEST: _createRoom is called:', localTracks);
-        if (room) {
-            logger.debug('_createRoom called when room already exists');
-            this.leaveRoom();
-        }
+        if (room) logger.debug('_createRoom called when room already exists', room, APP.connection);
         room = APP.connection.initJitsiConference(APP.conference.roomName, this._getConferenceOptions());
 
         // Filter out the tracks that are muted (except on Safari).
