@@ -321,8 +321,6 @@ class ConferenceConnector {
             case JitsiConferenceErrors.OFFER_ANSWER_FAILED:
                 APP.store.dispatch(conferenceWillLeave(room));
 
-                logger.debug("TEST: disconnedt due to unrecoverable error:", err);
-
                 // FIXME the conference should be stopped by the library and not by
                 // the app. Both the errors above are unrecoverable from the library
                 // perspective.
@@ -1045,10 +1043,7 @@ export default {
     },
 
     _createRoom(localTracks) {
-        logger.debug('TEST: _createRoom is called:', localTracks);
-        if (room) {
-            logger.debug('TEST: _createRoom called when room already exists', room, APP.connection);
-        }
+        logger.debug('[AUTO_RECONNECT] _createRoom is called:', localTracks);
         room = APP.connection.initJitsiConference(APP.conference.roomName, this._getConferenceOptions());
 
         // Filter out the tracks that are muted (except on Safari).
@@ -2211,7 +2206,7 @@ export default {
      * @returns {Promise}
      */
     leaveRoom(doDisconnect = true, reason = '') {
-        logger.debug('TEST: Leaving room...', reason);
+        logger.debug('[AUTO_RECONNECT] Leaving room...', reason);
         APP.store.dispatch(conferenceWillLeave(room));
 
         const maybeDisconnect = () => {

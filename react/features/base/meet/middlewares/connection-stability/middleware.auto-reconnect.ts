@@ -13,9 +13,9 @@ import { hideLoader, showLoader } from "../../loader";
 
 const RECONNECTION_NOTIFICATION_ID = "connection.reconnecting";
 const RECONNECTION_LOADER_ID = "auto-reconnect";
-const RECONNECTION_WAIT_TIME_MS = 15000;
+const RECONNECTION_WAIT_TIME_MS = 3000;
 const MAX_RECONNECTION_ATTEMPTS = 2;
-const RECONNECTION_DELAY_MS = 3000;
+const RECONNECTION_DELAY_MS = 2000;
 const JWT_EXPIRED_ERROR = "connection.passwordRequired";
 
 let reconnectionTimer: number | null = null;
@@ -58,15 +58,17 @@ const clearRemoteTracks = (store: IStore) => {
 };
 
 const triggerReconnection = (store: IStore) => {
-    console.log('TEST: calling connect from triggerReconnection');
+    console.log('[AUTO_RECONNECT] calling connect from triggerReconnection');
     store.dispatch(connect());
 };
 
 const scheduleRetry = (store: IStore) => {
-    console.log('TEST: Scheduling reconnection scheduleRetry retry in', RECONNECTION_DELAY_MS, 'ms');
+    console.log('[AUTO_RECONNECT] Scheduling reconnection scheduleRetry retry in', RECONNECTION_DELAY_MS, 'ms');
+
+    clearTimer();
     reconnectionTimer = window.setTimeout(() => {
         if (!isLeavingConferenceManually() && isReconnecting) {
-            console.log('TEST: calling attemptReconnection from scheduleRetry');
+            console.log('[AUTO_RECONNECT] calling attemptReconnection from scheduleRetry');
             attemptReconnection(store);
         }
     }, RECONNECTION_DELAY_MS);
@@ -75,6 +77,7 @@ const scheduleRetry = (store: IStore) => {
 const handleMaxAttemptsReached = (store: IStore) => {
     isReconnecting = true;
     showReconnectionLoader(store, reconnectionAttempts + 1);
+    clearTimer();
     reconnectionTimer = window.setTimeout(reloadPage, 2000);
 };
 
@@ -85,10 +88,10 @@ const handleMaxAttemptsReached = (store: IStore) => {
 const attemptReconnection = async (store: IStore) => {
     if (isLeavingConferenceManually()) return;
 
-    console.log('TEST: attemptReconnection called, current attempt:', reconnectionAttempts);
+    console.log('[AUTO_RECONNECT] attemptReconnection called, current attempt:', reconnectionAttempts);
 
     if (reconnectionAttempts >= MAX_RECONNECTION_ATTEMPTS) {
-        console.log('TEST: max attempts reached:', MAX_RECONNECTION_ATTEMPTS);
+        console.log('[AUTO_RECONNECT] max attempts reached:', MAX_RECONNECTION_ATTEMPTS);
         handleMaxAttemptsReached(store);
         return;
     }
@@ -102,7 +105,6 @@ const attemptReconnection = async (store: IStore) => {
         clearExpiredJWT(store);
         await new Promise((resolve) => setTimeout(resolve, 100));
         triggerReconnection(store);
-        scheduleRetry(store);
     } catch (error) {
         console.error("[AUTO_RECONNECT] Reconnection error:", error);
         scheduleRetry(store);
@@ -140,15 +142,21 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         case CONNECTION_DISCONNECTED: {
             if (isLeavingConferenceManually()) break;
 
-            clearTimer();
-            reconnectionAttempts = 0;
-            isReconnecting = true;
-
-            reconnectionTimer = window.setTimeout(() => {
-                if (!isLeavingConferenceManually() && isReconnecting) {
-                    attemptReconnection(store);
-                }
-            }, RECONNECTION_WAIT_TIME_MS);
+            if (isReconnecting) {
+                console.log('[AUTO_RECONNECT] Already reconnecting, scheduling retry');
+                scheduleRetry(store);
+            } else {
+                // First disconnection - start reconnection process
+                console.log('[AUTO_RECONNECT] Starting reconnection process');
+                clearTimer();
+                reconnectionAttempts = 0;
+                
+                reconnectionTimer = window.setTimeout(() => {
+                    if (!isLeavingConferenceManually()) {
+                        attemptReconnection(store);
+                    }
+                }, RECONNECTION_WAIT_TIME_MS);
+            }
 
             break;
         }
@@ -167,8 +175,22 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         case CONNECTION_FAILED: {
             const { error } = action;
             console.log("[AUTO_RECONNECT] Connection failed with error:", error);
-            if (error?.name === JWT_EXPIRED_ERROR && !isLeavingConferenceManually() && !isReconnecting) {
-                attemptReconnection(store);
+            if (error?.name === JWT_EXPIRED_ERROR) {
+                if (!isLeavingConferenceManually()) {
+                    if (!isReconnecting) {
+                        // First JWT failure - start reconnection
+                        console.log('[AUTO_RECONNECT] JWT expired, starting reconnection');
+                        clearTimer();
+                        reconnectionAttempts = 0;
+                        attemptReconnection(store);
+                    } else {
+                        console.log('[AUTO_RECONNECT] JWT expired during reconnection, scheduling retry');
+                        scheduleRetry(store);
+                    }
+                }
+            } else if (isReconnecting) {
+                console.log('[AUTO_RECONNECT] Connection failed during reconnection, scheduling retry');
+                scheduleRetry(store);
             }
 
             break;
