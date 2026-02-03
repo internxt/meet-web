@@ -11082,7 +11082,7 @@ levn@^0.4.1:
 
 "lib-jitsi-meet@https://github.com/internxt/lib-jitsi-meet/releases/download/v.0.0.20-debug/lib-jitsi-meet-0.0.20-debug.tgz":
   version "0.0.20-debug"
-  resolved "https://github.com/internxt/lib-jitsi-meet/releases/download/v.0.0.20-debug/lib-jitsi-meet-0.0.20-debug.tgz#f02cdc6038f36abd9e38c3ce20922b054dd48973"
+  resolved "https://github.com/internxt/lib-jitsi-meet/releases/download/v.0.0.20-debug/lib-jitsi-meet-0.0.20-debug.tgz#ab9363fdb65265d476430737df9e5f25ec6f94a9"
   dependencies:
     "@hexagon/base64" "^2.0.4"
     "@jitsi/js-utils" "^2.6.7"

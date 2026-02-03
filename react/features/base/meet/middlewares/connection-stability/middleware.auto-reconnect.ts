@@ -58,12 +58,15 @@ const clearRemoteTracks = (store: IStore) => {
 };
 
 const triggerReconnection = (store: IStore) => {
+    console.log('TEST: calling connect from triggerReconnection');
     store.dispatch(connect());
 };
 
 const scheduleRetry = (store: IStore) => {
+    console.log('TEST: Scheduling reconnection scheduleRetry retry in', RECONNECTION_DELAY_MS, 'ms');
     reconnectionTimer = window.setTimeout(() => {
         if (!isLeavingConferenceManually() && isReconnecting) {
+            console.log('TEST: calling attemptReconnection from scheduleRetry');
             attemptReconnection(store);
         }
     }, RECONNECTION_DELAY_MS);
@@ -82,7 +85,10 @@ const handleMaxAttemptsReached = (store: IStore) => {
 const attemptReconnection = async (store: IStore) => {
     if (isLeavingConferenceManually()) return;
 
+    console.log('TEST: attemptReconnection called, current attempt:', reconnectionAttempts);
+
     if (reconnectionAttempts >= MAX_RECONNECTION_ATTEMPTS) {
+        console.log('TEST: max attempts reached:', MAX_RECONNECTION_ATTEMPTS);
         handleMaxAttemptsReached(store);
         return;
     }
