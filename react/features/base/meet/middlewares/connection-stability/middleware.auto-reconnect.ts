@@ -57,9 +57,9 @@ const clearRemoteTracks = (store: IStore) => {
     });
 };
 
-const triggerReconnection = (store: IStore) => {
+const triggerReconnection = async (store: IStore) => {
     console.log('[AUTO_RECONNECT] calling connect from triggerReconnection');
-    store.dispatch(connect());
+    return await store.dispatch(connect());
 };
 
 const scheduleRetry = (store: IStore) => {
@@ -104,7 +104,7 @@ const attemptReconnection = async (store: IStore) => {
         clearRemoteTracks(store);
         clearExpiredJWT(store);
         await new Promise((resolve) => setTimeout(resolve, 100));
-        triggerReconnection(store);
+        await triggerReconnection(store);
     } catch (error) {
         console.error("[AUTO_RECONNECT] Reconnection error:", error);
         scheduleRetry(store);
