@@ -23,6 +23,7 @@ const JWT_EXPIRED_ERROR = "connection.passwordRequired";
 let reconnectionTimer: number | null = null;
 let isReconnecting = false;
 let reconnectionAttempts = 0;
+let reconnectionLock = false;
 
 export const isAutoReconnecting = () => isReconnecting;
 
@@ -117,7 +118,11 @@ const cleanupActiveConnection = async (store: IStore) => {
 const attemptReconnection = async (store: IStore) => {
     if (isLeavingConferenceManually()) return;
 
-    console.log('[AUTO_RECONNECT] attemptReconnection called, current attempt:', reconnectionAttempts);
+    if (reconnectionLock) {
+        console.log('[AUTO_RECONNECT] Reconnection already in progress, skipping');
+        return;
+    }
+    
 
     if (reconnectionAttempts >= MAX_RECONNECTION_ATTEMPTS) {
         console.log('[AUTO_RECONNECT] max attempts reached:', MAX_RECONNECTION_ATTEMPTS);
@@ -129,6 +134,9 @@ const attemptReconnection = async (store: IStore) => {
     isReconnecting = true;
     showReconnectionLoader(store, reconnectionAttempts);
 
+    reconnectionLock = true;
+    console.log('[AUTO_RECONNECT] attemptReconnection called, current attempt:', reconnectionAttempts);
+
     try {
         cleanupOldConference(store);
         await cleanupActiveConnection(store);
@@ -138,6 +146,8 @@ const attemptReconnection = async (store: IStore) => {
     } catch (error) {
         console.error("[AUTO_RECONNECT] Reconnection error:", error);
         await scheduleRetry(store);
+    } finally {
+        reconnectionLock = false;
     }
 };
 
@@ -171,6 +181,10 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
 
         case CONNECTION_DISCONNECTED: {
             if (isLeavingConferenceManually()) break;
+            if (reconnectionLock) {
+                console.log('[AUTO_RECONNECT] Reconnection in progress, ignoring disconnect');
+                break;
+            }
 
             if (isReconnecting) {
                 console.log('[AUTO_RECONNECT] Already reconnecting, scheduling retry');

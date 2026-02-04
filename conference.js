@@ -1043,7 +1043,6 @@ export default {
     },
 
     _createRoom(localTracks) {
-        logger.debug('[AUTO_RECONNECT] _createRoom is called:', localTracks);
         room = APP.connection.initJitsiConference(APP.conference.roomName, this._getConferenceOptions());
 
         // Filter out the tracks that are muted (except on Safari).
@@ -2206,7 +2205,6 @@ export default {
      * @returns {Promise}
      */
     leaveRoom(doDisconnect = true, reason = '') {
-        logger.debug('[AUTO_RECONNECT] Leaving room...', reason);
         APP.store.dispatch(conferenceWillLeave(room));
 
         const maybeDisconnect = () => {
