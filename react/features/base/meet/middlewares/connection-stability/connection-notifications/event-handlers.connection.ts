@@ -1,6 +1,7 @@
 import { IStore } from '../../../../../app/types';
 import { isLeavingConferenceManually } from "../../../general/utils/conferenceState";
-import { isAutoReconnecting } from "../middleware.auto-reconnect";
+// import { isAutoReconnecting } from "../middleware.auto-reconnect";
+const isAutoReconnecting = () => false;
 import { showConnectionFailedNotification, showConnectionLostNotification } from "./notification-helpers";
 
 /**
