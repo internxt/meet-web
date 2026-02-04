@@ -2,7 +2,9 @@ import { batch } from "react-redux";
 import { AnyAction } from "redux";
 import { IStore } from "../../../../app/types";
 import { hideNotification } from "../../../../notifications/actions";
+import { conferenceLeft } from "../../../conference/actions.web";
 import { CONFERENCE_WILL_LEAVE } from "../../../conference/actionTypes";
+import { getCurrentConference } from "../../../conference/functions";
 import { isLeavingConferenceManually, setLeaveConferenceManually } from "../../general/utils/conferenceState";
 import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED, CONNECTION_FAILED } from "../../../connection/actionTypes";
 import { connect } from "../../../connection/actions.web";
@@ -83,6 +85,21 @@ const handleMaxAttemptsReached = (store: IStore) => {
 
 
 
+const cleanupOldConference = (store: IStore) => {
+    const state = store.getState();
+    const oldConference = getCurrentConference(state);
+
+    if (oldConference) {
+        try {
+            (oldConference as any).cleanUpWebWorkers();
+            (oldConference as any).removeAllListeners();
+        } catch (e) {
+            console.warn("[AUTO_RECONNECT] Error cleaning up old conference:", e);
+        }
+        store.dispatch(conferenceLeft(oldConference));
+    }
+};
+
 const cleanupActiveConnection = async (store: IStore) => {
     console.log('[AUTO_RECONNECT] calling cleanupActiveConnection');
     const state = store.getState();
@@ -113,6 +130,7 @@ const attemptReconnection = async (store: IStore) => {
     showReconnectionLoader(store, reconnectionAttempts);
 
     try {
+        cleanupOldConference(store);
         await cleanupActiveConnection(store);
         clearRemoteTracks(store);
         clearExpiredJWT(store);
