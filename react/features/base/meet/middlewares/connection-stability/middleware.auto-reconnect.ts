@@ -5,7 +5,7 @@ import { hideNotification } from "../../../../notifications/actions";
 import { CONFERENCE_WILL_LEAVE } from "../../../conference/actionTypes";
 import { isLeavingConferenceManually, setLeaveConferenceManually } from "../../general/utils/conferenceState";
 import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED, CONNECTION_FAILED } from "../../../connection/actionTypes";
-import { connect, hangup } from "../../../connection/actions.web";
+import { connect } from "../../../connection/actions.web";
 import { setJWT } from "../../../jwt/actions";
 import MiddlewareRegistry from "../../../redux/MiddlewareRegistry";
 import { trackRemoved } from "../../../tracks/actions.any";
@@ -84,9 +84,11 @@ const handleMaxAttemptsReached = (store: IStore) => {
 
 
 const cleanupActiveConnection = async (store: IStore) => {
+    console.log('[AUTO_RECONNECT] calling cleanupActiveConnection');
     const state = store.getState();
     const { connection } = state["features/base/connection"];
     if (connection?.disconnect) {
+         console.log('[AUTO_RECONNECT] calling disconnect on active connection');
         await connection.disconnect();
     }
 };
