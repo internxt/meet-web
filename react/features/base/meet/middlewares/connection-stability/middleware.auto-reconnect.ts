@@ -62,14 +62,14 @@ const triggerReconnection = async (store: IStore) => {
     return await store.dispatch(connect());
 };
 
-const scheduleRetry = async (store: IStore) => {
+const scheduleRetry = (store: IStore) => {
     console.log('[AUTO_RECONNECT] Scheduling reconnection scheduleRetry retry in', RECONNECTION_DELAY_MS, 'ms');
 
     clearTimer();
     reconnectionTimer = window.setTimeout(() => {
         if (!isLeavingConferenceManually() && isReconnecting) {
             console.log('[AUTO_RECONNECT] calling attemptReconnection from scheduleRetry');
-            await attemptReconnection(store);
+            attemptReconnection(store);
         }
     }, RECONNECTION_DELAY_MS);
 };
