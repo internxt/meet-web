@@ -62,14 +62,14 @@ const triggerReconnection = async (store: IStore) => {
     return await store.dispatch(connect());
 };
 
-const scheduleRetry = (store: IStore) => {
+const scheduleRetry = async (store: IStore) => {
     console.log('[AUTO_RECONNECT] Scheduling reconnection scheduleRetry retry in', RECONNECTION_DELAY_MS, 'ms');
 
     clearTimer();
     reconnectionTimer = window.setTimeout(() => {
         if (!isLeavingConferenceManually() && isReconnecting) {
             console.log('[AUTO_RECONNECT] calling attemptReconnection from scheduleRetry');
-            attemptReconnection(store);
+            await attemptReconnection(store);
         }
     }, RECONNECTION_DELAY_MS);
 };
@@ -103,11 +103,10 @@ const attemptReconnection = async (store: IStore) => {
     try {
         clearRemoteTracks(store);
         clearExpiredJWT(store);
-        await new Promise((resolve) => setTimeout(resolve, 100));
         await triggerReconnection(store);
     } catch (error) {
         console.error("[AUTO_RECONNECT] Reconnection error:", error);
-        scheduleRetry(store);
+        await scheduleRetry(store);
     }
 };
 
@@ -146,7 +145,6 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
                 console.log('[AUTO_RECONNECT] Already reconnecting, scheduling retry');
                 scheduleRetry(store);
             } else {
-                // First disconnection - start reconnection process
                 console.log('[AUTO_RECONNECT] Starting reconnection process');
                 clearTimer();
                 reconnectionAttempts = 0;
@@ -178,7 +176,6 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
             if (error?.name === JWT_EXPIRED_ERROR) {
                 if (!isLeavingConferenceManually()) {
                     if (!isReconnecting) {
-                        // First JWT failure - start reconnection
                         console.log('[AUTO_RECONNECT] JWT expired, starting reconnection');
                         clearTimer();
                         reconnectionAttempts = 0;
