@@ -59,7 +59,6 @@ const clearRemoteTracks = (store: IStore) => {
 
 const triggerReconnection = async (store: IStore) => {
     console.log('[AUTO_RECONNECT] calling connect from triggerReconnection');
-    await store.dispatch(hangup(false));
     return await store.dispatch(connect());
 };
 
@@ -82,6 +81,16 @@ const handleMaxAttemptsReached = (store: IStore) => {
     reconnectionTimer = window.setTimeout(reloadPage, 2000);
 };
 
+
+
+const cleanupActiveConnection = async (store: IStore) => {
+    const state = store.getState();
+    const { connection } = state["features/base/connection"];
+    if (connection?.disconnect) {
+        await connection.disconnect();
+    }
+};
+
 /**
  * Attempts to reconnect by clearing JWT and connecting to conference again.
  * If max attempts reached, reloads the page.
@@ -102,6 +111,7 @@ const attemptReconnection = async (store: IStore) => {
     showReconnectionLoader(store, reconnectionAttempts);
 
     try {
+        await cleanupActiveConnection(store);
         clearRemoteTracks(store);
         clearExpiredJWT(store);
         await triggerReconnection(store);
