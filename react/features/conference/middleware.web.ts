@@ -24,19 +24,30 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case KICKED_OUT: {
-        const { dispatch } = store;
+        const { dispatch, getState } = store;
         const { participant } = action;
+        const { room } = getState()["features/base/conference"];
 
         // we need to first finish dispatching or the notification can be cleared out
         const result = next(action);
 
         const participantDisplayName
-                = participant && getParticipantDisplayName(store.getState, participant.getId());
+                = getParticipantDisplayName(store.getState, participant.getId());
+            const roomId = room ?? "";
 
-        dispatch(hangup(true,
-            participantDisplayName ? i18next.t('dialog.kickTitle', { participantDisplayName })
-                : i18next.t('dialog.kickSystemTitle'),
-            true));
+        dispatch(hangup(true, roomId, i18next.t("dialog.kickTitle", { participantDisplayName })));
+        // Jitsi latest version
+        // dispatch(
+        //     hangup(
+        //         true,
+        //         roomId,
+        //         participantDisplayName
+        //             ? i18next.t("dialog.kickTitle", { participantDisplayName })
+        //             : i18next.t("dialog.kickSystemTitle"),
+        //         true
+        //     )
+        // );
+
         return result;
     }
     }
