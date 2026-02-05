@@ -38,7 +38,7 @@ export function connect(id?: string, password?: string) {
                 .then(j => {
                     j && dispatch(setJWT(j));
 
-                    return dispatch(_connectInternal(id, password));
+                    return dispatch(_connectInternal({id, password}));
                 }).catch(e => {
                     logger.error('Connection error', e);
                 });
