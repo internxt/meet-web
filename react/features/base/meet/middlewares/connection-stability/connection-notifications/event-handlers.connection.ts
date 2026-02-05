@@ -1,9 +1,8 @@
 import { IStore } from '../../../../../app/types';
 import { isLeavingConferenceManually } from "../../../general/utils/conferenceState";
-//import { isAutoReconnecting } from "../middleware.auto-reconnect";
+import { isAutoReconnecting } from "../middleware.auto-reconnect";
 import { showConnectionFailedNotification, showConnectionLostNotification } from "./notification-helpers";
 
-const isAutoReconnecting = () => false;
 /**
  * Handles when XMPP connection is established
  * This is the signaling connection, not media
