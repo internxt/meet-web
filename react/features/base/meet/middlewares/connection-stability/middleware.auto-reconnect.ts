@@ -5,12 +5,12 @@ import { hideNotification } from "../../../../notifications/actions";
 import { conferenceLeft } from "../../../conference/actions.web";
 import { CONFERENCE_WILL_LEAVE } from "../../../conference/actionTypes";
 import { getCurrentConference } from "../../../conference/functions";
-import { isLeavingConferenceManually, setLeaveConferenceManually } from "../../general/utils/conferenceState";
-import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED, CONNECTION_FAILED } from "../../../connection/actionTypes";
 import { connect } from "../../../connection/actions.web";
+import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED, CONNECTION_FAILED } from "../../../connection/actionTypes";
 import { setJWT } from "../../../jwt/actions";
 import MiddlewareRegistry from "../../../redux/MiddlewareRegistry";
 import { trackRemoved } from "../../../tracks/actions.any";
+import { isLeavingConferenceManually, setLeaveConferenceManually } from "../../general/utils/conferenceState";
 import { hideLoader, showLoader } from "../../loader";
 
 const RECONNECTION_NOTIFICATION_ID = "connection.reconnecting";
@@ -92,7 +92,6 @@ const cleanupOldConference = (store: IStore) => {
 
     if (oldConference) {
         try {
-            (oldConference as any).cleanUpWebWorkers();
             (oldConference as any).removeAllListeners();
         } catch (e) {
             console.warn("[AUTO_RECONNECT] Error cleaning up old conference:", e);
@@ -122,7 +121,7 @@ const attemptReconnection = async (store: IStore) => {
         console.log('[AUTO_RECONNECT] Reconnection already in progress, skipping');
         return;
     }
-    
+
 
     if (reconnectionAttempts >= MAX_RECONNECTION_ATTEMPTS) {
         console.log('[AUTO_RECONNECT] max attempts reached:', MAX_RECONNECTION_ATTEMPTS);
@@ -193,7 +192,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
                 console.log('[AUTO_RECONNECT] Starting reconnection process');
                 clearTimer();
                 reconnectionAttempts = 0;
-                
+
                 reconnectionTimer = window.setTimeout(() => {
                     if (!isLeavingConferenceManually()) {
                         attemptReconnection(store);
