@@ -65,6 +65,7 @@ const checkConnectionQuality = (store: IStore, connectionQuality: number) => {
     }
 
     if (connectionQuality < GOOD_CONNECTION_THRESHOLD) {
+        console.log('TEST: Poor connection detected, showing warning notification. Connection quality:', connectionQuality);
         showPoorConnectionWarning(store);
     } else {
         hidePoorConnectionWarning(store);
@@ -77,6 +78,7 @@ const onStatsUpdated = (store: IStore) => (stats: IConnectionStats) => {
     }
 
     const connectionQuality = stats.connectionQuality;
+    console.log('TEST: Connection stats updated. Connection quality:', connectionQuality);
 
     if (typeof connectionQuality === 'number') {
         checkConnectionQuality(store, connectionQuality);
