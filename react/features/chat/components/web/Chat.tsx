@@ -124,6 +124,8 @@ const useStyles = makeStyles<{ _isResizing: boolean; width: number; }>()((theme,
             alignSelf: "center",
             borderColor: "#474747",
             borderWidth: "1px",
+            animation: "chatSlideIn 0.3s cubic-bezier(0.4, 0.0, 0.2, 1) forwards",
+            transformOrigin: "right center",
             "&:hover, &:focus-within": {
                 "& .dragHandleContainer": {
                     visibility: "visible",
@@ -140,11 +142,64 @@ const useStyles = makeStyles<{ _isResizing: boolean; width: number; }>()((theme,
                 width: "auto",
                 borderRadius: 0,
                 margin: 0,
+                animation: "chatSlideInMobile 0.3s cubic-bezier(0.4, 0.0, 0.2, 1) forwards",
             },
 
             "*": {
                 userSelect: "text",
                 "-webkit-user-select": "text",
+            },
+
+            "@keyframes chatSlideIn": {
+                "0%": {
+                    opacity: 0,
+                    transform: "translateX(100%) scale(0.95)",
+                },
+                "100%": {
+                    opacity: 1,
+                    transform: "translateX(0) scale(1)",
+                },
+            },
+
+            "@keyframes chatSlideInMobile": {
+                "0%": {
+                    opacity: 0,
+                    transform: "translateY(100%)",
+                },
+                "100%": {
+                    opacity: 1,
+                    transform: "translateY(0)",
+                },
+            },
+
+            "@keyframes chatSlideOut": {
+                "0%": {
+                    opacity: 1,
+                    transform: "translateX(0) scale(1)",
+                },
+                "100%": {
+                    opacity: 0,
+                    transform: "translateX(100%) scale(0.95)",
+                },
+            },
+
+            "@keyframes chatSlideOutMobile": {
+                "0%": {
+                    opacity: 1,
+                    transform: "translateY(0)",
+                },
+                "100%": {
+                    opacity: 0,
+                    transform: "translateY(100%)",
+                },
+            },
+        },
+
+        containerClosing: {
+            animation: "chatSlideOut 0.25s cubic-bezier(0.4, 0.0, 0.6, 1) forwards",
+
+            "@media (max-width: 580px)": {
+                animation: "chatSlideOutMobile 0.25s cubic-bezier(0.4, 0.0, 0.6, 1) forwards",
             },
         },
 
@@ -276,6 +331,8 @@ const Chat = ({
     const [ mousePosition, setMousePosition ] = useState<number | null>(null);
     const [ dragChatWidth, setDragChatWidth ] = useState<number | null>(null);
     const [showBanner, setShowBanner] = useState(true);
+    const [isClosing, setIsClosing] = useState(false);
+    const [shouldRender, setShouldRender] = useState(_isOpen);
     const maxChatWidth = useSelector(getChatMaxSize);
     const notifyTimestamp = useSelector((state: IReduxState) =>
         state['features/chat'].notifyPrivateRecipientsChangedTimestamp
@@ -286,6 +343,21 @@ const Chat = ({
     const privateMessageRecipient = useSelector((state: IReduxState) => state['features/chat'].privateMessageRecipient);
     const participants = useSelector(getRemoteParticipants);
     const isPrivateChatAllowed = useSelector((state: IReduxState) => isPrivateChatEnabledSelf(state));
+
+    useEffect(() => {
+        if (_isOpen) {
+            setShouldRender(true);
+            setIsClosing(false);
+        } else if (shouldRender) {
+            setIsClosing(true);
+            const timer = setTimeout(() => {
+                setShouldRender(false);
+                setIsClosing(false);
+            }, 250);
+
+            return () => clearTimeout(timer);
+        }
+    }, [_isOpen]);
 
     const options = useMemo(() => {
         const o = Array.from(participants?.values() || [])
@@ -646,8 +718,8 @@ function renderChat() {
     }
 
     return (
-        _isOpen ? <div
-            className = { classes.container }
+        shouldRender ? <div
+            className = { cx(classes.container, isClosing && classes.containerClosing) }
             id = 'sideToolbarContainer'
             onKeyDown = { onEscClick } >
             <ChatHeader
