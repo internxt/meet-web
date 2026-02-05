@@ -55,7 +55,7 @@ export function connect(id?: string, password?: string) {
             password = passwordOverride; // eslint-disable-line no-param-reassign
         }
 
-        return dispatch(_connectInternal(id, password));
+        return dispatch(_connectInternal({id, password}));
     };
 }
 
