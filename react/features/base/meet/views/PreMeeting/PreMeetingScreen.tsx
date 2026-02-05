@@ -209,6 +209,9 @@ const PreMeetingScreen = ({
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
     const [isCreatingMeeting, setIsCreatingMeeting] = useState(false);
     const [meetingUsersData, setMeetingUsersData] = useState<MeetingUser[]>([]);
+    const [isLoadingParticipants, setIsLoadingParticipants] = useState(false);
+    const [participantsLoadError, setParticipantsLoadError] = useState(false);
+    
     const userData = useUserData();
     const [openLogin, setOpenLogin] = useState<boolean>(true);
 
@@ -246,8 +249,16 @@ const PreMeetingScreen = ({
 
     const getUsersInMeeting = async () => {
         if (!isInNewMeeting) {
-            const meetingUsers = await MeetingService.instance.getCurrentUsersInCall(room);
-            setMeetingUsersData(meetingUsers);
+            setIsLoadingParticipants(true);
+            setParticipantsLoadError(false);
+            try {
+                const meetingUsers = await MeetingService.instance.getCurrentUsersInCall(room);
+                setMeetingUsersData(meetingUsers);
+            } catch {
+                setParticipantsLoadError(true);
+            } finally {
+                setIsLoadingParticipants(false);
+            }
         }
     };
 
@@ -355,6 +366,8 @@ const PreMeetingScreen = ({
                     setUserName={setName}
                     setIsNameInputFocused={setIsNameInputFocused}
                     participants={meetingUsersData}
+                    isLoadingParticipants={isLoadingParticipants}
+                    participantsLoadError={participantsLoadError}
                     joinConference={async () => {
                         if (createConference) {
                             setIsCreatingMeeting(true);

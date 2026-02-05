@@ -9,6 +9,73 @@ import NameInputSection from "./NameInputSection";
 import ParticipantsList from "./ParticipantsList";
 import VideoPreviewSection from "./VideoPreviewSection";
 
+const Spinner = () => (
+    <svg
+        className="animate-spin h-6 w-6"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+    >
+        <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="#636367"
+            strokeWidth="4"
+        />
+        <path
+            className="opacity-75"
+            fill="#636367"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        />
+    </svg>
+);
+
+interface ParticipantsStatusProps {
+    isCreatingConference?: boolean;
+    isLoadingParticipants?: boolean;
+    participantsLoadError?: boolean;
+    participants: MeetingUser[];
+    maxParticipants: number;
+    translate: (key: string, options?: Record<string, unknown>) => string;
+}
+
+const ParticipantsStatus = ({
+    isCreatingConference,
+    isLoadingParticipants,
+    participantsLoadError,
+    participants,
+    maxParticipants,
+    translate: t,
+}: ParticipantsStatusProps) => {
+    if (isCreatingConference) {
+        return (
+            <span className="text-base font-normal text-white/75">
+                {t("meet.preMeeting.upToParticipants", { num: maxParticipants })}
+            </span>
+        );
+    }
+
+    if (isLoadingParticipants) {
+        return (
+            <div className="flex h-6 items-center justify-center mb-5">
+                <Spinner />
+            </div>
+        );
+    }
+
+    if (participantsLoadError) {
+        return (
+            <span className="text-base font-normal text-white/75 mb-5">
+                {t("meet.preMeeting.participantsNotAvailable")}
+            </span>
+        );
+    }
+
+    return <ParticipantsList participants={participants} translate={t} />;
+};
+
 interface PreMeetingModalProps {
     /**
      * The video track to render as preview
@@ -51,6 +118,16 @@ interface PreMeetingModalProps {
     participants: MeetingUser[];
 
     /**
+     * Flag to indicate if participants are loading
+     */
+    isLoadingParticipants?: boolean;
+
+    /**
+     * Flag to indicate if there was an error loading participants
+     */
+    participantsLoadError?: boolean;
+
+    /**
      * Join conference handler
      */
     joinConference?: () => void;
@@ -88,6 +165,8 @@ const PreMeetingModal = ({
     setUserName,
     setIsNameInputFocused,
     participants,
+    isLoadingParticipants,
+    participantsLoadError,
     joinConference,
     disableJoinButton,
     flipX,
@@ -119,19 +198,17 @@ const PreMeetingModal = ({
                 />
                 <MediaControlsWrapper />
                 <div className="border border-b border-white/15"/>
-                {isCreatingConference ? (
-                    <div className="flex flex-col items-center justify-center space-y-5">
-                        <div className="flex flex-col items-center justify-center">
-                            <span className="text-xl font-semibold text-white">{t("meet.internxtMeet")}</span>
-
-                            <span className="text-base font-normal text-white/75">
-                                {t("meet.preMeeting.upToParticipants", { num })}
-                            </span>
-                        </div>
-                    </div>
-                ) : (
-                    <ParticipantsList participants={participants} translate={t} />
-                )}
+                <div className="flex flex-col items-center justify-center">
+                    <span className="text-xl font-semibold text-white">{t("meet.internxtMeet")}</span>
+                    <ParticipantsStatus
+                        isCreatingConference={isCreatingConference}
+                        isLoadingParticipants={isLoadingParticipants}
+                        participantsLoadError={participantsLoadError}
+                        participants={participants}
+                        maxParticipants={num}
+                        translate={t}
+                    />
+                </div>
                 {!!errorMessage && (
                     <div className="max-w-[264px]">
                         <ErrorMessage message={errorMessage} />

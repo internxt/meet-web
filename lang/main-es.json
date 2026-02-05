@@ -818,6 +818,7 @@
             "participants": "Participantes",
             "participant": "Participante",
             "upToParticipants": "Hasta {{num}} participantes",
+            "participantsNotAvailable": "Participantes no disponibles",
             "upgrade": "Actualizar",
             "upgradeMessage": "Meet no está disponible con tu plan. \nActualiza ahora para empezar a realizar reuniones privadas."
         },

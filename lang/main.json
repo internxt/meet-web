@@ -937,6 +937,7 @@
             "participants": "Participants",
             "participant": "Participant",
             "upToParticipants": "Up to {{num}} participants",
+            "participantsNotAvailable": "Participants not available",
             "upgrade": "Upgrade",
             "upgradeMessage": "Meet is not available with your plan. \nUpgrade now to start private meetings."
         },
