@@ -7,7 +7,7 @@ import { CONFERENCE_WILL_LEAVE } from "../../../conference/actionTypes";
 import { getCurrentConference } from "../../../conference/functions";
 import { isLeavingConferenceManually, setLeaveConferenceManually } from "../../general/utils/conferenceState";
 import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED, CONNECTION_FAILED } from "../../../connection/actionTypes";
-import { reloadNow } from "../../../../app/actions.web";
+import { connect } from "../../../connection/actions.web";
 import { setJWT } from "../../../jwt/actions";
 import MiddlewareRegistry from "../../../redux/MiddlewareRegistry";
 import { trackRemoved } from "../../../tracks/actions.any";
@@ -62,7 +62,7 @@ const clearRemoteTracks = (store: IStore) => {
 
 const triggerReconnection = async (store: IStore) => {
     console.log('[AUTO_RECONNECT] calling connect from triggerReconnection');
-    return await store.dispatch(reloadNow());
+    return await store.dispatch(connect());
 };
 
 const scheduleRetry = (store: IStore) => {
