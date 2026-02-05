@@ -12,6 +12,7 @@ local is_admin = util.is_admin;
 local is_healthcheck_room = util.is_healthcheck_room;
 local is_moderated = util.is_moderated;
 local process_host_module = util.process_host_module;
+local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 
 local disable_auto_owners = module:get_option_boolean('wait_for_host_disable_auto_owners', false);
 
@@ -65,6 +66,8 @@ module:hook('muc-occupant-pre-join', function (event)
         if module:fire_event('room_has_host', { room = room; occupant = occupant; session = session; }) then
             -- the host is here, let's drop the lobby
             room:set_members_only(false);
+            -- this is set by create-persistent-lobby-room, so let's clear it
+            room:set_persistent(false);
 
             -- let's set the default role of 'participant' for the newly created occupant as it was nil when created
             -- when the room was still members_only, later if not disabled this participant will become a moderator
@@ -76,7 +79,7 @@ module:hook('muc-occupant-pre-join', function (event)
             module:fire_event('room_host_arrived', room.jid, session);
             lobby_host:fire_event('destroy-lobby-room', {
                 room = room,
-                newjid = room.jid,
+                newjid = internal_room_jid_match_rewrite(room.jid),
                 message = 'Host arrived.',
             });
         elseif not room:get_members_only() then

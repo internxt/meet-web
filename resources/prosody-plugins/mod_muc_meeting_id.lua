@@ -10,6 +10,8 @@ local is_healthcheck_room = main_util.is_healthcheck_room;
 local internal_room_jid_match_rewrite = main_util.internal_room_jid_match_rewrite;
 local presence_check_status = main_util.presence_check_status;
 local extract_subdomain = main_util.extract_subdomain;
+local util = module:require 'util';
+local is_transcriber = util.is_transcriber;
 
 local QUEUE_MAX_SIZE = 500;
 
@@ -158,7 +160,7 @@ module:hook("muc-occupant-groupchat", function(event)
     event.stanza:remove_children('nick', 'http://jabber.org/protocol/nick');
 end, 45); -- prosody check is prio 50, we want to run after it
 
-module:hook('message/bare', function(event)
+local function filterTranscriptionResult(event)
     local stanza = event.stanza;
 
     if stanza.attr.type ~= 'groupchat' then
@@ -173,14 +175,17 @@ module:hook('message/bare', function(event)
 
     local room = get_room_from_jid(stanza.attr.to);
     if not room then
-        module:log('warn', 'No room found found for %s', stanza.attr.to);
+        module:log('warn', 'No room found for %s', stanza.attr.to);
         return;
     end
 
     local occupant_jid = stanza.attr.from;
     local occupant = room:get_occupant_by_real_jid(occupant_jid);
     if not occupant then
-        module:log("error", "Occupant sending msg %s was not found in room %s", occupant_jid, room.jid)
+        -- skip logs for messages coming from s2s
+        if event.origin.type == 'c2s' then
+            module:log("error", "Occupant sending msg %s was not found in room %s", occupant_jid, room.jid);
+        end
         return;
     end
 
@@ -190,17 +195,23 @@ module:hook('message/bare', function(event)
         return;
     end
 
-    -- TODO: add optimization by moving type and certain fields like is_interim as attribute on 'json-message'
-    -- using string find is roughly 70x faster than json decode for checking the value
-    if string.find(json_message, '"is_interim":true', 1, true) then
-        return;
-    end
-
     local msg_obj, error = json.decode(json_message);
 
     if error then
         module:log('error', 'Error decoding data error:%s Sender: %s to:%s', error, stanza.attr.from, stanza.attr.to);
         return true;
+    end
+
+    if msg_obj.type == 'transcription-result' then
+        if not is_transcriber(stanza.attr.from) then
+            module:log('warn', 'Filtering transcription-result message from non-transcriber: %s', stanza.attr.from);
+            -- Do not fire the event, and do not forward the message
+            return true
+        end
+        if msg_obj.is_interim then
+            -- Do not fire the event, but forward the message
+            return
+        end
     end
 
     if msg_obj.transcript ~= nil then
@@ -240,4 +251,7 @@ module:hook('message/bare', function(event)
         room = room, occupant = occupant, message = msg_obj,
         origin = event.origin,
         stanza = stanza, raw_message = json_message });
-end);
+end
+
+module:hook('message/bare', filterTranscriptionResult);
+module:hook('jitsi-visitor-groupchat-pre-route', filterTranscriptionResult);
