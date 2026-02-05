@@ -10,6 +10,8 @@ import { stopLocalVideoRecording } from '../../recording/actions.any';
 import LocalRecordingManager from '../../recording/components/Recording/LocalRecordingManager.web';
 import { setJWT } from '../jwt/actions';
 
+import { LocalStorageManager } from "../meet/LocalStorageManager";
+import MeetingService from "../meet/services/meeting.service";
 import { _connectInternal } from "./actions.any";
 import logger from './logger';
 
@@ -27,7 +29,9 @@ export function connect(id?: string, password?: string) {
         const state = getState();
         const { jwt } = state["features/base/jwt"];
         const { iAmRecorder, iAmSipGateway } = state["features/base/config"];
-
+        // TODO: CHECK WHY USER REDUCER IS NULL IN THIS POINT, initializers are not executing as expected
+        // const { user } = state["features/user"];
+        const user = LocalStorageManager.instance.getUser();
         if (!iAmRecorder && !iAmSipGateway && isVpaasMeeting(state)) {
             return dispatch(getCustomerDetails())
                 .then(() => {
@@ -35,11 +39,25 @@ export function connect(id?: string, password?: string) {
                         return getJaasJWT(state);
                     }
                 })
-                .then(j => {
-                    j && dispatch(setJWT(j));
+                .then((j) => j && dispatch(setJWT(j)))
+                .then(() =>
+                    dispatch(
+                        _connectInternal({
+                            id,
+                            password,
+                            name: user?.name,
+                            lastname: user?.lastname,
+                            isAnonymous: !user,
+                        })
+                    )
+                )
+                // latest jitsi changes, test if not works current ones
+                // .then(j => {
+                //     j && dispatch(setJWT(j));
 
-                    return dispatch(_connectInternal({id, password}));
-                }).catch(e => {
+                //     return dispatch(_connectInternal(id, password));
+                // })
+                .catch(e => {
                     logger.error('Connection error', e);
                 });
         }
@@ -55,7 +73,15 @@ export function connect(id?: string, password?: string) {
             password = passwordOverride; // eslint-disable-line no-param-reassign
         }
 
-        return dispatch(_connectInternal({id, password}));
+        return dispatch(
+            _connectInternal({
+                id,
+                password,
+                name: user?.name,
+                lastname: user?.lastname,
+                isAnonymous: !user,
+            })
+        );
     };
 }
 
@@ -69,21 +95,31 @@ export function connect(id?: string, password?: string) {
  * the user on conference termination.
  * @returns {Function}
  */
-export function hangup(requestFeedback = false, feedbackTitle?: string, notifyOnConferenceTermination?: boolean) {
+export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?: string, notifyOnConferenceTermination?: boolean) {
      // XXX For web based version we use conference hanging up logic from the old app.
     return async (dispatch: IStore["dispatch"]) => {
         if (LocalRecordingManager.isRecordingLocally()) {
             dispatch(stopLocalVideoRecording());
-            dispatch(showWarningNotification({
-                titleKey: 'localRecording.stopping',
-                descriptionKey: 'localRecording.wait'
-            }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+            dispatch(
+                showWarningNotification(
+                    {
+                        titleKey: "localRecording.stopping",
+                        descriptionKey: "localRecording.wait",
+                    },
+                    NOTIFICATION_TIMEOUT_TYPE.STICKY
+                )
+            );
 
             // wait 1000ms for the recording to end and start downloading
             await new Promise((res) => {
                 setTimeout(res, 1000);
             });
         }
+
+        if (!roomId) {
+            return Promise.reject(new Error("No roomId provided to hangup"));
+        }
+        MeetingService.instance.leaveCall(roomId);
 
         return APP.conference.hangup(requestFeedback, feedbackTitle, notifyOnConferenceTermination);
     };
