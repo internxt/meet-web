@@ -960,7 +960,7 @@
         },
         "secureMeetingMessage": {
             "title": "Your meeting is private",
-            "description": "Only invited or approved participants can join"
+            "description": "Only invited participants can join"
         },
         "settings": {
             "video": {
