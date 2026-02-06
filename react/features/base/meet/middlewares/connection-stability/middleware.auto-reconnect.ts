@@ -4,13 +4,12 @@ import { IStore } from "../../../../app/types";
 import { hideNotification } from "../../../../notifications/actions";
 import { CONFERENCE_WILL_LEAVE, CONFERENCE_JOINED } from "../../../conference/actionTypes";
 import { isLeavingConferenceManually, setLeaveConferenceManually } from "../../general/utils/conferenceState";
-import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED, CONNECTION_FAILED } from "../../../connection/actionTypes";
+import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from "../../../connection/actionTypes";
 import { connect } from "../../../connection/actions.web";
 import { setJWT } from "../../../jwt/actions";
 import MiddlewareRegistry from "../../../redux/MiddlewareRegistry";
 import { trackRemoved, destroyLocalTracks } from "../../../tracks/actions.any";
 import { hideLoader, showLoader } from "../../loader";
-import { disconnect } from "../../../connection/actions.web";
 
 const RECONNECTION_NOTIFICATION_ID = "connection.reconnecting";
 const RECONNECTION_LOADER_ID = "auto-reconnect";
@@ -18,7 +17,6 @@ const JWT_EXPIRED_ERROR = "connection.passwordRequired";
 
 let reconnectionTimer: number | null = null;
 let isReconnecting = false;
-let hasReconnected = false;
 
 export const isAutoReconnecting = () => isReconnecting;
 
@@ -59,34 +57,27 @@ const clarLocalTracks = (store: IStore) => {
  */
 const leaveAndRejoinConference = async (store: IStore) => {
     console.log("[AUTO_RECONNECT] Starting leave and rejoin...");
-    if (isLeavingConferenceManually() || hasReconnected) return;
+    if (isLeavingConferenceManually()) return;
 
-    hasReconnected = true;
     isReconnecting = true;
     showReconnectionLoader(store);
 
     try {        
         const state = store.getState();
-        const { conference } = state['features/base/conference'];
-        if (conference) {
-            console.log("[AUTO_RECONNECT] Found conference, leaving it.");
-            await conference.leave();
-            clearRemoteTracks(store);
-            clearExpiredJWT(store);
-            clarLocalTracks(store);
+        const connection = state['features/base/connection'].connection; // this exists even if conference is gone
+        if (connection) {
+            console.log("[AUTO_RECONNECT] Found connection, leaving it.");
+            await connection.disconnect();
         } else {
-            console.log("[AUTO_RECONNECT] No conference found in state, skipping leave.", state);
+            console.log("[AUTO_RECONNECT] No connection found in state, skipping leave.", state);
         }
         
-        
-        console.log("[AUTO_RECONNECT] Disconnecting via disconnect()...");
-        await store.dispatch(disconnect()); 
+
         console.log("[AUTO_RECONNECT] Rejoining conference via connect()...");
         await store.dispatch(connect());
         
     } catch (error) {
         console.error("[AUTO_RECONNECT] Leave and rejoin error:", error);
-        hasReconnected = false;
         isReconnecting = false;
         hideReconnectionLoader(store);
     }
@@ -101,7 +92,6 @@ const clearTimer = () => {
 
 const resetReconnectionState = () => {
     clearTimer();
-    hasReconnected = false;
     isReconnecting = false;
 };
 
@@ -144,7 +134,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         case CONNECTION_FAILED: {
             const { error } = action;
             console.log("[AUTO_RECONNECT] Connection failed with error:", error);
-            if (error?.name === JWT_EXPIRED_ERROR && !isLeavingConferenceManually() && !isReconnecting && !hasReconnected) {
+            if (error?.name === JWT_EXPIRED_ERROR && !isLeavingConferenceManually() && !isReconnecting) {
                 leaveAndRejoinConference(store);
             }
 
