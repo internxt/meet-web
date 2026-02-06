@@ -157,24 +157,6 @@ MiddlewareRegistry.register(store => next => action => {
         store.dispatch(hideLoginDialog());
         break;
 
-    case CONNECTION_FAILED: {
-        const { error } = action;
-        const { getState } = store;
-        const state = getState();
-        const { jwt } = state['features/base/jwt'];
-
-        if (error
-                && error.name === JitsiConnectionErrors.PASSWORD_REQUIRED
-                && typeof error.recoverable === 'undefined'
-                && !jwt) {
-            error.recoverable = true;
-
-            _handleLogin(store);
-        }
-
-        break;
-    }
-
     case LOGIN: {
         _handleLogin(store);
 
