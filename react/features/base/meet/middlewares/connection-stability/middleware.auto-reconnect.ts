@@ -32,25 +32,6 @@ const hideReconnectionLoader = (store: IStore) => {
     store.dispatch(hideLoader(RECONNECTION_LOADER_ID));
 };
 
-const clearExpiredJWT = (store: IStore) => {
-    store.dispatch(setJWT(undefined));
-};
-
-const clearRemoteTracks = (store: IStore) => {
-    const state = store.getState();
-    const remoteTracks = state["features/base/tracks"].filter((t) => !t.local);
-
-    batch(() => {
-        for (const track of remoteTracks) {
-            store.dispatch(trackRemoved(track.jitsiTrack));
-        }
-    });
-};
-
-const clarLocalTracks = (store: IStore) => {
-    store.dispatch(destroyLocalTracks());
-};
-
 /**
  * Leaves the conference at the Jitsi library level and rejoins.
  * This is done ONCE per disconnection.
@@ -124,10 +105,8 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         }
 
         case CONNECTION_ESTABLISHED: {
-            if (!isReconnecting) {
-                resetReconnectionState();
-                setLeaveConferenceManually(false);
-            }
+            resetReconnectionState();
+            setLeaveConferenceManually(false);
             break;
         }
  

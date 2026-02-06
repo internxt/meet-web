@@ -89,11 +89,11 @@ function _connectionEstablished(store: IStore, next: Function, action: AnyAction
 function _connectionFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
     // In the case of a split-brain error, reload early and prevent further
     // handling of the action.
-    if (_isMaybeSplitBrainError(getState, action)) {
+    /*if (_isMaybeSplitBrainError(getState, action)) {
         dispatch(reloadNow());
 
         return;
-    }
+    }*/
 
     return next(action);
 }
