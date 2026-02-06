@@ -443,85 +443,29 @@ function _logJwtErrors(message: string, errors: string) {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _connectionFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
-    console.log("[AUTO_RECONNECT]  ERRROR, went to react/features/base/conference/middleware.any.ts");
-    const { connection, error } = action;
-    const { jwt } = getState()['features/base/jwt'];
+   const state = getState();
 
-    if (jwt) {
-        const errors: string = validateJwt(jwt).map((err: any) =>
-            i18n.t(`dialog.tokenAuthFailedReason.${err.key}`, err.args))
-        .join(' ');
-
-        _logJwtErrors(error.message, errors);
-
-        // do not show the notification when we will prompt the user
-        // for username and password
-        if (error.name === JitsiConnectionErrors.PASSWORD_REQUIRED) {
-            dispatch(showErrorNotification({
-                descriptionKey: errors ? 'dialog.tokenAuthFailedWithReasons' : 'dialog.tokenAuthFailed',
-                descriptionArguments: { reason: errors },
-                titleKey: 'dialog.tokenAuthFailedTitle'
-            }));
-        }
-    }
-
-    if (error.name === JitsiConnectionErrors.CONFERENCE_REQUEST_FAILED) {
-        let notificationAction: Function = showNotification;
-        const notificationProps = {
-            customActionNameKey: [ 'dialog.rejoinNow' ],
-            customActionHandler: [ () => dispatch(reloadNow()) ],
-            descriptionKey: 'notify.connectionFailed'
-        } as INotificationProps;
-
-        const { locationURL = { href: '' } as URL } = getState()['features/base/connection'];
-        const { tenant = '' } = parseURIString(locationURL.href) || {};
-
-        if (tenant.startsWith('-') || tenant.endsWith('-')) {
-            notificationProps.descriptionKey = 'notify.invalidTenantHyphenDescription';
-            notificationProps.titleKey = 'notify.invalidTenant';
-            notificationAction = showErrorNotification;
-        } else if (tenant.length > 63) {
-            notificationProps.descriptionKey = 'notify.invalidTenantLengthDescription';
-            notificationProps.titleKey = 'notify.invalidTenant';
-            notificationAction = showErrorNotification;
-        }
-
-        dispatch(notificationAction(notificationProps, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-    }
-
-    const result = next(action);
-
-    _removeUnloadHandler(getState);
-
-    forEachConference(getState, conference => {
-        // TODO: revisit this
-        // It feels that it would make things easier if JitsiConference
-        // in lib-jitsi-meet would monitor it's connection and emit
-        // CONFERENCE_FAILED when it's dropped. It has more knowledge on
-        // whether it can recover or not. But because the reload screen
-        // and the retry logic is implemented in the app maybe it can be
-        // left this way for now.
-        if (conference.getConnection() === connection) {
-            // XXX Note that on mobile the error type passed to
-            // connectionFailed is always an object with .name property.
-            // This fact needs to be checked prior to enabling this logic on
-            // web.
-            const conferenceAction = conferenceFailed(conference, error.name);
-
-            // Copy the recoverable flag if set on the CONNECTION_FAILED
-            // action to not emit recoverable action caused by
-            // a non-recoverable one.
-            if (typeof error.recoverable !== 'undefined') {
-                conferenceAction.error.recoverable = error.recoverable;
+    const connection = state['features/base/connection'].connection;
+    const conference = state['features/base/conference'].conference;
+    
+    (async () => {
+        try {
+            if (conference) {
+                console.log("[AUTO_RECONNECT] Leaving conference");
+                await conference.leave();
             }
-
-            dispatch(conferenceAction);
+            if (connection) {
+                console.log("[AUTO_RECONNECT] Disconnecting connection");
+                await connection.disconnect();
+            }
+            
+            
+        } catch (err) {
+            console.error("[AUTO_RECONNECT] _connectionFailed failed:", err);
+           
         }
-
-        return true;
-    });
-
-    return result;
+    })();
+    return next(action);
 }
 
 /**

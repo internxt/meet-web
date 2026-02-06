@@ -9,6 +9,7 @@ import { getURLWithoutParams } from '../base/connection/utils';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { isEmbedded } from '../base/util/embedUtils';
 
+import { reloadNow } from './actions';
 import { _getRouteToRender } from './getRouteToRender';
 import { IStore } from './types';
 
@@ -86,33 +87,15 @@ function _connectionEstablished(store: IStore, next: Function, action: AnyAction
  * @private
  */
 function _connectionFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
-    console.log("[AUTO_RECONNECT] ERRROR, went to connection failed react/features/app/middleware.ts");
-    
-    const state = getState();
+    // In the case of a split-brain error, reload early and prevent further
+    // handling of the action.
+    if (_isMaybeSplitBrainError(getState, action)) {
+        dispatch(reloadNow());
 
-    const connection = state['features/base/connection'].connection;
-    const conference = state['features/base/conference'].conference;
-    
-    (async () => {
-        try {
-            if (conference) {
-                console.log("[AUTO_RECONNECT] Leaving conference");
-                await conference.leave();
-            }
-            if (connection) {
-                console.log("[AUTO_RECONNECT] Disconnecting connection");
-                await connection.disconnect();
-            }
-            
-            next(action);
-            
-        } catch (err) {
-            console.error("[AUTO_RECONNECT] _connectionFailed failed:", err);
-            next(action);
-        }
-    })();
-    
-    return;
+        return;
+    }
+
+    return next(action);
 }
 
 /**
