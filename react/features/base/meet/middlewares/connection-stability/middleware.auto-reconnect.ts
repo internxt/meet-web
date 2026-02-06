@@ -2,8 +2,7 @@ import { batch } from "react-redux";
 import { AnyAction } from "redux";
 import { IStore } from "../../../../app/types";
 import { hideNotification } from "../../../../notifications/actions";
-import { CONFERENCE_WILL_LEAVE, CONFERENCE_LEFT } from "../../../conference/actionTypes";
-import { createConference } from "../../../conference/actions.any";
+import { CONFERENCE_WILL_LEAVE, CONFERENCE_JOINED } from "../../../conference/actionTypes";
 import { isLeavingConferenceManually, setLeaveConferenceManually } from "../../general/utils/conferenceState";
 import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED, CONNECTION_FAILED } from "../../../connection/actionTypes";
 import { disconnect } from "../../../connection/actions.any";
@@ -16,13 +15,11 @@ import { hideLoader, showLoader } from "../../loader";
 const RECONNECTION_NOTIFICATION_ID = "connection.reconnecting";
 const RECONNECTION_LOADER_ID = "auto-reconnect";
 const RECONNECTION_WAIT_TIME_MS = 15000;
-const RECONNECTION_DELAY_MS = 3000;
 const JWT_EXPIRED_ERROR = "connection.passwordRequired";
 
 let reconnectionTimer: number | null = null;
 let isReconnecting = false;
 let hasReconnected = false;
-let savedRoomInfo: { room: string; conference: any } | null = null;
 
 export const isAutoReconnecting = () => isReconnecting;
 
@@ -53,17 +50,12 @@ const clearRemoteTracks = (store: IStore) => {
     });
 };
 
-const saveRoomInfo = (store: IStore) => {
-    const state = store.getState();
-    const { room, conference } = state["features/base/conference"];
-    
-    if (room) {
-        savedRoomInfo = { room, conference };
-        console.log("[AUTO_RECONNECT] Saved room info:", room);
-    }
-};
-
+/**
+ * Leaves the conference at the Jitsi library level and rejoins.
+ * This is done ONCE per disconnection.
+ */
 const leaveAndRejoinConference = async (store: IStore) => {
+    console.log("[AUTO_RECONNECT] Starting leave and rejoin...");
     if (isLeavingConferenceManually() || hasReconnected) return;
 
     hasReconnected = true;
@@ -71,40 +63,22 @@ const leaveAndRejoinConference = async (store: IStore) => {
     showReconnectionLoader(store);
 
     try {
-        saveRoomInfo(store);
-
-        if (!savedRoomInfo?.room) {
-            console.error("[AUTO_RECONNECT] No room info saved, cannot rejoin");
-            hasReconnected = false;
-            isReconnecting = false;
-            hideReconnectionLoader(store);
-            return;
-        }
-
-        console.log("[AUTO_RECONNECT] Disconnecting from conference...");
+        console.log("[AUTO_RECONNECT] Leaving conference via disconnect()...");
         
-        await store.dispatch(disconnect());
-
-        await new Promise((resolve) => setTimeout(resolve, RECONNECTION_DELAY_MS));
-
+        await store.dispatch(disconnect(true));
+        
         clearRemoteTracks(store);
         clearExpiredJWT(store);
-
-        console.log("[AUTO_RECONNECT] Reconnecting and rejoining room:", savedRoomInfo.room);
+        
+        console.log("[AUTO_RECONNECT] Rejoining conference via connect()...");
         
         await store.dispatch(connect());
-
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        console.log("[AUTO_RECONNECT] Creating conference for room:", savedRoomInfo.room);
-        await store.dispatch(createConference());
-
+        
     } catch (error) {
         console.error("[AUTO_RECONNECT] Leave and rejoin error:", error);
         hasReconnected = false;
         isReconnecting = false;
         hideReconnectionLoader(store);
-        savedRoomInfo = null;
     }
 };
 
@@ -119,7 +93,6 @@ const resetReconnectionState = () => {
     clearTimer();
     hasReconnected = false;
     isReconnecting = false;
-    savedRoomInfo = null;
 };
 
 /**
@@ -139,10 +112,14 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
             break;
         }
 
-        case CONFERENCE_LEFT: {
-            if (!isReconnecting) {
-                resetReconnectionState();
+        case CONFERENCE_JOINED: {
+            if (isReconnecting) {
+                console.log("[AUTO_RECONNECT] Successfully rejoined conference");
+                hideReconnectionNotification(store);
+                hideReconnectionLoader(store);
+                setLeaveConferenceManually(false);
             }
+            resetReconnectionState();
             break;
         }
 
@@ -162,13 +139,10 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         }
 
         case CONNECTION_ESTABLISHED: {
-            if (isReconnecting) {
-                hideReconnectionNotification(store);
-                hideReconnectionLoader(store);
+            if (!isReconnecting) {
+                resetReconnectionState();
+                setLeaveConferenceManually(false);
             }
-
-            resetReconnectionState();
-            setLeaveConferenceManually(false);
             break;
         }
 
