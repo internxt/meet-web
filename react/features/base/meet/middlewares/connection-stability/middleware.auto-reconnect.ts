@@ -9,7 +9,7 @@ import { disconnect } from "../../../connection/actions.any";
 import { connect } from "../../../connection/actions.web";
 import { setJWT } from "../../../jwt/actions";
 import MiddlewareRegistry from "../../../redux/MiddlewareRegistry";
-import { trackRemoved } from "../../../tracks/actions.any";
+import { trackRemoved, destroyLocalTracks } from "../../../tracks/actions.any";
 import { hideLoader, showLoader } from "../../loader";
 
 const RECONNECTION_NOTIFICATION_ID = "connection.reconnecting";
@@ -50,6 +50,10 @@ const clearRemoteTracks = (store: IStore) => {
     });
 };
 
+const clarLocalTracks = (store: IStore) => {
+    store.dispatch(destroyLocalTracks());
+};
+
 /**
  * Leaves the conference at the Jitsi library level and rejoins.
  * This is done ONCE per disconnection.
@@ -69,6 +73,7 @@ const leaveAndRejoinConference = async (store: IStore) => {
         
         clearRemoteTracks(store);
         clearExpiredJWT(store);
+        clarLocalTracks(store);
         
         console.log("[AUTO_RECONNECT] Rejoining conference via connect()...");
         
