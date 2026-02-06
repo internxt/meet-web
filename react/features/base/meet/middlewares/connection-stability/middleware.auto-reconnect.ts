@@ -5,7 +5,6 @@ import { hideNotification } from "../../../../notifications/actions";
 import { CONFERENCE_WILL_LEAVE, CONFERENCE_JOINED } from "../../../conference/actionTypes";
 import { isLeavingConferenceManually, setLeaveConferenceManually } from "../../general/utils/conferenceState";
 import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED, CONNECTION_FAILED } from "../../../connection/actionTypes";
-import { disconnect } from "../../../connection/actions.any";
 import { connect } from "../../../connection/actions.web";
 import { setJWT } from "../../../jwt/actions";
 import MiddlewareRegistry from "../../../redux/MiddlewareRegistry";
@@ -67,9 +66,15 @@ const leaveAndRejoinConference = async (store: IStore) => {
     showReconnectionLoader(store);
 
     try {
-        console.log("[AUTO_RECONNECT] Leaving conference via disconnect()...");
+        console.log("[AUTO_RECONNECT] Leaving conference via leave()...");
         
-        await store.dispatch(disconnect(true));
+        const state = store.getState();
+        const { conference } = state['features/base/conference'];
+        if (!conference) {
+           console.error("[AUTO_RECONNECT] ERRROR!!!!! No conference found in state, skipping leave.", state);
+           return;
+        }
+        conference.leave();
         
         clearRemoteTracks(store);
         clearExpiredJWT(store);
