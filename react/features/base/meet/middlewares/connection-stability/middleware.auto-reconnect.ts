@@ -140,7 +140,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
             }
             break;
         }
-        case CONNECTION_DISCONNECTED: 
+ 
         case CONNECTION_FAILED: {
             const { error } = action;
             console.log("[AUTO_RECONNECT] Connection failed with error:", error);
