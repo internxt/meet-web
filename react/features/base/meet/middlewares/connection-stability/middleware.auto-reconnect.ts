@@ -66,20 +66,6 @@ const leaveAndRejoinConference = async (store: IStore) => {
     showReconnectionLoader(store);
 
     try {
-        console.log("[AUTO_RECONNECT] Leaving conference via leave()...");
-        
-        const state = store.getState();
-        const { conference } = state['features/base/conference'];
-        if (!conference) {
-           console.error("[AUTO_RECONNECT] ERRROR!!!!! No conference found in state, skipping leave.", state);
-           return;
-        }
-        conference.leave();
-        
-        clearRemoteTracks(store);
-        clearExpiredJWT(store);
-        clarLocalTracks(store);
-        
         console.log("[AUTO_RECONNECT] Rejoining conference via connect()...");
         
         await store.dispatch(connect());
@@ -130,21 +116,6 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
                 setLeaveConferenceManually(false);
             }
             resetReconnectionState();
-            break;
-        }
-
-        case CONNECTION_DISCONNECTED: {
-            if (isLeavingConferenceManually() || hasReconnected) break;
-
-            clearTimer();
-            isReconnecting = true;
-
-            reconnectionTimer = window.setTimeout(() => {
-                if (!isLeavingConferenceManually() && isReconnecting && !hasReconnected) {
-                    leaveAndRejoinConference(store);
-                }
-            }, RECONNECTION_WAIT_TIME_MS);
-
             break;
         }
 
