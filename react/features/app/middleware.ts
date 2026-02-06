@@ -87,7 +87,7 @@ function _connectionEstablished(store: IStore, next: Function, action: AnyAction
  * @private
  */
 function _connectionFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
-    console.log("[AUTO_RECONNECT]  ERRROR, went to Received connection failed action:", action);
+    console.log("[AUTO_RECONNECT]  ERRROR, went to Received connection failed action react/features/app/middleware.ts");
     // In the case of a split-brain error, reload early and prevent further
     // handling of the action.
     if (_isMaybeSplitBrainError(getState, action)) {

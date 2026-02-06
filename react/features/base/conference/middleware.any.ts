@@ -443,7 +443,7 @@ function _logJwtErrors(message: string, errors: string) {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _connectionFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
-    console.log("[AUTO_RECONNECT]  ERRROR, went to Received connection failed action:", action);
+    console.log("[AUTO_RECONNECT]  ERRROR, went to react/features/base/conference/middleware.any.ts");
     const { connection, error } = action;
     const { jwt } = getState()['features/base/jwt'];
 

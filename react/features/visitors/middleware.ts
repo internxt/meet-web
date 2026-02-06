@@ -163,7 +163,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         break;
     }
     case CONNECTION_FAILED: {
-        console.log("[AUTO_RECONNECT]  ERRROR, went to Received connection failed action:", action);
+        console.log("[AUTO_RECONNECT]  ERRROR, went to react/features/visitors/middleware.ts");
         const { error } = action;
 
         if (error?.name !== JitsiConnectionErrors.NOT_LIVE_ERROR) {

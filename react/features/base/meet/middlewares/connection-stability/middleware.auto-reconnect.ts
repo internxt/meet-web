@@ -1,4 +1,3 @@
-import { batch } from "react-redux";
 import { AnyAction } from "redux";
 import { IStore } from "../../../../app/types";
 import { hideNotification } from "../../../../notifications/actions";
@@ -6,9 +5,7 @@ import { CONFERENCE_WILL_LEAVE, CONFERENCE_JOINED } from "../../../conference/ac
 import { isLeavingConferenceManually, setLeaveConferenceManually } from "../../general/utils/conferenceState";
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from "../../../connection/actionTypes";
 import { connect } from "../../../connection/actions.web";
-import { setJWT } from "../../../jwt/actions";
 import MiddlewareRegistry from "../../../redux/MiddlewareRegistry";
-import { trackRemoved, destroyLocalTracks } from "../../../tracks/actions.any";
 import { hideLoader, showLoader } from "../../loader";
 
 const RECONNECTION_NOTIFICATION_ID = "connection.reconnecting";
