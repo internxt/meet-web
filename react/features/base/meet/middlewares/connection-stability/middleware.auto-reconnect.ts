@@ -42,12 +42,18 @@ const leaveAndRejoinConference = async (store: IStore) => {
 
     try {        
         const state = store.getState();
-        const connection = state['features/base/connection'].connection; // this exists even if conference is gone
+
+        const conference = state['features/base/conference'].conference;
+        const connection = state['features/base/connection'].connection;
+        
+        if (conference) {
+            console.log("[AUTO_RECONNECT] Found conference, leaving it.");
+            await conference.leave();
+        }
+        
         if (connection) {
-            console.log("[AUTO_RECONNECT] Found connection, leaving it.");
+            console.log("[AUTO_RECONNECT] Found connection, disconnecting it.");
             await connection.disconnect();
-        } else {
-            console.log("[AUTO_RECONNECT] No connection found in state, skipping leave.", state);
         }
         
 

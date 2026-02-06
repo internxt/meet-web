@@ -8,8 +8,8 @@ import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection/ac
 import { getURLWithoutParams } from '../base/connection/utils';
 import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
 import { isEmbedded } from '../base/util/embedUtils';
+import { connect } from "../base/connection/actions.web";
 
-import { reloadNow } from './actions';
 import { _getRouteToRender } from './getRouteToRender';
 import { IStore } from './types';
 
@@ -87,17 +87,37 @@ function _connectionEstablished(store: IStore, next: Function, action: AnyAction
  * @private
  */
 function _connectionFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
-    console.log("[AUTO_RECONNECT]  ERRROR, went to Received connection failed action react/features/app/middleware.ts");
-    // In the case of a split-brain error, reload early and prevent further
-    // handling of the action.
-    if (_isMaybeSplitBrainError(getState, action)) {
-        console.log("[AUTO_RECONNECT]  ERRROR, calling reloadNow() due to suspected split brain error");
-        dispatch(reloadNow());
-
-        return;
-    }
-
-    return next(action);
+    console.log("[AUTO_RECONNECT] ERRROR, went to connection failed react/features/app/middleware.ts");
+    
+    const state = getState();
+    
+    // FIX: Capture connection/conference BEFORE calling next()
+    const connection = state['features/base/connection'].connection;
+    const conference = state['features/base/conference'].conference;
+    
+    // FIX: Auto-reconnect on ANY connection failure
+    (async () => {
+        try {
+            if (conference) {
+                console.log("[AUTO_RECONNECT] Leaving conference");
+                await conference.leave();
+            }
+            if (connection) {
+                console.log("[AUTO_RECONNECT] Disconnecting connection");
+                await connection.disconnect();
+            }
+            
+            next(action);
+            
+            console.log("[AUTO_RECONNECT] Reconnecting");
+            await dispatch(connect());
+        } catch (err) {
+            console.error("[AUTO_RECONNECT] Reconnect failed:", err);
+            next(action);
+        }
+    })();
+    
+    return;
 }
 
 /**
