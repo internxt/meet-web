@@ -6,7 +6,7 @@ import { isLeavingConferenceManually, setLeaveConferenceManually } from "../../g
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from "../../../connection/actionTypes";
 import { connect } from "../../../connection/actions.web";
 import MiddlewareRegistry from "../../../redux/MiddlewareRegistry";
-import { hideLoader, showLoader } from "../../loader";
+import { hideLoader } from "../../loader";
 
 const RECONNECTION_NOTIFICATION_ID = "connection.reconnecting";
 const RECONNECTION_LOADER_ID = "auto-reconnect";
@@ -21,50 +21,8 @@ const hideReconnectionNotification = (store: IStore) => {
     store.dispatch(hideNotification(RECONNECTION_NOTIFICATION_ID));
 };
 
-const showReconnectionLoader = (store: IStore) => {
-    store.dispatch(showLoader(undefined, "loader.reconnecting", RECONNECTION_LOADER_ID));
-};
-
 const hideReconnectionLoader = (store: IStore) => {
     store.dispatch(hideLoader(RECONNECTION_LOADER_ID));
-};
-
-/**
- * Leaves the conference at the Jitsi library level and rejoins.
- * This is done ONCE per disconnection.
- */
-const leaveAndRejoinConference = async (store: IStore) => {
-    console.log("[AUTO_RECONNECT] Starting leave and rejoin...");
-    if (isLeavingConferenceManually()) return;
-
-    isReconnecting = true;
-    showReconnectionLoader(store);
-
-    try {        
-        const state = store.getState();
-
-        const conference = state['features/base/conference'].conference;
-        const connection = state['features/base/connection'].connection;
-        
-        if (conference) {
-            console.log("[AUTO_RECONNECT] Found conference, leaving it.");
-            await conference.leave();
-        }
-        
-        if (connection) {
-            console.log("[AUTO_RECONNECT] Found connection, disconnecting it.");
-            await connection.disconnect();
-        }
-        
-
-        console.log("[AUTO_RECONNECT] Rejoining conference via connect()...");
-        await store.dispatch(connect());
-        
-    } catch (error) {
-        console.error("[AUTO_RECONNECT] Leave and rejoin error:", error);
-        isReconnecting = false;
-        hideReconnectionLoader(store);
-    }
 };
 
 const clearTimer = () => {
@@ -117,7 +75,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
             const { error } = action;
             console.log("[AUTO_RECONNECT] Connection failed with error:", error);
             if (error?.name === JWT_EXPIRED_ERROR && !isLeavingConferenceManually() && !isReconnecting) {
-                leaveAndRejoinConference(store);
+                store.dispatch(connect());
             }
 
             break;

@@ -1,6 +1,6 @@
 import { IStore } from '../../../../../app/types';
 import { isLeavingConferenceManually } from "../../../general/utils/conferenceState";
-//import { isAutoReconnecting } from "../middleware.auto-reconnect";
+import { isAutoReconnecting } from "../middleware.auto-reconnect";
 import { showConnectionFailedNotification, showConnectionLostNotification } from "./notification-helpers";
 
 /**
@@ -22,7 +22,7 @@ export const handleXMPPDisconnected = (dispatch: IStore["dispatch"], message: st
     console.log("[CONNECTION_NOTIFICATIONS] XMPP disconnected:", message);
 
     if (isLeavingConferenceManually()) return;
-    //if (isAutoReconnecting()) return;
+    if (isAutoReconnecting()) return;
 
     showConnectionLostNotification(dispatch);
 };
@@ -37,7 +37,7 @@ export const handleXMPPDisconnected = (dispatch: IStore["dispatch"], message: st
  */
 export const handleXMPPConnectionFailed = (dispatch: IStore["dispatch"], error: any, message: string) => {
     console.error("[CONNECTION_NOTIFICATIONS] XMPP connection failed:", error, message);
-    //if (isAutoReconnecting()) return;
+    if (isAutoReconnecting()) return;
 
     showConnectionFailedNotification(dispatch, message);
 };
