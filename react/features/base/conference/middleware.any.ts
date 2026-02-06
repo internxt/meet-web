@@ -445,16 +445,24 @@ function _logJwtErrors(message: string, errors: string) {
 function _connectionFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
      
     console.log("[AUTO_RECONNECT] entered _connectionFailed middleware");
-     const { conference } = getState()['features/base/conference'];
+    const { connection } = action;
+    const state = getState();
+    const conference = state['features/base/conference'].conference;
     (async () => {
         try {
             if (conference) {
-                conference.leave()
-                .then(() => dispatch(disconnect()));
+                console.log("[AUTO_RECONNECT] Leaving conference");
+                dispatch(conferenceWillLeave(conference));
+                await conference.leave();
+            }
+            
+            if (connection) {
+                console.log("[AUTO_RECONNECT] Disconnecting connection");
+                await connection.disconnect();
             }
 
         next(action);
-
+        console.log("[AUTO_RECONNECT] Start new connection");
         return dispatch(connect());
             
         } catch (err) {
