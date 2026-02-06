@@ -69,7 +69,6 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case CONFERENCE_FAILED:
     case CONNECTION_FAILED:
-        store.dispatch(setJoiningInProgress(false));
         break;
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);

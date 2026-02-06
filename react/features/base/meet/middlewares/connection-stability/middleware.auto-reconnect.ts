@@ -10,10 +10,10 @@ import { setJWT } from "../../../jwt/actions";
 import MiddlewareRegistry from "../../../redux/MiddlewareRegistry";
 import { trackRemoved, destroyLocalTracks } from "../../../tracks/actions.any";
 import { hideLoader, showLoader } from "../../loader";
+import { disconnect } from "../../../connection/actions.web";
 
 const RECONNECTION_NOTIFICATION_ID = "connection.reconnecting";
 const RECONNECTION_LOADER_ID = "auto-reconnect";
-const RECONNECTION_WAIT_TIME_MS = 15000;
 const JWT_EXPIRED_ERROR = "connection.passwordRequired";
 
 let reconnectionTimer: number | null = null;
@@ -65,9 +65,23 @@ const leaveAndRejoinConference = async (store: IStore) => {
     isReconnecting = true;
     showReconnectionLoader(store);
 
-    try {
-        console.log("[AUTO_RECONNECT] Rejoining conference via connect()...");
+    try {        
+        const state = store.getState();
+        const { conference } = state['features/base/conference'];
+        if (conference) {
+            console.log("[AUTO_RECONNECT] Found conference, leaving it.");
+            await conference.leave();
+            clearRemoteTracks(store);
+            clearExpiredJWT(store);
+            clarLocalTracks(store);
+        } else {
+            console.log("[AUTO_RECONNECT] No conference found in state, skipping leave.", state);
+        }
         
+        
+        console.log("[AUTO_RECONNECT] Disconnecting via disconnect()...");
+        await store.dispatch(disconnect()); 
+        console.log("[AUTO_RECONNECT] Rejoining conference via connect()...");
         await store.dispatch(connect());
         
     } catch (error) {
@@ -126,7 +140,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
             }
             break;
         }
-
+        case CONNECTION_DISCONNECTED: 
         case CONNECTION_FAILED: {
             const { error } = action;
             console.log("[AUTO_RECONNECT] Connection failed with error:", error);
