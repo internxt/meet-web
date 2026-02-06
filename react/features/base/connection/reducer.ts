@@ -141,6 +141,7 @@ function _connectionFailed(
             connection: Object;
             error: ConnectionFailedError;
         }) {
+    console.log("[AUTO_RECONNECT] ERRROR Reducing connection failed with error:");
     const connection_ = _getCurrentConnection(state);
 
     if (connection_ && connection_ !== connection) {
