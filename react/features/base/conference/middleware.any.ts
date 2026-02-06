@@ -443,30 +443,25 @@ function _logJwtErrors(message: string, errors: string) {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _connectionFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
+     
     console.log("[AUTO_RECONNECT] entered _connectionFailed middleware");
-    const state = getState();
-
-    const connection = state['features/base/connection'].connection;
-    const conference = state['features/base/conference'].conference;
-    
+     const { conference } = getState()['features/base/conference'];
     (async () => {
         try {
             if (conference) {
-                console.log("[AUTO_RECONNECT] Leaving conference");
-                await conference.leave();
+                conference.leave()
+                .then(() => dispatch(disconnect()));
             }
-            if (connection) {
-                console.log("[AUTO_RECONNECT] Disconnecting connection");
-                await connection.disconnect();
-            }
-            dispatch(connect());
+
+        next(action);
+
+        return dispatch(connect());
             
         } catch (err) {
             console.error("[AUTO_RECONNECT] _connectionFailed failed:", err);
            
         }
     })();
-    return next(action);
 }
 
 /**
