@@ -457,7 +457,6 @@ export function disconnect(isRedirect?: boolean, shouldLeave = true) {
 
         // Leave the conference.
         if (conference_) {
-            console.log("[AUTO_RECONNECT] sending conferenceWillLeave()...");
             // In a fashion similar to JitsiConference's CONFERENCE_LEFT event
             // (and the respective Redux action) which is fired after the
             // conference has been left, notify the application about the
@@ -465,12 +464,10 @@ export function disconnect(isRedirect?: boolean, shouldLeave = true) {
             dispatch(conferenceWillLeave(conference_, isRedirect));
 
             if (!shouldLeave) {
-                console.log("[AUTO_RECONNECT] skipping JitsiConference.leave()...");
                 // we are skipping JitsiConference.leave(), but will still dispatch the normal leave flow events
                 dispatch(conferenceLeft(conference_));
                 promise = Promise.resolve();
             } else {
-                console.log("[AUTO_RECONNECT] calling JitsiConference.leave()...");
                 promise
                     = conference_.leave()
                     .catch((error: Error) => {
