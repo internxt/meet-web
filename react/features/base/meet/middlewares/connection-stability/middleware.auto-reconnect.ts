@@ -5,7 +5,7 @@ import { hideNotification } from "../../../../notifications/actions";
 import { CONFERENCE_WILL_LEAVE } from "../../../conference/actionTypes";
 import { isLeavingConferenceManually, setLeaveConferenceManually } from "../../general/utils/conferenceState";
 import { CONNECTION_DISCONNECTED, CONNECTION_ESTABLISHED, CONNECTION_FAILED } from "../../../connection/actionTypes";
-import { connect } from "../../../connection/actions.web";
+import { reloadNow } from "../../../../app/actions.web";
 import { setJWT } from "../../../jwt/actions";
 import MiddlewareRegistry from "../../../redux/MiddlewareRegistry";
 import { trackRemoved } from "../../../tracks/actions.any";
@@ -14,13 +14,11 @@ import { hideLoader, showLoader } from "../../loader";
 const RECONNECTION_NOTIFICATION_ID = "connection.reconnecting";
 const RECONNECTION_LOADER_ID = "auto-reconnect";
 const RECONNECTION_WAIT_TIME_MS = 15000;
-const MAX_RECONNECTION_ATTEMPTS = 2;
 const RECONNECTION_DELAY_MS = 3000;
 const JWT_EXPIRED_ERROR = "connection.passwordRequired";
 
 let reconnectionTimer: number | null = null;
 let isReconnecting = false;
-let reconnectionAttempts = 0;
 
 export const isAutoReconnecting = () => isReconnecting;
 
@@ -28,19 +26,16 @@ const hideReconnectionNotification = (store: IStore) => {
     store.dispatch(hideNotification(RECONNECTION_NOTIFICATION_ID));
 };
 
-const showReconnectionLoader = (store: IStore, attempt: number) => {
-    const textKey = attempt <= MAX_RECONNECTION_ATTEMPTS ? "loader.reconnecting" : "loader.reloading";
+const showReconnectionLoader = (store: IStore) => {
 
-    store.dispatch(showLoader(undefined, textKey, RECONNECTION_LOADER_ID));
+    store.dispatch(showLoader(undefined, "loader.reconnecting", RECONNECTION_LOADER_ID));
 };
 
 const hideReconnectionLoader = (store: IStore) => {
     store.dispatch(hideLoader(RECONNECTION_LOADER_ID));
 };
 
-const reloadPage = () => {
-    window.location.reload();
-};
+
 
 const clearExpiredJWT = (store: IStore) => {
     store.dispatch(setJWT(undefined));
@@ -58,7 +53,7 @@ const clearRemoteTracks = (store: IStore) => {
 };
 
 const triggerReconnection = (store: IStore) => {
-    store.dispatch(connect());
+    store.dispatch(reloadNow());
 };
 
 const scheduleRetry = (store: IStore) => {
@@ -69,12 +64,6 @@ const scheduleRetry = (store: IStore) => {
     }, RECONNECTION_DELAY_MS);
 };
 
-const handleMaxAttemptsReached = (store: IStore) => {
-    isReconnecting = true;
-    showReconnectionLoader(store, reconnectionAttempts + 1);
-    reconnectionTimer = window.setTimeout(reloadPage, 2000);
-};
-
 /**
  * Attempts to reconnect by clearing JWT and connecting to conference again.
  * If max attempts reached, reloads the page.
@@ -82,14 +71,8 @@ const handleMaxAttemptsReached = (store: IStore) => {
 const attemptReconnection = async (store: IStore) => {
     if (isLeavingConferenceManually()) return;
 
-    if (reconnectionAttempts >= MAX_RECONNECTION_ATTEMPTS) {
-        handleMaxAttemptsReached(store);
-        return;
-    }
-
-    reconnectionAttempts++;
     isReconnecting = true;
-    showReconnectionLoader(store, reconnectionAttempts);
+    showReconnectionLoader(store);
 
     try {
         clearRemoteTracks(store);
@@ -112,7 +95,6 @@ const clearTimer = () => {
 
 const resetReconnectionState = () => {
     clearTimer();
-    reconnectionAttempts = 0;
     isReconnecting = false;
 };
 
@@ -135,7 +117,6 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
             if (isLeavingConferenceManually()) break;
 
             clearTimer();
-            reconnectionAttempts = 0;
             isReconnecting = true;
 
             reconnectionTimer = window.setTimeout(() => {
