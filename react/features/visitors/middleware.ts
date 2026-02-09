@@ -163,6 +163,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         break;
     }
     case CONNECTION_FAILED: {
+        console.log("[AUTO_RECONNECT] attempting reconnect in CONNECTION_FAILED of visitors middleware");
         const { error } = action;
 
         if (error?.name !== JitsiConnectionErrors.NOT_LIVE_ERROR) {

@@ -87,6 +87,7 @@ function _connectionEstablished(store: IStore, next: Function, action: AnyAction
  * @private
  */
 function _connectionFailed({ dispatch, getState }: IStore, next: Function, action: AnyAction) {
+    console.log("[AUTO_RECONNECT] Entered _connectionFailed to check _isMaybeSplitBrainError");
     // In the case of a split-brain error, reload early and prevent further
     // handling of the action.
     if (_isMaybeSplitBrainError(getState, action)) {

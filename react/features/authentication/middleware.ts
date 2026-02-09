@@ -158,6 +158,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case CONNECTION_FAILED: {
+        console.log("[AUTO_RECONNECT] Entered CONNECTION_FAILED to check jwt");
         const { error } = action;
         const { getState } = store;
         const state = getState();

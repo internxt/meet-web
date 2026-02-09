@@ -140,8 +140,8 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         }
 
         case CONNECTION_FAILED: {
+            console.log("[AUTO_RECONNECT] Attempting reconnect");
             const { error } = action;
-            console.log("[AUTO_RECONNECT] Connection failed with error:", error);
             if (error?.name === JWT_EXPIRED_ERROR && !isLeavingConferenceManually() && !isReconnecting) {
                 attemptReconnection(store);
             }

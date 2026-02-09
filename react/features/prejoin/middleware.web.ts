@@ -69,6 +69,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case CONFERENCE_FAILED:
     case CONNECTION_FAILED:
+        console.log("[AUTO_RECONNECT] set setJoiningInProgress to false in middleware");
         store.dispatch(setJoiningInProgress(false));
         break;
     case CONFERENCE_JOINED:
