@@ -61,8 +61,10 @@ export const setupXMPPConnectionListeners = (connection: any, dispatch: IStore["
         handleXMPPDisconnected(dispatch, message)
     );
 
-    connection.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, (error: any, message: string) =>
-        handleXMPPConnectionFailed(dispatch, error, message)
+    connection.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, (error: any, message: string) => {
+        console.log("[AUTO_RECONNECT] dispatched CONNECTION_FAILED from XMPP connection listener");
+        handleXMPPConnectionFailed(dispatch, error, message);
+    }
     );
 
     state.hasConnectionListeners = true;

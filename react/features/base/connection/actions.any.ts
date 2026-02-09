@@ -31,6 +31,7 @@ import { JITSI_CONNECTION_URL_KEY } from "./constants";
 import logger from "./logger";
 import { get8x8Options } from "./options8x8";
 import { ConnectionFailedError, IIceServers } from "./types";
+import { log } from '@tensorflow/tfjs-core/dist/log';
 
 /**
  * The options that will be passed to the JitsiConnection instance.
@@ -94,6 +95,7 @@ export function connectionEstablished(connection: Object, timeEstablished: numbe
  * }}
  */
 export function connectionFailed(connection: Object, error: ConnectionFailedError) {
+    console.log("[AUTO_RECONNECT] CconnectionFailed return CONNECTION_FAILED action");
     const { credentials } = error;
 
     if (credentials && !Object.keys(credentials).length) {
@@ -311,6 +313,7 @@ export function _connectInternal({
                      * @returns {void}
                      */
                     function _onConnectionFailed(err: string, message: string, credentials: any, details: Object) {
+                        console.log("[AUTO_RECONNECT] send CONNECTION_FAILED notification");
                         // eslint-disable-line max-params
                         unsubscribe();
 
