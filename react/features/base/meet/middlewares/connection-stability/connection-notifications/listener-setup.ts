@@ -35,7 +35,6 @@ export const setupConferenceMediaListeners = (
 
     console.log("[LISTENER_SETUP] Setting up conference media listeners (ICE events)");
 
-    // Create named handler functions for proper cleanup
     const interruptedHandler = () => handleMediaConnectionInterrupted(dispatch, state);
     const restoredHandler = () => handleMediaConnectionRestored(dispatch, state);
     const suspendHandler = () => handleDeviceSuspended(dispatch);
@@ -44,7 +43,6 @@ export const setupConferenceMediaListeners = (
     conference.addEventListener(JitsiConferenceEvents.CONNECTION_RESTORED, restoredHandler);
     conference.addEventListener(JitsiConferenceEvents.SUSPEND_DETECTED, suspendHandler);
 
-    // Store handlers and conference reference for cleanup
     state.conferenceHandlers = {
         interruptedHandler,
         restoredHandler,
@@ -83,7 +81,6 @@ export const removeConferenceMediaListeners = (state: ConnectionState) => {
         conferenceHandlers.suspendHandler
     );
 
-    // Clear references to prevent memory leaks
     state.conferenceHandlers = undefined;
     state.conferenceRef = undefined;
     state.hasConferenceListeners = false;
@@ -109,7 +106,6 @@ export const setupXMPPConnectionListeners = (connection: any, dispatch: IStore["
 
     console.log("[LISTENER_SETUP] Setting up XMPP connection listeners");
 
-    // Create named handler functions for proper cleanup
     const connectedHandler = () => handleXMPPConnected();
     const disconnectedHandler = (message: string) => handleXMPPDisconnected(dispatch, message);
     const failedHandler = (error: any, message: string) => handleXMPPConnectionFailed(dispatch, error, message);
@@ -118,7 +114,6 @@ export const setupXMPPConnectionListeners = (connection: any, dispatch: IStore["
     connection.addEventListener(JitsiConnectionEvents.CONNECTION_DISCONNECTED, disconnectedHandler);
     connection.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, failedHandler);
 
-    // Store handlers and connection reference for cleanup
     state.connectionHandlers = {
         connectedHandler,
         disconnectedHandler,
@@ -157,7 +152,6 @@ export const removeXMPPConnectionListeners = (state: ConnectionState) => {
         connectionHandlers.failedHandler
     );
 
-    // Clear references to prevent memory leaks
     state.connectionHandlers = undefined;
     state.connectionRef = undefined;
     state.hasConnectionListeners = false;
