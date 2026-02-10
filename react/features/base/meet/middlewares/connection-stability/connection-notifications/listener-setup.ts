@@ -29,17 +29,54 @@ export const setupConferenceMediaListeners = (
         return;
     }
 
-    conference.addEventListener(JitsiConferenceEvents.CONNECTION_INTERRUPTED, () =>
-        handleMediaConnectionInterrupted(dispatch, state)
-    );
+    // Create named handler functions for proper cleanup
+    const interruptedHandler = () => handleMediaConnectionInterrupted(dispatch, state);
+    const restoredHandler = () => handleMediaConnectionRestored(dispatch, state);
+    const suspendHandler = () => handleDeviceSuspended(dispatch);
 
-    conference.addEventListener(JitsiConferenceEvents.CONNECTION_RESTORED, () =>
-        handleMediaConnectionRestored(dispatch, state)
-    );
+    conference.addEventListener(JitsiConferenceEvents.CONNECTION_INTERRUPTED, interruptedHandler);
+    conference.addEventListener(JitsiConferenceEvents.CONNECTION_RESTORED, restoredHandler);
+    conference.addEventListener(JitsiConferenceEvents.SUSPEND_DETECTED, suspendHandler);
 
-    conference.addEventListener(JitsiConferenceEvents.SUSPEND_DETECTED, () => handleDeviceSuspended(dispatch));
-
+    // Store handlers and conference reference for cleanup
+    state.conferenceHandlers = {
+        interruptedHandler,
+        restoredHandler,
+        suspendHandler
+    };
+    state.conferenceRef = conference;
     state.hasConferenceListeners = true;
+};
+
+/**
+ * Removes event listeners for conference media connection events
+ *
+ * @param state - Connection state containing handler references
+ */
+export const removeConferenceMediaListeners = (state: ConnectionState) => {
+    if (!state.conferenceRef || !state.conferenceHandlers) {
+        return;
+    }
+
+    const { conferenceRef, conferenceHandlers } = state;
+
+    conferenceRef.removeEventListener(
+        JitsiConferenceEvents.CONNECTION_INTERRUPTED,
+        conferenceHandlers.interruptedHandler
+    );
+    conferenceRef.removeEventListener(
+        JitsiConferenceEvents.CONNECTION_RESTORED,
+        conferenceHandlers.restoredHandler
+    );
+    conferenceRef.removeEventListener(
+        JitsiConferenceEvents.SUSPEND_DETECTED,
+        conferenceHandlers.suspendHandler
+    );
+
+    // Clear references to prevent memory leaks
+    state.conferenceHandlers = undefined;
+    state.conferenceRef = undefined;
+    state.hasConferenceListeners = false;
 };
 
 /**
@@ -55,15 +92,52 @@ export const setupXMPPConnectionListeners = (connection: any, dispatch: IStore["
         return;
     }
 
-    connection.addEventListener(JitsiConnectionEvents.CONNECTION_ESTABLISHED, () => handleXMPPConnected());
+    // Create named handler functions for proper cleanup
+    const connectedHandler = () => handleXMPPConnected();
+    const disconnectedHandler = (message: string) => handleXMPPDisconnected(dispatch, message);
+    const failedHandler = (error: any, message: string) => handleXMPPConnectionFailed(dispatch, error, message);
 
-    connection.addEventListener(JitsiConnectionEvents.CONNECTION_DISCONNECTED, (message: string) =>
-        handleXMPPDisconnected(dispatch, message)
-    );
+    connection.addEventListener(JitsiConnectionEvents.CONNECTION_ESTABLISHED, connectedHandler);
+    connection.addEventListener(JitsiConnectionEvents.CONNECTION_DISCONNECTED, disconnectedHandler);
+    connection.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, failedHandler);
 
-    connection.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, (error: any, message: string) =>
-        handleXMPPConnectionFailed(dispatch, error, message)
-    );
-
+    // Store handlers and connection reference for cleanup
+    state.connectionHandlers = {
+        connectedHandler,
+        disconnectedHandler,
+        failedHandler
+    };
+    state.connectionRef = connection;
     state.hasConnectionListeners = true;
+};
+
+/**
+ * Removes event listeners for XMPP connection events
+ *
+ * @param state - Connection state containing handler references
+ */
+export const removeXMPPConnectionListeners = (state: ConnectionState) => {
+    if (!state.connectionRef || !state.connectionHandlers) {
+        return;
+    }
+
+    const { connectionRef, connectionHandlers } = state;
+
+    connectionRef.removeEventListener(
+        JitsiConnectionEvents.CONNECTION_ESTABLISHED,
+        connectionHandlers.connectedHandler
+    );
+    connectionRef.removeEventListener(
+        JitsiConnectionEvents.CONNECTION_DISCONNECTED,
+        connectionHandlers.disconnectedHandler
+    );
+    connectionRef.removeEventListener(
+        JitsiConnectionEvents.CONNECTION_FAILED,
+        connectionHandlers.failedHandler
+    );
+
+    // Clear references to prevent memory leaks
+    state.connectionHandlers = undefined;
+    state.connectionRef = undefined;
+    state.hasConnectionListeners = false;
 };

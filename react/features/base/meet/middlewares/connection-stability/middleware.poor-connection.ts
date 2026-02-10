@@ -15,6 +15,8 @@ let conferenceJoinTime: number | null = null;
 let lastWarningTime: number | null = null;
 let isNotificationCurrentlyShown = false;
 let isSubscribedToStats = false;
+let subscribedParticipantId: string | null = null;
+let subscribedCallback: ((stats: IConnectionStats) => void) | null = null;
 
 interface IConnectionStats {
     connectionQuality?: number;
@@ -100,7 +102,10 @@ MiddlewareRegistry.register((store: IStore) => (next) => (action: AnyAction) => 
             isNotificationCurrentlyShown = false;
 
             if (localParticipant.id && !isSubscribedToStats) {
-                statsEmitter.subscribeToClientStats(localParticipant.id, onStatsUpdated(store));
+                const callback = onStatsUpdated(store);
+                subscribedCallback = callback;
+                subscribedParticipantId = localParticipant.id;
+                statsEmitter.subscribeToClientStats(localParticipant.id, callback);
                 isSubscribedToStats = true;
             }
 
@@ -110,9 +115,18 @@ MiddlewareRegistry.register((store: IStore) => (next) => (action: AnyAction) => 
         case CONFERENCE_WILL_LEAVE: {
             // User manually hung up - hide notification and reset state
             hidePoorConnectionWarning(store);
+
+            // Unsubscribe from stats emitter to prevent memory leaks
+            if (isSubscribedToStats && subscribedParticipantId && subscribedCallback) {
+                statsEmitter.unsubscribeToClientStats(subscribedParticipantId, subscribedCallback);
+            }
+
             conferenceJoinTime = null;
             lastWarningTime = null;
             isNotificationCurrentlyShown = false;
+            isSubscribedToStats = false;
+            subscribedParticipantId = null;
+            subscribedCallback = null;
             break;
         }
     }

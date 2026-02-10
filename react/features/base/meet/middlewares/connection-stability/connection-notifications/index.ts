@@ -4,7 +4,12 @@ import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE } from '../../../../conference
 import { setLeaveConferenceManually } from '../../../general/utils/conferenceState';
 import { CONNECTION_WILL_CONNECT } from '../../../../connection/actionTypes';
 import MiddlewareRegistry from '../../../../redux/MiddlewareRegistry';
-import { setupConferenceMediaListeners, setupXMPPConnectionListeners } from './listener-setup';
+import {
+    removeConferenceMediaListeners,
+    removeXMPPConnectionListeners,
+    setupConferenceMediaListeners,
+    setupXMPPConnectionListeners
+} from './listener-setup';
 import { createConnectionState } from './state';
 
 /**
@@ -41,9 +46,10 @@ MiddlewareRegistry.register(({ dispatch }: IStore) => {
                 }
 
                 case CONFERENCE_WILL_LEAVE: {
-                    // User clicked hangup button - don't show reconnection notifications
+                    // User clicked hangup button - cleanup listeners to prevent memory leaks
+                    removeConferenceMediaListeners(connectionState);
+                    removeXMPPConnectionListeners(connectionState);
                     setLeaveConferenceManually(true);
-                    connectionState.hasConferenceListeners = false;
                     connectionState.wasMediaConnectionInterrupted = false;
                     break;
                 }
