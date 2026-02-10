@@ -9,7 +9,8 @@ import { isCustomPanelEnabled } from './functions';
 const customPanel = {
     key: 'custom-panel',
     Content: CustomPanelButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 /**
