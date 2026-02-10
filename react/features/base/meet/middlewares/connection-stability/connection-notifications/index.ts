@@ -29,6 +29,7 @@ MiddlewareRegistry.register(({ dispatch }: IStore) => {
 
             switch (action.type) {
                 case CONNECTION_WILL_CONNECT: {
+                    console.log("[CONNECTION_NOTIFICATIONS] CONNECTION_WILL_CONNECT - Setting up XMPP listeners");
                     setLeaveConferenceManually(false);
                     connectionState.hasConnectionListeners = false;
 
@@ -39,6 +40,7 @@ MiddlewareRegistry.register(({ dispatch }: IStore) => {
                 }
 
                 case CONFERENCE_JOINED: {
+                    console.log("[CONNECTION_NOTIFICATIONS] CONFERENCE_JOINED - Setting up media listeners");
                     const { conference } = action;
 
                     setupConferenceMediaListeners(conference, dispatch, connectionState);
@@ -46,6 +48,7 @@ MiddlewareRegistry.register(({ dispatch }: IStore) => {
                 }
 
                 case CONFERENCE_WILL_LEAVE: {
+                    console.log("[CONNECTION_NOTIFICATIONS] CONFERENCE_WILL_LEAVE - Cleaning up all listeners");
                     // User clicked hangup button - cleanup listeners to prevent memory leaks
                     removeConferenceMediaListeners(connectionState);
                     removeXMPPConnectionListeners(connectionState);

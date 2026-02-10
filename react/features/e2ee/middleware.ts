@@ -159,13 +159,19 @@ StateListenerRegistry.register(
     (state) => getCurrentConference(state),
     (conference, { dispatch }, previousConference) => {
         if (previousConference && e2eeHandlerRefs?.conference === previousConference) {
+            console.log("[E2EE] Conference changed - cleaning up previous conference");
+
             // CRITICAL: Call E2EE cleanup from lib-jitsi-meet
             if (typeof previousConference.cleanUpWebWorkers === "function") {
+                console.log("[E2EE] Calling cleanUpWebWorkers() to terminate E2EE worker");
                 previousConference.cleanUpWebWorkers();
+            } else {
+                console.warn("[E2EE] cleanUpWebWorkers() not available on previous conference");
             }
 
             // Remove all stored event handlers to prevent memory leaks
             if (e2eeHandlerRefs) {
+                console.log(`[E2EE] Removing ${e2eeHandlerRefs.handlers.size} event handlers`);
                 for (const [event, handler] of e2eeHandlerRefs.handlers) {
                     previousConference.off(event, handler);
                 }
@@ -175,6 +181,7 @@ StateListenerRegistry.register(
         }
 
         if (conference) {
+            console.log("[E2EE] Setting up E2EE handlers for new conference");
             const handlers = new Map<string, Function>();
 
             // E2EE_SAS_AVAILABLE handler
@@ -225,6 +232,7 @@ StateListenerRegistry.register(
 
             // Store references for cleanup
             e2eeHandlerRefs = { conference, handlers };
+            console.log(`[E2EE] Successfully registered ${handlers.size} E2EE event handlers`);
         }
     }
 );

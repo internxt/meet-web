@@ -26,8 +26,14 @@ export const setupConferenceMediaListeners = (
     state: ConnectionState
 ) => {
     if (state.hasConferenceListeners || !conference) {
+        console.log("[LISTENER_SETUP] Skipping conference media listeners setup", {
+            alreadyHasListeners: state.hasConferenceListeners,
+            noConference: !conference
+        });
         return;
     }
+
+    console.log("[LISTENER_SETUP] Setting up conference media listeners (ICE events)");
 
     // Create named handler functions for proper cleanup
     const interruptedHandler = () => handleMediaConnectionInterrupted(dispatch, state);
@@ -46,6 +52,7 @@ export const setupConferenceMediaListeners = (
     };
     state.conferenceRef = conference;
     state.hasConferenceListeners = true;
+    console.log("[LISTENER_SETUP] Conference media listeners registered successfully");
 };
 
 /**
@@ -55,8 +62,11 @@ export const setupConferenceMediaListeners = (
  */
 export const removeConferenceMediaListeners = (state: ConnectionState) => {
     if (!state.conferenceRef || !state.conferenceHandlers) {
+        console.log("[LISTENER_SETUP] Skipping conference media listeners removal - no refs");
         return;
     }
+
+    console.log("[LISTENER_SETUP] Removing conference media listeners");
 
     const { conferenceRef, conferenceHandlers } = state;
 
@@ -77,6 +87,7 @@ export const removeConferenceMediaListeners = (state: ConnectionState) => {
     state.conferenceHandlers = undefined;
     state.conferenceRef = undefined;
     state.hasConferenceListeners = false;
+    console.log("[LISTENER_SETUP] Conference media listeners removed successfully");
 };
 
 /**
@@ -89,8 +100,14 @@ export const removeConferenceMediaListeners = (state: ConnectionState) => {
  */
 export const setupXMPPConnectionListeners = (connection: any, dispatch: IStore["dispatch"], state: ConnectionState) => {
     if (!connection || state.hasConnectionListeners) {
+        console.log("[LISTENER_SETUP] Skipping XMPP listeners setup", {
+            noConnection: !connection,
+            alreadyHasListeners: state.hasConnectionListeners
+        });
         return;
     }
+
+    console.log("[LISTENER_SETUP] Setting up XMPP connection listeners");
 
     // Create named handler functions for proper cleanup
     const connectedHandler = () => handleXMPPConnected();
@@ -109,6 +126,7 @@ export const setupXMPPConnectionListeners = (connection: any, dispatch: IStore["
     };
     state.connectionRef = connection;
     state.hasConnectionListeners = true;
+    console.log("[LISTENER_SETUP] XMPP connection listeners registered successfully");
 };
 
 /**
@@ -118,8 +136,11 @@ export const setupXMPPConnectionListeners = (connection: any, dispatch: IStore["
  */
 export const removeXMPPConnectionListeners = (state: ConnectionState) => {
     if (!state.connectionRef || !state.connectionHandlers) {
+        console.log("[LISTENER_SETUP] Skipping XMPP listeners removal - no refs");
         return;
     }
+
+    console.log("[LISTENER_SETUP] Removing XMPP connection listeners");
 
     const { connectionRef, connectionHandlers } = state;
 
@@ -140,4 +161,5 @@ export const removeXMPPConnectionListeners = (state: ConnectionState) => {
     state.connectionHandlers = undefined;
     state.connectionRef = undefined;
     state.hasConnectionListeners = false;
+    console.log("[LISTENER_SETUP] XMPP connection listeners removed successfully");
 };
