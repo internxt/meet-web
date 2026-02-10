@@ -130,8 +130,6 @@ const resetReconnectionState = () => {
 MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyAction) => {
     const result = next(action);
 
-    return result;
-
     switch (action.type) {
         case CONFERENCE_WILL_LEAVE: {
             console.log("[AUTO_RECONNECT] CONFERENCE_WILL_LEAVE - User leaving conference");
