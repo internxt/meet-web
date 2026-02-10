@@ -58,6 +58,7 @@ const clearRemoteTracks = (store: IStore) => {
 };
 
 const triggerReconnection = (store: IStore) => {
+    console.log("[AUTO_RECONNECT] Triggering reconnection via connect()");
     store.dispatch(connect());
 };
 
@@ -80,14 +81,20 @@ const handleMaxAttemptsReached = (store: IStore) => {
  * If max attempts reached, reloads the page.
  */
 const attemptReconnection = async (store: IStore) => {
-    if (isLeavingConferenceManually()) return;
+    console.log("[AUTO_RECONNECT] attemptReconnection called");
+    if (isLeavingConferenceManually()) {
+        console.log("[AUTO_RECONNECT] Aborting: User is leaving manually");
+        return;
+    }
 
     if (reconnectionAttempts >= MAX_RECONNECTION_ATTEMPTS) {
+        console.log("[AUTO_RECONNECT] Max attempts reached, will reload page");
         handleMaxAttemptsReached(store);
         return;
     }
 
     reconnectionAttempts++;
+    console.log(`[AUTO_RECONNECT] Attempt #${reconnectionAttempts}/${MAX_RECONNECTION_ATTEMPTS}`);
     isReconnecting = true;
     showReconnectionLoader(store, reconnectionAttempts);
 
@@ -111,6 +118,7 @@ const clearTimer = () => {
 };
 
 const resetReconnectionState = () => {
+    console.log("[AUTO_RECONNECT] Resetting reconnection state");
     clearTimer();
     reconnectionAttempts = 0;
     isReconnecting = false;
@@ -124,6 +132,7 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
 
     switch (action.type) {
         case CONFERENCE_WILL_LEAVE: {
+            console.log("[AUTO_RECONNECT] CONFERENCE_WILL_LEAVE - User leaving conference");
             setLeaveConferenceManually(true);
             resetReconnectionState();
             hideReconnectionNotification(store);
@@ -132,11 +141,18 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         }
 
         case CONNECTION_DISCONNECTED: {
-            if (isLeavingConferenceManually()) break;
+            console.log("[AUTO_RECONNECT] CONNECTION_DISCONNECTED", {
+                isLeavingManually: isLeavingConferenceManually()
+            });
+            if (isLeavingConferenceManually()) {
+                console.log("[AUTO_RECONNECT] Skipping reconnection - user leaving manually");
+                break;
+            }
 
             clearTimer();
             reconnectionAttempts = 0;
             isReconnecting = true;
+            console.log(`[AUTO_RECONNECT] Will attempt reconnection in ${RECONNECTION_WAIT_TIME_MS}ms`);
 
             reconnectionTimer = window.setTimeout(() => {
                 if (!isLeavingConferenceManually() && isReconnecting) {
@@ -148,7 +164,11 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
         }
 
         case CONNECTION_ESTABLISHED: {
+            console.log("[AUTO_RECONNECT] CONNECTION_ESTABLISHED", {
+                wasReconnecting: isReconnecting
+            });
             if (isReconnecting) {
+                console.log("[AUTO_RECONNECT] Reconnection successful!");
                 hideReconnectionNotification(store);
                 hideReconnectionLoader(store);
             }
@@ -160,8 +180,14 @@ MiddlewareRegistry.register((store: IStore) => (next: Function) => (action: AnyA
 
         case CONNECTION_FAILED: {
             const { error } = action;
-            console.log("[AUTO_RECONNECT] Connection failed with error:", error);
+            console.log("[AUTO_RECONNECT] CONNECTION_FAILED", {
+                error,
+                errorName: error?.name,
+                isLeavingManually: isLeavingConferenceManually(),
+                isReconnecting
+            });
             if (error?.name === JWT_EXPIRED_ERROR && !isLeavingConferenceManually() && !isReconnecting) {
+                console.log("[AUTO_RECONNECT] JWT expired, starting reconnection");
                 attemptReconnection(store);
             }
 
