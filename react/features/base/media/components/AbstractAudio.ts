@@ -110,7 +110,7 @@ export default class AbstractAudio extends Component<IProps> {
     setSinkId(sinkId: string) {
         if (this._audioElementImpl && typeof this._audioElementImpl.setSinkId === 'function') {
             this._audioElementImpl.setSinkId(sinkId)
-                .catch(error => logger.error('Error setting sink', error));
+                .catch(error => logger.error(`Error setting sink ID ${sinkId}: ${error}`));
         }
     }
 
