@@ -132,6 +132,7 @@ export interface IJitsiConference {
     myUserId: Function;
     off: Function;
     on: Function;
+    once: Function;
     options: any;
     removeTrack: Function;
     replaceTrack: Function;
