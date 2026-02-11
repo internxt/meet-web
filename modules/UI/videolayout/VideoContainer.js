@@ -400,6 +400,8 @@ export class VideoContainer extends LargeContainer {
      * @returns {void}
      */
     positionRemoteStatusMessages() {
+        console.log('TEST: this.remoteConnectionMessage:', this.remoteConnectionMessage);
+        console.log('TEST: this.remotePresenceMessage:', this.remotePresenceMessage);
         this._positionParticipantStatus(this.remoteConnectionMessage);
         this._positionParticipantStatus(this.remotePresenceMessage);
     }
@@ -419,6 +421,7 @@ export class VideoContainer extends LargeContainer {
                 element.style.top = avatarImage.top + avatarImage.height + 10;
             }
         } else {
+            console.log('TEST: _positionParticipantStatus:', element);
             const height = element.getBoundingClientRect().height;
             const parentHeight = element.parentElement.getBoundingClientRect()?.height;
 
