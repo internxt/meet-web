@@ -360,7 +360,7 @@ const ChatMessage = ({
                     <div className = { classes.replyWrapper }>
                         <div className = { cx('messagecontent', classes.messageContent) }>
                             {/* {showDisplayName && _renderDisplayName()} */}
-                            <div className ="text-sm font-normal text-white">
+                            <div className ="text-sm font-normal text-white whitespace-pre-wrap break-words">
                                 {isFileMessage(message) ? (
                                     <FileMessage
                                         message = { message }
