@@ -634,6 +634,12 @@ export class VideoContainer extends LargeContainer {
      */
     show() {
         return new Promise(resolve => {
+            if (!this.wrapperParent) {
+                logger.warn('Wrapper parent not found, cannot show');
+                resolve();
+                return;
+            }
+
             this.wrapperParent.style.visibility = 'visible';
             this.wrapperParent.classList.remove('animatedFadeOut');
             this.wrapperParent.classList.add('animatedFadeIn');
