@@ -1,9 +1,10 @@
 import { Button } from "@internxt/ui";
-import { Info } from "@phosphor-icons/react";
-import React, { useState } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
+
 import { useUserData } from "../../views/PreMeeting/hooks/useUserData";
-import { isMeetingEnabled } from "../store/meeting/selectors";
+import { UpgradeTooltip } from "../components/UpgradeTooltip";
+import { getUserTier, isMeetingEnabled } from "../store/meeting/selectors";
 
 interface MeetingButtonProps {
     /**
@@ -44,81 +45,52 @@ interface MeetingButtonProps {
     displayNewMeetingButtonAlways?: boolean;
 }
 
+const DEFAULT_PROPS = {
+    loading: false,
+    className: "",
+    variant: "primary" as const,
+    displayUpgradeButton: false,
+    displayNewMeetingButtonAlways: false,
+} satisfies Partial<MeetingButtonProps>;
+
 /**
- * A smart component that automatically displays either "New Meeting" or "Upgrade"
- * button based on user's login status and meeting feature access.
+ * Display New Meeting button or upgrade button based on user's meeting feature availability.
  */
 const MeetingButton: React.FC<MeetingButtonProps> = ({
     onNewMeeting,
     translate,
-    loading = false,
-    className = "",
-    variant = "primary",
-    displayUpgradeButton = false,
-    displayNewMeetingButtonAlways = false,
+    loading = DEFAULT_PROPS.loading,
+    className = DEFAULT_PROPS.className,
+    variant = DEFAULT_PROPS.variant,
+    displayUpgradeButton = DEFAULT_PROPS.displayUpgradeButton,
+    displayNewMeetingButtonAlways = DEFAULT_PROPS.displayNewMeetingButtonAlways,
 }) => {
     const isMeetEnabled = useSelector(isMeetingEnabled);
-    const isLogged = !!useUserData();
-    const [showTooltip, setShowTooltip] = useState(false);
+    const userTier = useSelector(getUserTier);
+    const userData = useUserData();
+    const isLogged = !!userData;
 
-    if (!isLogged) {
-        if (displayNewMeetingButtonAlways) {
-            return (
-                <Button
-                    variant={variant}
-                    onClick={onNewMeeting}
-                    disabled={loading}
-                    loading={loading}
-                    className={className}
-                >
-                    {translate("meet.preMeeting.newMeeting")}
-                </Button>
-            );
-        } else {
-            return null;
-        }
+    const isTierLoaded = userTier !== null;
+    const shouldShowUpgrade = isLogged && isTierLoaded && !isMeetEnabled && displayUpgradeButton;
+    const shouldRenderButton = isLogged || displayNewMeetingButtonAlways;
+
+    if (!shouldRenderButton) {
+        return null;
     }
 
-    if (isMeetEnabled) {
-        return (
-            <Button variant={variant} onClick={onNewMeeting} disabled={loading} loading={loading} className={className}>
-                {translate("meet.preMeeting.newMeeting")}
+    const isUpgradeMode = shouldShowUpgrade;
+    const buttonText = isUpgradeMode ? translate("meet.preMeeting.upgrade") : translate("meet.preMeeting.newMeeting");
+    const buttonAction = isUpgradeMode ? () => window.open("https://internxt.com/pricing", "_blank") : onNewMeeting;
+
+    return (
+        <div className="flex flex-row items-center space-x-3">
+            <Button variant={variant} onClick={buttonAction} disabled={loading} loading={loading} className={className}>
+                {buttonText}
             </Button>
-        );
-    } else {
-        return displayUpgradeButton ? (
-            <div className="flex flex-row items-center space-x-3">
-                <Button
-                    variant={variant}
-                    onClick={() => window.open("https://internxt.com/pricing", "_blank")}
-                    disabled={loading}
-                    loading={loading}
-                    className={className}
-                >
-                    {translate("meet.preMeeting.upgrade")}
-                </Button>
 
-                <div
-                    className="relative flex items-center"
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                >
-                    <Info size={20} className="text-white cursor-pointer" />
-
-                    {showTooltip && (
-                        <div className="absolute left-full ml-3 top-1/2 -translate-y-1/2 z-50 w-max max-w-sm">
-                            <div className="relative bg-white rounded-lg shadow-lg px-4 py-3">
-                                <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-white" />
-                                <p className="text-sm text-black leading-tight whitespace-pre-line">
-                                    {translate("meet.preMeeting.upgradeMessage")}
-                                </p>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
-        ) : null;
-    }
+            {isUpgradeMode && <UpgradeTooltip translate={translate} />}
+        </div>
+    );
 };
 
 export default MeetingButton;

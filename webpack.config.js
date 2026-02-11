@@ -1,19 +1,18 @@
 /* global __dirname */
 
-const CircularDependencyPlugin = require('circular-dependency-plugin');
-const fs = require('fs');
-const { join, resolve } = require('path');
-const process = require('process');
-const webpack = require('webpack');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const dotenv = require('dotenv');
+const CircularDependencyPlugin = require("circular-dependency-plugin");
+const fs = require("fs");
+const { join, resolve } = require("path");
+const process = require("process");
+const webpack = require("webpack");
+const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
+const dotenv = require("dotenv");
 
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
  * development with webpack-dev-server.
  */
-const devServerProxyTarget
-    = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://alpha.jitsi.net';
+const devServerProxyTarget = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || "https://alpha.jitsi.net";
 
 /**
  * Build a Performance configuration object for the given size.
@@ -31,7 +30,7 @@ function getPerformanceHints(options, size) {
     return {
         hints: isProduction && !analyzeBundle ? 'warning' : false,
         maxAssetSize: size,
-        maxEntrypointSize: size
+        maxEntrypointSize: size,
     };
 }
 
@@ -47,11 +46,13 @@ function getBundleAnalyzerPlugin(analyzeBundle, name) {
         return [];
     }
 
-    return [ new BundleAnalyzerPlugin({
-        analyzerMode: 'disabled',
-        generateStatsFile: true,
-        statsFilename: `${name}-stats.json`
-    }) ];
+    return [
+        new BundleAnalyzerPlugin({
+            analyzerMode: "disabled",
+            generateStatsFile: true,
+            statsFilename: `${name}-stats.json`,
+        }),
+    ];
 }
 
 /**
@@ -66,26 +67,27 @@ function getBundleAnalyzerPlugin(analyzeBundle, name) {
 function devServerProxyBypass({ path }) {
     let tpath = path;
 
-    if (tpath.startsWith('/v1/_cdn/')) {
+    if (tpath.startsWith("/v1/_cdn/")) {
         // The CDN is not available in the dev server, so we need to bypass it.
-        tpath = tpath.replace(/\/v1\/_cdn\/[^/]+\//, '/');
+        tpath = tpath.replace(/\/v1\/_cdn\/[^/]+\//, "/");
     }
 
-    if (tpath.startsWith('/css/')
-            || tpath.startsWith('/doc/')
-            || tpath.startsWith('/fonts/')
-            || tpath.startsWith('/images/')
-            || tpath.startsWith('/lang/')
-            || tpath.startsWith('/sounds/')
-            || tpath.startsWith('/static/')
-            || tpath.endsWith('.wasm')) {
-
+    if (
+        tpath.startsWith("/css/") ||
+        tpath.startsWith("/doc/") ||
+        tpath.startsWith("/fonts/") ||
+        tpath.startsWith("/images/") ||
+        tpath.startsWith("/lang/") ||
+        tpath.startsWith("/sounds/") ||
+        tpath.startsWith("/static/") ||
+        tpath.endsWith(".wasm")
+    ) {
         return tpath;
     }
 
-    if (tpath.startsWith('/libs/')) {
-        if (tpath.endsWith('.min.js') && !fs.existsSync(join(process.cwd(), tpath))) {
-            return tpath.replace('.min.js', '.js');
+    if (tpath.startsWith("/libs/")) {
+        if (tpath.endsWith(".min.js") && !fs.existsSync(join(process.cwd(), tpath))) {
+            return tpath.replace(".min.js", ".js");
         }
 
         return tpath;
@@ -172,11 +174,18 @@ function getConfig(options = {}) {
                                 importLoaders: 1,
                             },
                         },
-                        "postcss-loader",
+                        "postcss-loader", // For tailwindcss
                     ],
+                },
+                // SVG with ?raw query will be loaded as raw string
+                {
+                    test: /\.svg$/,
+                    resourceQuery: /raw/,
+                    type: "asset/source",
                 },
                 {
                     test: /\.svg$/,
+                    resourceQuery: { not: [/raw/] },
                     use: [
                         {
                             loader: "@svgr/webpack",
@@ -274,44 +283,44 @@ function getDevServerConfig() {
         client: {
             overlay: {
                 errors: true,
-                warnings: false
-            }
+                warnings: false,
+            },
         },
-        host: '::',
+        host: "localhost",
         hot: true,
         proxy: [
             {
-                context: [ '/' ],
+                context: ["/"],
                 bypass: devServerProxyBypass,
                 secure: false,
                 target: devServerProxyTarget,
                 headers: {
-                    'Host': new URL(devServerProxyTarget).host
-                }
-            }
+                    Host: new URL(devServerProxyTarget).host,
+                },
+            },
         ],
-        server: process.env.CODESPACES ? 'http' : 'https',
+        server: process.env.CODESPACES ? "http" : "https",
         static: {
             directory: process.cwd(),
             watch: {
-                ignored: file => file.endsWith('.log')
-            }
-        }
+                ignored: (file) => file.endsWith(".log"),
+            },
+        },
     };
 }
 
 module.exports = (_env, argv) => {
     const analyzeBundle = Boolean(process.env.ANALYZE_BUNDLE);
-    const mode = typeof argv.mode === 'undefined' ? 'production' : argv.mode;
-    const isProduction = mode === 'production';
+    const mode = typeof argv.mode === "undefined" ? "production" : argv.mode;
+    const isProduction = mode === "production";
     const configOptions = {
         detectCircularDeps: Boolean(process.env.DETECT_CIRCULAR_DEPS),
-        isProduction
+        isProduction,
     };
     const config = getConfig(configOptions);
     const perfHintOptions = {
         analyzeBundle,
-        isProduction
+        isProduction,
     };
 
     return [

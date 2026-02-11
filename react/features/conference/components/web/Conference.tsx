@@ -40,6 +40,7 @@ import ConferenceControlsWrapper from "../../../base/meet/views/Conference/conta
 import VideoGalleryWrapper from "../../../base/meet/views/Conference/containers/VideoGalleryWrapper";
 import { setConferenceViewMode } from "../../../filmstrip/actions.web";
 import { ViewMode } from "../../../filmstrip/reducer";
+import LargeVideoWeb from "../../../large-video/components/LargeVideo.web";
 import { showVisitorsQueue } from "../../../visitors/functions";
 
 /**
@@ -82,6 +83,11 @@ interface IProps extends AbstractProps, WithTranslation {
      *Whether or not the notifications should be displayed in the overflow drawer.
      */
     _overflowDrawer: boolean;
+
+    /**
+     * The indicator which determines whether the UI is reduced.
+     */
+    _reducedUI: boolean;
 
     /**
      * Name for this conference room.
@@ -222,12 +228,42 @@ class Conference extends AbstractConference<IProps, any> {
             _layoutClassName,
             _notificationsVisible,
             _overflowDrawer,
+            _reducedUI,
             _showLobby,
             _showPrejoin,
             viewMode,
             _showVisitorsQueue,
             t,
         } = this.props;
+
+        if (_reducedUI) {
+            return (
+                <div
+                    id="layout_wrapper"
+                    onMouseEnter={this._onMouseEnter}
+                    onMouseLeave={this._onMouseLeave}
+                    onMouseMove={this._onMouseMove}
+                    ref={this._setBackground}
+                >
+                    <Chat />
+                    <div
+                        className={_layoutClassName}
+                        id="videoconference_page"
+                        onMouseMove={isMobileBrowser() ? undefined : this._onShowToolbar}
+                    >
+                        <ConferenceInfo />
+                        <Notice />
+                        <div id="videospace" onTouchStart={this._onVideospaceTouchStart}>
+                            <LargeVideoWeb />
+                        </div>
+                        <span aria-level={1} className="sr-only" role="heading">
+                            {t("toolbar.accessibilityLabel.heading")}
+                        </span>
+                        {/* <Toolbox /> */}
+                    </div>
+                </div>
+            );
+        }
 
         return (
             <div
@@ -427,6 +463,8 @@ function _mapStateToProps(state: IReduxState) {
     const { viewMode } = state["features/filmstrip"];
     const { overflowDrawer } = state["features/toolbox"];
     const room = state["features/base/conference"].room;
+    const { reducedUI } = state['features/base/responsive-ui'];
+
     return {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: backgroundAlpha,
@@ -434,6 +472,7 @@ function _mapStateToProps(state: IReduxState) {
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state) ?? ""],
         _mouseMoveCallbackInterval: mouseMoveCallbackInterval,
         _overflowDrawer: overflowDrawer,
+        _reducedUI: reducedUI,
         _roomName: getConferenceNameForTitle(state),
         _showLobby: getIsLobbyVisible(state),
         _showPrejoin: isPrejoinPageVisible(state),
