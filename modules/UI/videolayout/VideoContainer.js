@@ -400,10 +400,12 @@ export class VideoContainer extends LargeContainer {
      * @returns {void}
      */
     positionRemoteStatusMessages() {
-        console.log('TEST: this.remoteConnectionMessage:', this.remoteConnectionMessage);
-        console.log('TEST: this.remotePresenceMessage:', this.remotePresenceMessage);
+        if (this.remoteConnectionMessage) {
         this._positionParticipantStatus(this.remoteConnectionMessage);
+    }
+    if (this.remotePresenceMessage) {
         this._positionParticipantStatus(this.remotePresenceMessage);
+    }
     }
 
     /**
@@ -421,7 +423,6 @@ export class VideoContainer extends LargeContainer {
                 element.style.top = avatarImage.top + avatarImage.height + 10;
             }
         } else {
-            console.log('TEST: _positionParticipantStatus:', element);
             const height = element.getBoundingClientRect().height;
             const parentHeight = element.parentElement.getBoundingClientRect()?.height;
 
@@ -618,6 +619,10 @@ export class VideoContainer extends LargeContainer {
      * @param {boolean} show
      */
     showAvatar(show) {
+        if (!this.avatar) {
+            logger.warn('Avatar not found, cannot update visibility');
+            return;
+        }
         this.avatar.style.visibility = show ? 'visible' : 'hidden';
         this.avatarDisplayed = show;
 
