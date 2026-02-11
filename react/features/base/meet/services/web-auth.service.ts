@@ -5,6 +5,7 @@ import {
     WEB_AUTH_CONFIG,
     WEB_AUTH_MESSAGE_TYPES,
     WEB_AUTH_STORAGE_KEYS,
+    WEB_AUTH_VALID_ORIGINS,
     WebAuthMessage,
     WebAuthParams,
 } from './types/web-auth.types';
@@ -74,7 +75,7 @@ export class WebAuthService {
      * Validate origin of postMessage event
      */
     private isValidOrigin(origin: string): boolean {
-        return origin.includes("internxt.com") || origin.includes("localhost");
+        return WEB_AUTH_VALID_ORIGINS.some(valid => origin.includes(valid));
     }
 
     /**

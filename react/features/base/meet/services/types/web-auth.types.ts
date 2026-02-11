@@ -29,6 +29,12 @@ export const WEB_AUTH_STORAGE_KEYS = {
     NEW_TOKEN: "xNewToken",
 } as const;
 
+export const WEB_AUTH_VALID_ORIGINS = [
+    "internxt.com",
+    "localhost",
+    "pages.dev",
+] as const;
+
 export const WEB_AUTH_CONFIG: WebAuthConfig = {
     popupWidth: 500,
     popupHeight: 700,
