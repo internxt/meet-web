@@ -19,6 +19,7 @@ import {
 import { isPrejoinPageVisible } from './functions.any';
 
 import { leaveConference } from '../base/conference/actions.any';
+import { toggleE2EE } from '../e2ee/actions';
 
 /**
  * The redux middleware for {@link PrejoinPage}.
@@ -72,6 +73,7 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_FAILED:
     case CONNECTION_FAILED:
         store.dispatch(setJoiningInProgress(false));
+        store.dispatch(toggleE2EE(false));
         store.dispatch(leaveConference());
         console.log("TEST: Reloading the page");
         window.location.reload();
