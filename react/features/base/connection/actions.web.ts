@@ -136,7 +136,7 @@ export function cleanupAndReload(roomId: string) {
         APP.conference.cleanup();
         console.log("[RELOAD_PAGE]: Reloading the page", redirectUrl);
         window.location.replace(redirectUrl);
-        windows.location.reload();
+        window.location.reload();
 
         return;
     };
