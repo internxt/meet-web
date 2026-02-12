@@ -130,7 +130,7 @@ export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?:
 export function cleanupAndReload(roomId: string, redirectUrl: string) {
     console.log('[RELOAD_PAGE]: cleanup middleware');
     return async () => {
-        MeetingService.instance.leaveCall(roomId);
+        await MeetingService.instance.leaveCall(roomId);
 
         APP.conference.cleanup();
         console.log("[RELOAD_PAGE]: Reloading the page", redirectUrl);
