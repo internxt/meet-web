@@ -74,7 +74,6 @@ export function reloadWithStoredParams() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const { locationURL } = state['features/base/connection'];
-        console.log("TEST: Reloading the page with URL: ", locationURL);
 
         // Preserve the local tracks muted states.
         // @ts-ignore
