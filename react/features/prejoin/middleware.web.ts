@@ -78,7 +78,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (room) {
             store.dispatch(cleanUpConference(room));
             console.log("[RELOAD_PAGE]: Reloading the page");
-            window.location.reload();
+            setTimeout(() => window.location.reload());
         }
         
         break;
