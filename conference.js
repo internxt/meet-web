@@ -2197,6 +2197,31 @@ export default {
 
     },
 
+    cleanup() {
+        APP.store.dispatch(disableReceiver());
+
+        this._stopProxyConnection();
+
+        APP.store.dispatch(destroyLocalTracks());
+        this._localTracksInitialized = false;
+
+        // Remove unnecessary event listeners from firing callbacks.
+        if (this.deviceChangeListener) {
+            JitsiMeetJS.mediaDevices.removeEventListener(
+                JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
+                this.deviceChangeListener);
+        }
+
+        let feedbackResultPromise = Promise.resolve({});
+
+        const leavePromise = this.leaveRoom().catch(() => Promise.resolve());
+
+        Promise.allSettled([feedbackResultPromise, leavePromise]).then(() => {
+            this._room = undefined;
+            room = undefined;
+        });
+    },
+
     /**
      * Leaves the room.
      *

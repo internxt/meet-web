@@ -18,8 +18,7 @@ import {
 } from './actions';
 import { isPrejoinPageVisible } from './functions.any';
 
-import { leaveConference } from '../base/conference/actions.any';
-import { toggleE2EE } from '../e2ee/actions';
+import { cleanUpConference } from '../base/conference/actions.any';
 
 /**
  * The redux middleware for {@link PrejoinPage}.
@@ -71,14 +70,19 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case CONFERENCE_FAILED:
-    case CONNECTION_FAILED:
+    case CONNECTION_FAILED: {
         store.dispatch(setJoiningInProgress(false));
-        store.dispatch(toggleE2EE(false));
-        store.dispatch(leaveConference());
-        console.log("TEST: Reloading the page");
-        window.location.reload();
+        const state = store.getState();
+        const { room } = state['features/base/conference'];
+        console.log("TEST:Room ID on failure: ", room);
+        if (room) {
+            store.dispatch(cleanUpConference(room));
+            console.log("TEST: Reloading the page");
+            window.location.reload();
+        }
         
         break;
+    }
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
     }

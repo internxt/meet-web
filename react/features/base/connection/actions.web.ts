@@ -124,3 +124,22 @@ export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?:
         return APP.conference.hangup(requestFeedback, feedbackTitle, notifyOnConferenceTermination);
     };
 }
+
+
+
+export function cleanup(roomId: string) {
+    return async (dispatch: IStore["dispatch"]) => {
+        if (LocalRecordingManager.isRecordingLocally()) {
+            dispatch(stopLocalVideoRecording());
+
+            // wait 1000ms for the recording to end and start downloading
+            await new Promise((res) => {
+                setTimeout(res, 1000);
+            });
+        }
+
+        MeetingService.instance.leaveCall(roomId);
+
+        return APP.conference.cleanup();
+    };
+}
