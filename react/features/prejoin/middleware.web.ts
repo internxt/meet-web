@@ -74,10 +74,10 @@ MiddlewareRegistry.register(store => next => action => {
         store.dispatch(setJoiningInProgress(false));
         const state = store.getState();
         const { room } = state['features/base/conference'];
-        console.log("TEST:Room ID on failure: ", room);
+        console.log("[RELOAD_PAGE]: room ID on failure: ", room);
         if (room) {
             store.dispatch(cleanUpConference(room));
-            console.log("TEST: Reloading the page");
+            console.log("[RELOAD_PAGE]: Reloading the page");
             window.location.reload();
         }
         

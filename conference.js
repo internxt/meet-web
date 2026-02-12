@@ -2198,6 +2198,7 @@ export default {
     },
 
     cleanup() {
+        console.log('[RELOAD_PAGE]: Cleaning up the conference');
         APP.store.dispatch(disableReceiver());
 
         this._stopProxyConnection();

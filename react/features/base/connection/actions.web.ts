@@ -128,6 +128,7 @@ export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?:
 
 
 export function cleanup(roomId: string) {
+    console.log('[RELOAD_PAGE]: cleanup middleware');
     return async (dispatch: IStore["dispatch"]) => {
         if (LocalRecordingManager.isRecordingLocally()) {
             dispatch(stopLocalVideoRecording());
