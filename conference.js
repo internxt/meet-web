@@ -2213,15 +2213,9 @@ export default {
                 this.deviceChangeListener);
         }
 
-        let feedbackResultPromise = Promise.resolve({});
-
-        const leavePromise = this.leaveRoom().catch(() => Promise.resolve());
-
-        Promise.allSettled([feedbackResultPromise, leavePromise]).then(() => {
+        this.leaveRoom().catch(() => Promise.resolve()).then(() => {
             this._room = undefined;
             room = undefined;
-            console.log("[RELOAD_PAGE]: Reloading the page");
-            window.location.reload();
         });
     },
 

@@ -5,7 +5,7 @@ import { setIAmVisitor } from '../../visitors/actions';
 import { iAmVisitor } from '../../visitors/functions';
 import { overwriteConfig } from '../config/actions';
 import { getReplaceParticipant } from '../config/functions';
-import { connect, disconnect, hangup, cleanup } from '../connection/actions';
+import { connect, disconnect, hangup, cleanupAndReload } from '../connection/actions';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection/constants';
 import { hasAvailableDevices } from '../devices/functions.any';
 import JitsiMeetJS, { JitsiConferenceEvents, JitsiE2ePingEvents } from '../lib-jitsi-meet';
@@ -754,7 +754,7 @@ export function leaveConference(roomID?: string) {
 }
 
 export function cleanUpConference(roomID: string) {
-    return async (dispatch: IStore["dispatch"]) => dispatch(cleanup(roomID));
+    return async (dispatch: IStore["dispatch"]) => dispatch(cleanupAndReload(roomID));
 }
 
 /**
