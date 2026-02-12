@@ -2220,6 +2220,8 @@ export default {
         Promise.allSettled([feedbackResultPromise, leavePromise]).then(() => {
             this._room = undefined;
             room = undefined;
+            console.log("[RELOAD_PAGE]: Reloading the page");
+            window.location.reload();
         });
     },
 
