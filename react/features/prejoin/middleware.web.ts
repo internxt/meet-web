@@ -10,7 +10,6 @@ import {
     TRACK_ADDED,
     TRACK_NO_DATA_FROM_SOURCE
 } from '../base/tracks/actionTypes';
-import { reloadWithStoredParams } from '../app/actions.any';
 
 import {
     setDeviceStatusOk,
@@ -18,6 +17,10 @@ import {
     setJoiningInProgress
 } from './actions';
 import { isPrejoinPageVisible } from './functions.any';
+
+import { hideNotification } from "../notifications/actions";
+import { toggleE2EE } from '../e2ee/actions';
+const RECONNECTION_NOTIFICATION_ID = "connection.reconnecting"; 
 
 /**
  * The redux middleware for {@link PrejoinPage}.
@@ -71,8 +74,11 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_FAILED:
     case CONNECTION_FAILED:
         store.dispatch(setJoiningInProgress(false));
+        store.dispatch(toggleE2EE(false));
         console.log("TEST: Reloading the page");
+        store.dispatch(hideNotification(RECONNECTION_NOTIFICATION_ID));
         window.location.reload();
+        
         break;
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
