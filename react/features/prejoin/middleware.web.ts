@@ -10,12 +10,12 @@ import {
     TRACK_ADDED,
     TRACK_NO_DATA_FROM_SOURCE
 } from '../base/tracks/actionTypes';
+import { reloadWithStoredParams } from '../app/actions.any';
 
 import {
     setDeviceStatusOk,
     setDeviceStatusWarning,
-    setJoiningInProgress,
-    reloadWithStoredParams
+    setJoiningInProgress
 } from './actions';
 import { isPrejoinPageVisible } from './functions.any';
 
