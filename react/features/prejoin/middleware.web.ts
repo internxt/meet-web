@@ -10,12 +10,12 @@ import {
     TRACK_ADDED,
     TRACK_NO_DATA_FROM_SOURCE
 } from '../base/tracks/actionTypes';
-import { reloadNow } from '../app/actions.web';
 
 import {
     setDeviceStatusOk,
     setDeviceStatusWarning,
-    setJoiningInProgress
+    setJoiningInProgress,
+    reloadWithStoredParams
 } from './actions';
 import { isPrejoinPageVisible } from './functions.any';
 
@@ -71,7 +71,7 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_FAILED:
     case CONNECTION_FAILED:
         store.dispatch(setJoiningInProgress(false));
-        store.dispatch(reloadNow());
+        store.dispatch(reloadWithStoredParams());
         break;
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
