@@ -131,12 +131,11 @@ export function cleanupAndReload(roomId: string) {
     console.log('[RELOAD_PAGE]: cleanup middleware');
     return async () => {
         const redirectUrl = window.location.href;
-        await MeetingService.instance.leaveCall(roomId);
+        MeetingService.instance.leaveCall(roomId);
 
         APP.conference.cleanup();
         console.log("[RELOAD_PAGE]: Reloading the page", redirectUrl);
-        window.location.href = redirectUrl;
-        window.location.reload();
+        window.location.replace(redirectUrl);
 
         return;
     };
