@@ -753,8 +753,8 @@ export function leaveConference(roomID?: string) {
     return async (dispatch: IStore["dispatch"]) => dispatch(hangup(true, roomID));
 }
 
-export function cleanUpConference(roomID: string) {
-    return async (dispatch: IStore["dispatch"]) => dispatch(cleanupAndReload(roomID));
+export function cleanUpConference(roomID: string, url: string) {
+    return async (dispatch: IStore["dispatch"]) => dispatch(cleanupAndReload(roomID, url));
 }
 
 /**

@@ -73,10 +73,11 @@ MiddlewareRegistry.register(store => next => action => {
     case CONNECTION_FAILED: {
         store.dispatch(setJoiningInProgress(false));
         const state = store.getState();
+        const url = window.location.href;
         const { room } = state['features/base/conference'];
-        console.log("[RELOAD_PAGE]: room ID on failure: ", room);
+        console.log("[RELOAD_PAGE]: room ID on failure: ", room, url);
         if (room) {
-            store.dispatch(cleanUpConference(room));
+            store.dispatch(cleanUpConference(room, url));
         }
         
         break;
