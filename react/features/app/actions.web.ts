@@ -186,6 +186,7 @@ export function reloadNow() {
     return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
         const { locationURL } = state["features/base/connection"];
+        console.log("TEST: Reloading the page with URL: ", locationURL);
 
         const reloadAction = () => {
             logger.info(`Reloading the conference using URL: ${locationURL}`);
