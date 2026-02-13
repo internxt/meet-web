@@ -197,6 +197,7 @@ export function maybeRedirectToWelcomePage(_options?: any): any {
  */
 export function reloadNow() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        console.log('[RELOAD_PAGE]: entered reloadNow() in native');
         window.location.reload();
 
         /*const state = getState();

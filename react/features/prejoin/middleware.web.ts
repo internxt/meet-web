@@ -74,11 +74,10 @@ MiddlewareRegistry.register(store => next => action => {
         store.dispatch(setJoiningInProgress(false));
         store.dispatch({ type: 'SET_PAGE_RELOAD_DISABLED', disabled: true });
         const state = store.getState();
-        const url = window.location.href;
         const { room } = state['features/base/conference'];
-        console.log("[RELOAD_PAGE]: Room ID on failure: ", room, url);
+        console.log("[RELOAD_PAGE]: Room ID on failure: ", room);
         if (room) {
-            store.dispatch(cleanUpConference(room, url));
+            store.dispatch(cleanUpConference(room));
         }
         
         return;

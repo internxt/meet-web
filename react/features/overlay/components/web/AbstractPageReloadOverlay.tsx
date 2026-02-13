@@ -125,7 +125,7 @@ export default class AbstractPageReloadOverlay<P extends IProps>
          *
          * @type {number}
          */
-        /*const timeoutSeconds = 10 + randomInt(0, 20);
+        const timeoutSeconds = 10 + randomInt(0, 20);
 
         let message, title;
 
@@ -142,7 +142,7 @@ export default class AbstractPageReloadOverlay<P extends IProps>
             timeLeft: timeoutSeconds,
             timeoutSeconds,
             title
-        }; */
+        }; 
     }
 
     /**
@@ -177,6 +177,7 @@ export default class AbstractPageReloadOverlay<P extends IProps>
                             clearInterval(this._interval);
                             this._interval = undefined;
                         }
+                        console.log('[RELOAD_PAGE]: Went to reloadNow() call');
                         //this.props.dispatch(reloadNow());
                     } else {
                         this.setState(prevState => {
