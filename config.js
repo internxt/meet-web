@@ -666,7 +666,7 @@ var config = {
 
     // Enables forced reload of the client when the call is migrated as a result of
     // the bridge going down.
-    enableForcedReload: true,
+    enableForcedReload: false,
 
     // Use TURN/UDP servers for the jitsi-videobridge connection (by default
     // we filter out TURN/UDP because it is usually not needed since the
