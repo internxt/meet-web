@@ -72,6 +72,7 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_FAILED:
     case CONNECTION_FAILED: {
         store.dispatch(setJoiningInProgress(false));
+        store.dispatch({ type: 'SET_PAGE_RELOAD_DISABLED', disabled: true });
         const state = store.getState();
         const url = window.location.href;
         const { room } = state['features/base/conference'];

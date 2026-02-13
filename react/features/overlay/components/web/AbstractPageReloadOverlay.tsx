@@ -160,10 +160,10 @@ export default class AbstractPageReloadOverlay<P extends IProps>
             }));
         }
 
-        sendAnalytics(createPageReloadScheduledEvent(
+        /*sendAnalytics(createPageReloadScheduledEvent(
             this.props.reason ?? '',
             this.state.timeoutSeconds,
-            this.props.details));
+            this.props.details)); */
 
         logger.info(
             `The conference will be reloaded after ${
