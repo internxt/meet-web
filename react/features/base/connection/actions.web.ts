@@ -128,10 +128,15 @@ export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?:
 
 
 export async function cleanupAndReload(roomId: string, redirectUrl: string) {
-    console.log('[RELOAD_PAGE]: Cleaning up the conference, href:', window.location.href);
-    APP.conference.cleanup();
-    console.log('[RELOAD_PAGE]: Leaving the call, href:', window.location.href);
-    await MeetingService.instance.leaveCall(roomId);
-    console.log("[RELOAD_PAGE]: Reloading the page", redirectUrl, window.location.href);
-    window.location.replace(redirectUrl);
+    try{
+        console.log('[RELOAD_PAGE]: Leaving the call, href:', window.location.href);
+        await MeetingService.instance.leaveCall(roomId);
+        console.log('[RELOAD_PAGE]: Cleaning up the conference, href:', window.location.href);
+        APP.conference.cleanup();
+    } catch (error) {
+        console.error("[RELOAD_PAGE]: Error during cleanup and reload", error);
+    } finally {
+        console.log("[RELOAD_PAGE]: Reloading the page", redirectUrl, window.location.href);
+        window.location.reload();
+    }
 }

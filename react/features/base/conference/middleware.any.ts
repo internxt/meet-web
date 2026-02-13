@@ -305,7 +305,6 @@ function _conferenceFailed({ dispatch, getState }: IStore, next: Function, actio
         && (error?.name === JitsiConferenceErrors.CONFERENCE_RESTARTED
             || error?.name === JitsiConnectionErrors.SHARD_CHANGED_ERROR)) {
         dispatch(conferenceWillLeave(conference));
-        console.log('[RELOAD_PAGE]: Starting reload from enableForcedReload');
         dispatch(reloadNow());
     }
 
@@ -467,7 +466,6 @@ function _connectionFailed({ dispatch, getState }: IStore, next: Function, actio
 
     if (error.name === JitsiConnectionErrors.CONFERENCE_REQUEST_FAILED) {
         let notificationAction: Function = showNotification;
-        console.log('[RELOAD_PAGE]: Starting reload from CONFERENCE_REQUEST_FAILED');
         const notificationProps = {
             customActionNameKey: [ 'dialog.rejoinNow' ],
             customActionHandler: [ () => dispatch(reloadNow()) ],

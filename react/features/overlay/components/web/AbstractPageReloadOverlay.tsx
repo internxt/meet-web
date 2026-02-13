@@ -177,8 +177,7 @@ export default class AbstractPageReloadOverlay<P extends IProps>
                             clearInterval(this._interval);
                             this._interval = undefined;
                         }
-                        console.log('[RELOAD_PAGE]: Starting reload from setInterval');
-                        this.props.dispatch(reloadNow());
+                        //this.props.dispatch(reloadNow());
                     } else {
                         this.setState(prevState => {
                             return {
