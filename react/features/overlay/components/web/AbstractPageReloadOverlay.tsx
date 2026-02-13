@@ -152,6 +152,8 @@ export default class AbstractPageReloadOverlay<P extends IProps>
      * @returns {void}
      */
     override componentDidMount() {
+        return;
+        /*
         // FIXME: We should dispatch action for this.
         if (typeof APP !== 'undefined' && APP.conference?._room) {
             APP.conference._room.sendApplicationLog(JSON.stringify({
@@ -160,10 +162,10 @@ export default class AbstractPageReloadOverlay<P extends IProps>
             }));
         }
 
-        /*sendAnalytics(createPageReloadScheduledEvent(
+        sendAnalytics(createPageReloadScheduledEvent(
             this.props.reason ?? '',
             this.state.timeoutSeconds,
-            this.props.details)); */
+            this.props.details)); 
 
         logger.info(
             `The conference will be reloaded after ${
@@ -187,7 +189,7 @@ export default class AbstractPageReloadOverlay<P extends IProps>
                         });
                     }
                 },
-                1000);
+                1000); */
     }
 
     /**

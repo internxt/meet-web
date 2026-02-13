@@ -132,6 +132,6 @@ export async function cleanupAndReload(roomId: string, redirectUrl: string) {
     APP.conference.cleanup();
     console.log('[RELOAD_PAGE]: Leaving the call, href:', window.location.href);
     await MeetingService.instance.leaveCall(roomId);
-    console.log("[RELOAD_PAGE]: Reloading the page", redirectUrl);
+    console.log("[RELOAD_PAGE]: Reloading the page", redirectUrl, window.location.href);
     window.location.replace(redirectUrl);
 }
