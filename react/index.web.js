@@ -40,6 +40,7 @@ if (Platform.OS === 'ios') {
             // writing nothing else resolves the issue. I tried to execute our
             // DOMContentLoaded handler but it seems that the 'onpageshow' event
             // is triggered only when 'window.location.reload()' code exists.
+            console.log('[RELOAD_PAGE]: Entered pageshow for ios');
             window.location.reload();
         }
     });
