@@ -132,7 +132,7 @@ export async function cleanupAndReload(roomId: string) {
         console.log('[RELOAD_PAGE]: Leaving the call, href:', window.location.href);
         await MeetingService.instance.leaveCall(roomId);
         console.log('[RELOAD_PAGE]: Cleaning up the conference, href:', window.location.href);
-        await APP.conference.cleanup();
+        APP.conference.cleanup();
     } catch (error) {
         console.error("[RELOAD_PAGE]: Error during cleanup and reload", error);
     } finally {
