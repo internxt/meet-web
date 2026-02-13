@@ -197,8 +197,10 @@ export function maybeRedirectToWelcomePage(_options?: any): any {
  */
 export function reloadNow() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        console.log('[RELOAD_PAGE]: Starting reload now react/features/app/actions.native.ts');
+        window.location.reload();
 
-        const state = getState();
+        /*const state = getState();
         const { locationURL } = state['features/base/connection'];
 
         // Preserve the local tracks muted state after the reload.
@@ -217,6 +219,6 @@ export function reloadNow() {
             return;
         }
 
-        reloadAction();
-    };
+        reloadAction(); */
+    }; 
 }

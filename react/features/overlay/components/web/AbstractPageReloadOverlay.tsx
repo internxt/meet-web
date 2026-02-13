@@ -125,7 +125,7 @@ export default class AbstractPageReloadOverlay<P extends IProps>
          *
          * @type {number}
          */
-        const timeoutSeconds = 10 + randomInt(0, 20);
+        /*const timeoutSeconds = 10 + randomInt(0, 20);
 
         let message, title;
 
@@ -142,7 +142,7 @@ export default class AbstractPageReloadOverlay<P extends IProps>
             timeLeft: timeoutSeconds,
             timeoutSeconds,
             title
-        };
+        }; */
     }
 
     /**
@@ -152,8 +152,6 @@ export default class AbstractPageReloadOverlay<P extends IProps>
      * @returns {void}
      */
     override componentDidMount() {
-        return;
-        /*
         // FIXME: We should dispatch action for this.
         if (typeof APP !== 'undefined' && APP.conference?._room) {
             APP.conference._room.sendApplicationLog(JSON.stringify({
@@ -179,7 +177,7 @@ export default class AbstractPageReloadOverlay<P extends IProps>
                             clearInterval(this._interval);
                             this._interval = undefined;
                         }
-
+                        console.log('[RELOAD_PAGE]: Starting reload from setInterval');
                         this.props.dispatch(reloadNow());
                     } else {
                         this.setState(prevState => {
@@ -189,7 +187,7 @@ export default class AbstractPageReloadOverlay<P extends IProps>
                         });
                     }
                 },
-                1000); */
+                1000); 
     }
 
     /**

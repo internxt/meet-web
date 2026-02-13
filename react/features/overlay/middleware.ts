@@ -120,11 +120,11 @@ StateListenerRegistry.register(
                 return;
             }
 
-            /*setTimeout(() => {
+            setTimeout(() => {
                 logger.info(`Reloading due to error: ${error.name}`, error);
 
                 store.dispatch(openPageReloadDialog(conferenceError, configError, connectionError));
-            }, 500);*/
+            }, 500);
         }
     }
 );

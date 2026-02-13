@@ -184,7 +184,9 @@ export function maybeRedirectToWelcomePage(options: { feedbackSubmitted?: boolea
  */
 export function reloadNow() {
     return (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
-        const state = getState();
+        console.log('[RELOAD_PAGE]: Starting reload now react/features/app/actions.web.ts');
+        window.location.reload();
+        /*const state = getState();
         const { locationURL } = state["features/base/connection"];
 
         const reloadAction = () => {
@@ -197,6 +199,6 @@ export function reloadNow() {
             return;
         }
 
-        reloadAction();
-    };
+        reloadAction(); */
+    }; 
 }
