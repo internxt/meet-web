@@ -2198,7 +2198,7 @@ export default {
     },
 
     cleanup() {
-        console.log('[RELOAD_PAGE]: Cleaning up the conference');
+        console.log('[RELOAD_PAGE]: Starting conference cleanup');
         APP.store.dispatch(disableReceiver());
 
         this._stopProxyConnection();
@@ -2216,6 +2216,7 @@ export default {
         this.leaveRoom().catch(() => Promise.resolve()).then(() => {
             this._room = undefined;
             room = undefined;
+            console.log('[RELOAD_PAGE]: Conference cleanup finished');
         });
     },
 

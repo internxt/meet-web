@@ -75,12 +75,12 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
         const url = window.location.href;
         const { room } = state['features/base/conference'];
-        console.log("[RELOAD_PAGE]: room ID on failure: ", room, url);
+        console.log("[RELOAD_PAGE]: Room ID on failure: ", room, url);
         if (room) {
             store.dispatch(cleanUpConference(room, url));
         }
         
-        break;
+        return;
     }
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
