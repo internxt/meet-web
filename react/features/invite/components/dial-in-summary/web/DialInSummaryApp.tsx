@@ -22,6 +22,7 @@ export default class DialInSummaryApp extends BaseApp<any> {
      * @returns {void}
      */
     override async componentDidMount() {
+        console.log('[RELOAD_PAGE]: Entered componentDidMount');
         await super.componentDidMount();
 
         // @ts-ignore

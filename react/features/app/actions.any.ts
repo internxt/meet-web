@@ -45,6 +45,7 @@ export function redirectWithStoredParams(pathname: string) {
  */
 export function redirectToStaticPage(pathname: string, hashParam?: string) {
     return () => {
+        console.log('[RELOAD_PAGE]: Starting reload from redirectToStaticPage');
         const windowLocation = window.location;
         let newPathname = pathname;
 
@@ -72,6 +73,7 @@ export function redirectToStaticPage(pathname: string, hashParam?: string) {
  */
 export function reloadWithStoredParams() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        console.log('[RELOAD_PAGE]: Starting reload from reloadWithStoredParams');
         const state = getState();
         const { locationURL } = state['features/base/connection'];
 

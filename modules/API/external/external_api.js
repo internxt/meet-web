@@ -393,6 +393,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {Array<string>}
      */
     _getAlwaysOnTopResources() {
+        console.log('[RELOAD_PAGE]: Entered _getAlwaysOnTopResources');
         const iframeWindow = this._frame.contentWindow;
         const iframeDocument = iframeWindow.document;
         let baseURL = '';

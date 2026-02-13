@@ -328,6 +328,7 @@ class ConferenceConnector {
                 break;
 
             case JitsiConferenceErrors.INCOMPATIBLE_SERVER_VERSIONS:
+                console.log('[RELOAD_PAGE]: Starting reload from INCOMPATIBLE_SERVER_VERSIONS');
                 APP.store.dispatch(reloadWithStoredParams());
                 break;
 

@@ -15,6 +15,7 @@ import logger from './logger';
  * @returns {string} - Default URL for the app.
  */
 export function getDefaultURL(stateful: IStateful) {
+    console.log('[RELOAD_PAGE]: Entered getDefaultURL');
     const state = toState(stateful);
     const { href } = window.location;
 
