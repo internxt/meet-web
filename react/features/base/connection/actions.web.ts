@@ -124,3 +124,17 @@ export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?:
         return APP.conference.hangup(requestFeedback, feedbackTitle, notifyOnConferenceTermination);
     };
 }
+
+export async function cleanupAndReload(roomId: string) {
+    try{
+        console.log('[RELOAD_PAGE]: Leaving the call');
+        await MeetingService.instance.leaveCall(roomId);
+        console.log('[RELOAD_PAGE]: Cleaning up the conference');
+        await APP.conference.cleanup();
+    } catch (error) {
+        console.error("[RELOAD_PAGE]: Error during cleanup and reload", error);
+    } finally {
+        console.log("[RELOAD_PAGE]: Reloading the page");
+        window.location.reload();
+    }
+}
