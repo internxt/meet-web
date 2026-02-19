@@ -37,6 +37,7 @@ import {
     getProfileTabProps,
     getShortcutsTabProps,
 } from "./functions.web";
+import logger from "./logger";
 
 /**
  * Opens {@code LogoutDialog}.
@@ -52,32 +53,46 @@ export function openLogoutDialog() {
 
         const { conference } = state["features/base/conference"];
         const { jwt } = state["features/base/jwt"];
-        const _room = state["features/base/conference"].room ?? "";
+        const room = state["features/base/conference"].room ?? "";
 
         dispatch(
-            openDialog(LogoutDialog, {
-                onLogout() {
+            openDialog("LogoutDialog", LogoutDialog, {
+                onLogout: () => {
                     if (isTokenAuthEnabled(config) && config.tokenAuthUrlAutoRedirect && jwt) {
-                        // user is logging out remove auto redirect indication
                         dispatch(setTokenAuthUrlSuccess(false));
                     }
 
-                    if (logoutUrl && browser.isElectron()) {
-                        const url = appendURLHashParam(logoutUrl, "electron", "true");
+                    if (logoutUrl) {
+                        if (browser.isElectron()) {
+                            const url = appendURLHashParam(logoutUrl, "electron", "true");
+                            window.open(url, "_blank");
 
-                        window.open(url, "_blank");
-
-                        if (_room) dispatch(hangup(true, _room));
-                    } else {
-                        if (logoutUrl) {
+                            if (room) {
+                                dispatch(hangup(true, room));
+                            } else {
+                                dispatch(hangup(true));
+                            }
+                        } else {
                             window.location.href = logoutUrl;
-
-                            return;
                         }
-                        if (_room) conference?.room.xmpp.moderator.logout(() => dispatch(hangup(true, _room)));
+
+                        return;
+                    }
+
+                    if (room && conference) {
+                        if (conference.room?.xmpp?.moderator?.logout) {
+                            conference.room.xmpp.moderator.logout(() => {
+                                dispatch(hangup(true, room));
+                            });
+                        } else {
+                            dispatch(hangup(true, room));
+                        }
+                    } else {
+                        logger.warn("No room available during logout");
+                        dispatch(hangup(true));
                     }
                 },
-            })
+            }),
         );
     };
 }
@@ -92,7 +107,7 @@ export function openLogoutDialog() {
  * @returns {Function}
  */
 export function openSettingsDialog(defaultTab?: string, isDisplayedOnWelcomePage?: boolean) {
-    return openDialog(SettingsDialogWrapper, {
+    return openDialog('SettingsDialog', SettingsDialogWrapper, {
         defaultTab,
         isDisplayedOnWelcomePage,
     });

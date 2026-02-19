@@ -1,5 +1,5 @@
 import COUNTRIES_RESOURCES from 'i18n-iso-countries/langs/en.json';
-import i18next from 'i18next';
+import i18next, { InitOptions } from 'i18next';
 import I18nextXHRBackend, { HttpBackendOptions } from 'i18next-http-backend';
 import { merge } from 'lodash-es';
 
@@ -59,12 +59,20 @@ export const DEFAULT_LANGUAGE = 'en';
 export const TRANSLATION_LANGUAGES_HEAD: Array<string> = [ DEFAULT_LANGUAGE ];
 
 /**
+ * The available/supported i18n namespaces.
+ *
+ * @public
+ * @type {Array<string>}
+ */
+export const SUPPORTED_NS = [ 'main', 'languages', 'countries', 'translation-languages' ];
+
+/**
  * The options to initialize i18next with.
  *
- * @type {i18next.InitOptions}
+ * @type {InitOptions}
  */
-const options: i18next.InitOptions = {
-    backend: <HttpBackendOptions>{
+const options: InitOptions = {
+    backend: {
         loadPath: (lng: string[], ns: string[]) => {
             switch (ns[0]) {
             case 'countries':
@@ -74,32 +82,37 @@ const options: i18next.InitOptions = {
                 return 'lang/{{ns}}.json';
             }
         }
-    },
+    } as HttpBackendOptions,
     defaultNS: 'main',
     fallbackLng: DEFAULT_LANGUAGE,
     interpolation: {
         escapeValue: false // not needed for react as it escapes by default
     },
-    load: 'languageOnly',
-    ns: [ 'main', 'languages', 'countries', 'translation-languages' ],
+    load: 'all',
+    ns: SUPPORTED_NS,
     react: {
         // re-render when a new resource bundle is added
-        // @ts-expect-error. Fixed in i18next 19.6.1.
         bindI18nStore: 'added',
         useSuspense: false
     },
     returnEmptyString: false,
     returnNull: false,
 
-    // XXX i18next modifies the array lngWhitelist so make sure to clone
+    // XXX i18next modifies the array supportedLngs so make sure to clone
     // LANGUAGES.
-    whitelist: LANGUAGES.slice()
+    supportedLngs: LANGUAGES.slice()
 };
 
-i18next
-    .use(navigator.product === 'ReactNative' ? {} : I18nextXHRBackend)
-    .use(languageDetector)
-    .init(options);
+if (navigator.product === 'ReactNative') {
+    i18next
+        .use(languageDetector)
+        .init(options);
+} else {
+    i18next
+        .use(I18nextXHRBackend)
+        .use(languageDetector)
+        .init(options);
+}
 
 // Add default language which is preloaded from the source code.
 i18next.addResourceBundle(
@@ -131,7 +144,9 @@ i18next.addResourceBundle(
 // XXX: Note we are using require here, because we want the side-effects of the
 // import, but imports can only be placed at the top, and it would be too early,
 // since i18next is not yet initialized at that point.
-require('./BuiltinLanguages');
+try {
+    require('./BuiltinLanguages');
+} catch { }
 
 // Label change through dynamic branding is available only for web
 if (typeof APP !== 'undefined') {

@@ -7,6 +7,7 @@ import { IVisitorChatParticipant } from '../visitors/types';
 import {
     ADD_MESSAGE,
     ADD_MESSAGE_REACTION,
+    CHAT_KEYS_ARRIVED,
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     EDIT_MESSAGE,
@@ -35,19 +36,21 @@ const DEFAULT_STATE = {
     privateMessageRecipient: undefined,
     lobbyMessageRecipient: undefined,
     isLobbyChatActive: false,
-    focusedTab: ChatTabs.CHAT,
+    focusedTab: undefined,
     isResizing: false,
     width: {
         current: CHAT_SIZE,
         userSet: null
-    }
+    },
+    isKeysArrived: false
 };
 
 export interface IChatState {
-    focusedTab: ChatTabs;
+    focusedTab?: ChatTabs;
     groupChatWithPermissions: boolean;
     isLobbyChatActive: boolean;
     isOpen: boolean;
+    isKeysArrived: boolean;
     isResizing: boolean;
     lastReadMessage?: IMessage;
     lobbyMessageRecipient?: {
@@ -181,6 +184,13 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         return {
             ...state,
             isOpen: true,
+            privateMessageRecipient: action.participant
+        };
+
+    case CHAT_KEYS_ARRIVED:
+        return {
+            ...state,
+            isKeysArrived: true,
             privateMessageRecipient: action.participant
         };
 

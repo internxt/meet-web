@@ -19,8 +19,9 @@ import UnsafeRoomWarning from "../../../premeeting/components/web/UnsafeRoomWarn
 import { updateSettings } from "../../../settings/actions";
 import { getDisplayName } from "../../../settings/functions.web";
 import { withPixelLineHeight } from "../../../styles/functions.web";
+import PrivateMeetingBanner from "../../general/components/PrivateMeetingBanner";
 import MeetingButton from "../../general/containers/MeetingButton";
-import { loginSuccess, logout } from "../../general/store/auth/actions";
+import { initializeAuth, loginSuccess, logout } from "../../general/store/auth/actions";
 import { setCreateRoomError } from "../../general/store/errors/actions";
 import { getPlanName as getPlanNameSelector } from "../../general/store/meeting/selectors";
 import { useLocalStorage } from "../../LocalStorageManager";
@@ -30,7 +31,6 @@ import { MeetingUser } from "../../services/types/meeting.types";
 import AuthModal from "../Home/containers/AuthModal";
 import Header from "./components/Header";
 import PreMeetingModal from "./components/PreMeetingModal";
-import SecureMeetingMessage from "./components/SecureMeetingMessage";
 import VideoEncodingToggle from "./containers/VideoEncodingToggle";
 import { useUserData } from "./hooks/useUserData";
 
@@ -209,6 +209,8 @@ const PreMeetingScreen = ({
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
     const [isCreatingMeeting, setIsCreatingMeeting] = useState(false);
     const [meetingUsersData, setMeetingUsersData] = useState<MeetingUser[]>([]);
+    const [isBannerVisible, setIsBannerVisible] = useState(true);
+
     const userData = useUserData();
     const [openLogin, setOpenLogin] = useState<boolean>(true);
 
@@ -230,7 +232,7 @@ const PreMeetingScreen = ({
                 {skipPrejoinButton}
             </>
         ),
-        [_buttons, skipPrejoinButton]
+        [_buttons, skipPrejoinButton],
     );
 
     const warningsSection = useMemo(
@@ -241,7 +243,7 @@ const PreMeetingScreen = ({
                 {showRecordingWarning && <RecordingWarning />}
             </>
         ),
-        [showUnsafeRoomWarning, showDeviceStatus, showRecordingWarning]
+        [showUnsafeRoomWarning, showDeviceStatus, showRecordingWarning],
     );
 
     const getUsersInMeeting = async () => {
@@ -252,6 +254,8 @@ const PreMeetingScreen = ({
     };
 
     useEffect(() => {
+        dispatch(initializeAuth());
+
         if (meetingUsersData.length === 0) {
             getUsersInMeeting();
         }
@@ -332,18 +336,21 @@ const PreMeetingScreen = ({
                     }}
                     onLogout={onLogout}
                     meetingButton={
-                        isInNewMeeting ? (
-                            <MeetingButton
-                                onNewMeeting={handleNewMeeting}
-                                translate={t}
-                                loading={isCreatingMeeting}
-                                className="w-full sm:w-auto"
-                            />
-                        ) : null
+                        <MeetingButton
+                            onNewMeeting={handleNewMeeting}
+                            translate={t}
+                            loading={isCreatingMeeting}
+                            className="w-full sm:w-auto"
+                            displayUpgradeButton={isInNewMeeting}
+                        />
                     }
                     navigateToHomePage={navigateToHomePage}
                     onOpenSettings={() => dispatch(openSettingsDialog(undefined, true))}
                     planName={planName}
+                />
+                <PrivateMeetingBanner
+                    isVisible={isBannerVisible}
+                    onClose={() => setIsBannerVisible(false)}
                 />
                 <PreMeetingModal
                     videoTrack={videoTrack}
@@ -378,9 +385,6 @@ const PreMeetingScreen = ({
                     onSignup={(credentials) => dispatch(loginSuccess(credentials))}
                     translate={t}
                 />
-                <div className="flex absolute bottom-7 right-7">
-                    <SecureMeetingMessage />
-                </div>
                 <div className={classes.videoEncodingToggleContainer}>
                     {ConfigService.instance.isDevelopment() && <VideoEncodingToggle />}
                 </div>
@@ -414,7 +418,7 @@ function mapStateToProps(state: IReduxState, ownProps: Partial<IProps>) {
     const { hiddenPremeetingButtons } = state["features/base/config"];
     const { toolbarButtons } = state["features/toolbox"];
     const premeetingButtons = (ownProps.thirdParty ? THIRD_PARTY_PREJOIN_BUTTONS : PREMEETING_BUTTONS).filter(
-        (b: any) => !(hiddenPremeetingButtons || []).includes(b)
+        (b: any) => !(hiddenPremeetingButtons || []).includes(b),
     );
     const { premeetingBackground } = state["features/dynamic-branding"];
     const userName = getDisplayName(state);

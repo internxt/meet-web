@@ -132,8 +132,16 @@
         "newMessages": "New messages",
         "privacyTooltip": "For your privacy, this chat will be deleted when the meeting ends",
         "nickname": {
+            "featureChat": "chat",
+            "featureClosedCaptions": "closed captions",
+            "featureFileSharing": "file sharing",
+            "featurePolls": "polls",
             "popover": "Choose a nickname",
             "title": "Enter a nickname to use chat",
+            "titleWith1Features": "Enter a nickname to use {{feature1}}",
+            "titleWith2Features": "Enter a nickname to use {{feature1}} and {{feature2}}",
+            "titleWith3Features": "Enter a nickname to use {{feature1}}, {{feature2}} and {{feature3}}",
+            "titleWith4Features": "Enter a nickname to use {{feature1}}, {{feature2}}, {{feature3}} and {{feature4}}",
             "titleWithCC": "Enter a nickname to use chat and closed captions",
             "titleWithPolls": "Enter a nickname to use chat and polls",
             "titleWithPollsAndCC": "Enter a nickname to use chat, polls and closed captions",
@@ -952,7 +960,7 @@
         },
         "secureMeetingMessage": {
             "title": "Your meeting is private",
-            "description": "Only invited or approved participants can join"
+            "description": "Only invited participants can join"
         },
         "settings": {
             "video": {
@@ -1090,6 +1098,8 @@
         "whiteboardLimitTitle": "Whiteboard usage",
         "encryptionKeySyncFailed": "The encryption key synchronization has failed. It is recommended that you leave the meeting and rejoin to restore secure communication.",
         "encryptionKeySyncFailedTitle": "Encryption Sync Failed",
+        "cryptoFailedTitle": "Cryptographic operation failed",
+        "cryptoFailed": "Cryptographic operation has failed. You cannot access video or audio of the meeting. It is recommended that you restart the browser. If you are the meeting organizer, recreate it.",
         "encryptionKeySyncRestored": "The encryption key synchronization has been successfully restored. Your secure communication is now active.",
         "encryptionKeySyncRestoredTitle": "Encryption Restored"
     },
@@ -1365,7 +1375,7 @@
             "signedIn": "Currently accessing calendar events for {{email}}. Click the Disconnect button below to stop accessing calendar events.",
             "title": "Calendar"
         },
-        "chatWithPermissions": "Chat requires permission",
+        "chatWithPermissions": "Disable chat for non-moderators",
         "desktopShareFramerate": "Desktop sharing frame rate",
         "desktopShareHighFpsWarning": "A higher frame rate for desktop sharing might affect your bandwidth. You need to restart the screen share for the new settings to take effect.",
         "desktopShareWarning": "You need to restart the screen share for the new settings to take effect.",
@@ -1538,7 +1548,7 @@
             "muteEveryoneElsesVideoStream": "Stop everyone else's video",
             "muteEveryonesVideoStream": "Stop everyone's video",
             "muteGUMPending": "Connecting your microphone",
-            "noiseSuppression": "Extra noise suppression (BETA)",
+            "noiseSuppression": "Extra noise suppression",
             "openChat": "Open chat",
             "participants": "Open participants panel. {{participantsCount}} participants",
             "pip": "Toggle Picture-in-Picture mode",
@@ -1603,20 +1613,21 @@
         "closeParticipantsPane": "Close participants pane",
         "closeReactionsMenu": "Close reactions menu",
         "closedCaptions": "Closed captions",
-        "disableNoiseSuppression": "Disable extra noise suppression (BETA)",
+        "disableNoiseSuppression": "Disable extra noise suppression",
         "disableReactionSounds": "You can disable reaction sounds for this meeting",
         "documentClose": "Close shared document",
         "documentOpen": "Open shared document",
         "download": "Download our apps",
         "e2ee": "End-to-End Encryption",
         "embedMeeting": "Embed meeting",
-        "enableNoiseSuppression": "Enable extra noise suppression (BETA)",
+        "enableNoiseSuppression": "Enable extra noise suppression",
         "endConference": "End meeting for all",
         "enterFullScreen": "View full screen",
         "enterTileView": "Enter tile view",
         "exitFullScreen": "Exit full screen",
         "exitTileView": "Exit tile view",
         "feedback": "Leave feedback",
+        "fileSharing": "File sharing",
         "giphy": "Toggle GIPHY menu",
         "hangup": "Leave the meeting",
         "help": "Help",
@@ -1645,13 +1656,14 @@
         "noAudioSignalDialInDesc": "You can also dial-in using:",
         "noAudioSignalDialInLinkDesc": "Dial-in numbers",
         "noAudioSignalTitle": "There is no input coming from your mic!",
-        "noiseSuppression": "Extra noise suppression (BETA)",
+        "noiseSuppression": "Extra noise suppression",
         "noisyAudioInputDesc": "It sounds like your microphone is making noise, please consider muting or changing the device.",
         "noisyAudioInputTitle": "Your microphone appears to be noisy!",
         "openChat": "Open chat",
         "openReactionsMenu": "Open reactions menu",
         "participants": "Participants",
         "pip": "Enter Picture-in-Picture mode",
+        "polls": "Polls",
         "privateMessage": "Send private message",
         "profile": "Edit your profile",
         "raiseHand": "Raise your hand",
@@ -1877,5 +1889,37 @@
             "heading": "Whiteboard"
         },
         "screenTitle": "Whiteboard"
+    },
+    "upgradePlanDialog": {
+      "upgrade": "Upgrade",
+      "cancel": "Cancel",
+      "soonBadge": "Soon",
+      "default": {
+        "title": "Upgrade now",
+        "description": "Your current plan doesn't allow you this feature. Upgrade now to unlock all the benefits of Internxt."
+      },
+      "meet": {
+        "title": "Unlock Meet",
+        "description": "Upgrade now to host and join fully encrypted video calls — private, secure, and unlimited."
+      },
+      "mail": {
+        "title": "Unlock Mail",
+        "description": "Unlock your private email service with end-to-end encryption."
+      },
+      "vpn": {
+        "title": "Unlock VPN",
+        "description": "Upgrade to protect your traffic with private, encrypted browsing."
+      },
+      "antivirus": {
+        "title": "Unlock Antivirus",
+        "description": "Upgrade to scan, detect, and block malware in real time."
+      },
+      "cleaner": {
+        "title": "Unlock Cleaner",
+        "description": "Upgrade now to keep your files optimized and free up space."
+      }
+    },
+    "errors": {
+        "downloadingDesktopApp": "Something went wrong while downloading the desktop app"
     }
 }

@@ -34,7 +34,7 @@ const VideoParticipant = ({
             className={`${relativePositioning ? "relative" : ""} flex ${
                 isScreenShare ? "" : "aspect-square sm:aspect-video"
             } min-w-40 ${className} items-center justify-center rounded-[20px] overflow-hidden ${
-                !!backgroundColor ? backgroundColor : "bg-gray-90"
+                !!backgroundColor ? backgroundColor : "bg-gray-90 dark:bg-gray-5"
             }
             ${dominantSpeaker && !isScreenShare ? "ring-4 ring-white" : ""}`}
             data-testid={`participant-${id}`}
@@ -49,7 +49,7 @@ const VideoParticipant = ({
                     )}
                     key={`video-${id}`}
                     // Set to false due to decoding issues and video lag
-                    encodeVideo={false}
+                    encodeVideo={true}
                 />
             ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gray-800">
