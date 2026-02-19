@@ -842,7 +842,7 @@
         },
         "secureMeetingMessage": {
             "title": "Tu reunión es privada",
-            "description": "Sólo pueden participar los participantes invitados o aprobados"
+            "description": "Sólo pueden participar los participantes invitados"
         },
         "settings": {
             "video": {
