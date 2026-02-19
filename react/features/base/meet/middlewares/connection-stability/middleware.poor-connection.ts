@@ -66,7 +66,7 @@ const checkConnectionQuality = (store: IStore, connectionQuality: number) => {
         return;
     }
 
-    if (connectionQuality < GOOD_CONNECTION_THRESHOLD) {
+    if (connectionQuality > 0 && connectionQuality < GOOD_CONNECTION_THRESHOLD) {
         showPoorConnectionWarning(store);
     } else {
         hidePoorConnectionWarning(store);
