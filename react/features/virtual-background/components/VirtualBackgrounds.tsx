@@ -99,7 +99,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         thumbnail: {
-            width: "100%", // Ocupa todo el ancho disponible del grid
+            width: "100%",
             aspectRatio: "7 / 4",
             borderRadius: "4px",
             boxSizing: "border-box",
@@ -107,8 +107,9 @@ const useStyles = makeStyles()(theme => {
             alignItems: "center",
             justifyContent: "center",
             textAlign: "center",
-            ...withPixelLineHeight(theme.typography.labelBold),
-            color: theme.palette.text01,
+             ...theme.typography.labelBold,
+                        color: theme.palette.virtualBackgroundText,
+
             objectFit: "cover",
 
             [["&:hover", "&:focus"] as any]: {
@@ -130,7 +131,7 @@ const useStyles = makeStyles()(theme => {
         },
 
         noneThumbnail: {
-            backgroundColor: theme.palette.ui04,
+            backgroundColor: theme.palette.virtualBackgroundBorder
         },
 
         slightBlur: {
@@ -157,7 +158,7 @@ const useStyles = makeStyles()(theme => {
             position: "absolute",
             top: "3px",
             right: "3px",
-            background: theme.palette.ui03,
+            background: theme.palette.virtualBackgroundBorder,
             borderRadius: "3px",
             cursor: "pointer",
             display: "none",

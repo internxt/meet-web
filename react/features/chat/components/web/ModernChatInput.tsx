@@ -15,6 +15,9 @@ export const ModernChatInput: React.FC<ModernChatInputProps> = ({ onSend, placeh
         if (trimmed) {
             onSend(trimmed);
             setMessage("");
+            if (textareaRef.current) {
+                textareaRef.current.style.height = "auto";
+            }
         }
     }, [message, onSend]);
 

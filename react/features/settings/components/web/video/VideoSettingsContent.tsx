@@ -95,6 +95,10 @@ const useStyles = makeStyles()((theme) => {
             },
         },
 
+        selectedEntry: {
+            border: `2px solid ${theme.palette.settingsVideoPreviewBorder}`
+        },
+
         previewVideo: {
             borderRadius: "12px",
             overflow: "hidden",
@@ -123,7 +127,7 @@ const useStyles = makeStyles()((theme) => {
             backgroundColor: "rgba(0, 0, 0, 0.7)",
             borderRadius: "16px",
             padding: `${theme.spacing(1)} ${theme.spacing(2)}`,
-            color: theme.palette.text01,
+            color: theme.palette.settingsTabText,
             // ...withPixelLineHeight(theme.typography.labelBold),
             // width: "fit-content",
             ...theme.typography.labelBold,

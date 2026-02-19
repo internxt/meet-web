@@ -144,48 +144,88 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 });
 
 /**
+ * Stored E2EE event handler references for cleanup.
+ */
+let e2eeHandlerRefs: {
+    conference: any;
+    handlers: Map<string, Function>;
+} | null = null;
+
+/**
  * Set up state change listener to perform maintenance tasks when the conference
  * is left or failed.
  */
 StateListenerRegistry.register(
     (state) => getCurrentConference(state),
     (conference, { dispatch }, previousConference) => {
-        if (previousConference) {
-            dispatch(toggleE2EE(false));
+        if (previousConference && e2eeHandlerRefs?.conference === previousConference) {
+            console.log("[E2EE] Conference changed - cleaning up previous conference");
+
+            if (previousConference?.cleanUpWebWorkers) {
+                console.log("[E2EE] Calling cleanUpWebWorkers() to terminate E2EE worker");
+                previousConference.cleanUpWebWorkers();
+            } else {
+                console.warn("[E2EE] cleanUpWebWorkers() not available on previous conference");
+            }
+
+            if (e2eeHandlerRefs) {
+                console.log(`[E2EE] Removing ${e2eeHandlerRefs.handlers.size} event handlers`);
+                for (const [event, handler] of e2eeHandlerRefs.handlers) {
+                    previousConference.off(event, handler);
+                }
+            }
+
+            e2eeHandlerRefs = null;
         }
 
         if (conference) {
-             conference.on(JitsiConferenceEvents.E2EE_SAS_AVAILABLE, (sas: object) => {
-               if (ConfigService.instance.isDevelopment()) {
-                   dispatch(openDialog('ParticipantVerificationDialog', ParticipantVerificationSASDialog, { sas }));
-               }
-             });
+            console.log("[E2EE] Setting up E2EE handlers for new conference");
+            const handlers = new Map<string, Function>();
 
-             conference.on(JitsiConferenceEvents.E2EE_KEY_SYNC_FAILED, () => {
-                 dispatch(showWarningNotification({
-                     titleKey: 'notify.encryptionKeySyncFailedTitle',
-                     descriptionKey: 'notify.encryptionKeySyncFailed'
-                 }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-             });
-            conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_READY, (pId: string, sas: object) => {
-                // Added our ParticipantVerificationSASDialog
-                dispatch(openDialog("ParticipantVerificationDialog", ParticipantVerificationSASDialog, { pId, sas }));
-            });
+            const sasAvailableHandler = (sas: object) => {
+                if (ConfigService.instance.isDevelopment()) {
+                    dispatch(openDialog('ParticipantVerificationDialog', ParticipantVerificationSASDialog, { sas }));
+                }
+            };
+            handlers.set(JitsiConferenceEvents.E2EE_SAS_AVAILABLE, sasAvailableHandler);
+            conference.on(JitsiConferenceEvents.E2EE_SAS_AVAILABLE, sasAvailableHandler);
 
-             conference.on(JitsiConferenceEvents.E2EE_CRYPTO_FAILED, () => {
-                 logger.debug(`E2EE: crypto failure detected`);
-                 dispatch(showWarningNotification({
-                     titleKey: 'notify.cryptoFailedTitle',
-                     descriptionKey: 'notify.cryptoFailed'
-                 }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-             });
+            const keySyncFailedHandler = () => {
+                dispatch(showWarningNotification({
+                    titleKey: 'notify.encryptionKeySyncFailedTitle',
+                    descriptionKey: 'notify.encryptionKeySyncFailed'
+                }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+            };
+            handlers.set(JitsiConferenceEvents.E2EE_KEY_SYNC_FAILED, keySyncFailedHandler);
+            conference.on(JitsiConferenceEvents.E2EE_KEY_SYNC_FAILED, keySyncFailedHandler);
 
-             conference.on(JitsiConferenceEvents.E2EE_KEY_SYNC_AFTER_TIMEOUT, () => {
-                 dispatch(showNotification({
-                     titleKey: 'notify.encryptionKeySyncRestoredTitle',
-                     descriptionKey: 'notify.encryptionKeySyncRestored'
-                 }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
-             });
+            const verificationReadyHandler = (pId: string, sas: object) => {
+                dispatch(openDialog('ParticipantVerificationDialog', ParticipantVerificationSASDialog, { pId, sas }));
+            };
+            handlers.set(JitsiConferenceEvents.E2EE_VERIFICATION_READY, verificationReadyHandler);
+            conference.on(JitsiConferenceEvents.E2EE_VERIFICATION_READY, verificationReadyHandler);
+
+            const cryptoFailedHandler = () => {
+                dispatch(showWarningNotification({
+                    titleKey: 'notify.cryptoFailedTitle',
+                    descriptionKey: 'notify.cryptoFailed'
+                }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+            };
+            handlers.set(JitsiConferenceEvents.E2EE_CRYPTO_FAILED, cryptoFailedHandler);
+            conference.on(JitsiConferenceEvents.E2EE_CRYPTO_FAILED, cryptoFailedHandler);
+
+            const keySyncAfterTimeoutHandler = () => {
+                dispatch(showNotification({
+                    titleKey: 'notify.encryptionKeySyncRestoredTitle',
+                    descriptionKey: 'notify.encryptionKeySyncRestored'
+                }, NOTIFICATION_TIMEOUT_TYPE.STICKY));
+            };
+            handlers.set(JitsiConferenceEvents.E2EE_KEY_SYNC_AFTER_TIMEOUT, keySyncAfterTimeoutHandler);
+            conference.on(JitsiConferenceEvents.E2EE_KEY_SYNC_AFTER_TIMEOUT, keySyncAfterTimeoutHandler);
+
+            // Store references for cleanup
+            e2eeHandlerRefs = { conference, handlers };
+            console.log(`[E2EE] Successfully registered ${handlers.size} E2EE event handlers`);
         }
     }
 );

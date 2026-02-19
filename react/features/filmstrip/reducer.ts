@@ -161,6 +161,15 @@ const DEFAULT_STATE: IFilmstripState = {
     visibleRemoteParticipants: new Set<string>(),
 
     /**
+     * The number of fully visible remote participants (excluding partially visible ones).
+     * Used for calculating speaker slots to avoid placing dominant speaker on partially visible tiles.
+     *
+     * @public
+     * @type {number}
+     */
+    fullyVisibleRemoteParticipantsCount: 0,
+
+    /**
      * The width of the resizable filmstrip.
      *
      * @public
@@ -212,6 +221,7 @@ export interface IFilmstripState {
         pinned?: boolean;
     }>;
     enabled: boolean;
+    fullyVisibleRemoteParticipantsCount: number;
     horizontalViewDimensions: {
         hasScroll?: boolean;
         local?: IDimensions;
@@ -320,7 +330,7 @@ ReducerRegistry.register<IFilmstripState>(
                 }
             };
         case SET_VISIBLE_REMOTE_PARTICIPANTS: {
-            const { endIndex, startIndex } = action;
+            const { endIndex, startIndex, fullyVisibleCount } = action;
             const { remoteParticipants } = state;
             const visibleRemoteParticipants = new Set(remoteParticipants.slice(startIndex, endIndex + 1));
 
@@ -328,7 +338,8 @@ ReducerRegistry.register<IFilmstripState>(
                 ...state,
                 visibleParticipantsStartIndex: startIndex,
                 visibleParticipantsEndIndex: endIndex,
-                visibleRemoteParticipants
+                visibleRemoteParticipants,
+                fullyVisibleRemoteParticipantsCount: fullyVisibleCount ?? visibleRemoteParticipants.size
             };
         }
         case PARTICIPANT_LEFT: {

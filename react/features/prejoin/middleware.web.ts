@@ -18,6 +18,8 @@ import {
 } from './actions';
 import { isPrejoinPageVisible } from './functions.any';
 
+import { cleanUpConference } from '../base/conference/actions.any';
+
 /**
  * The redux middleware for {@link PrejoinPage}.
  *
@@ -68,9 +70,17 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case CONFERENCE_FAILED:
-    case CONNECTION_FAILED:
+    case CONNECTION_FAILED: {
         store.dispatch(setJoiningInProgress(false));
+        const state = store.getState();
+        const { room } = state['features/base/conference'];
+        console.log("[RELOAD_PAGE]: Room ID on failure: ", room);
+        if (room) {
+            store.dispatch(cleanUpConference(room));
+        }
+        
         break;
+    }
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
     }

@@ -4,7 +4,12 @@ import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE } from '../../../../conference
 import { setLeaveConferenceManually } from '../../../general/utils/conferenceState';
 import { CONNECTION_WILL_CONNECT } from '../../../../connection/actionTypes';
 import MiddlewareRegistry from '../../../../redux/MiddlewareRegistry';
-import { setupConferenceMediaListeners, setupXMPPConnectionListeners } from './listener-setup';
+import {
+    removeConferenceMediaListeners,
+    removeXMPPConnectionListeners,
+    setupConferenceMediaListeners,
+    setupXMPPConnectionListeners
+} from './listener-setup';
 import { createConnectionState } from './state';
 
 /**
@@ -24,6 +29,7 @@ MiddlewareRegistry.register(({ dispatch }: IStore) => {
 
             switch (action.type) {
                 case CONNECTION_WILL_CONNECT: {
+                    console.log("[CONNECTION_NOTIFICATIONS] CONNECTION_WILL_CONNECT - Setting up XMPP listeners");
                     setLeaveConferenceManually(false);
                     connectionState.hasConnectionListeners = false;
 
@@ -34,6 +40,7 @@ MiddlewareRegistry.register(({ dispatch }: IStore) => {
                 }
 
                 case CONFERENCE_JOINED: {
+                    console.log("[CONNECTION_NOTIFICATIONS] CONFERENCE_JOINED - Setting up media listeners");
                     const { conference } = action;
 
                     setupConferenceMediaListeners(conference, dispatch, connectionState);
@@ -41,9 +48,11 @@ MiddlewareRegistry.register(({ dispatch }: IStore) => {
                 }
 
                 case CONFERENCE_WILL_LEAVE: {
-                    // User clicked hangup button - don't show reconnection notifications
+                    console.log("[CONNECTION_NOTIFICATIONS] CONFERENCE_WILL_LEAVE - Cleaning up all listeners");
+                    // User clicked hangup button - cleanup listeners to prevent memory leaks
+                    removeConferenceMediaListeners(connectionState);
+                    removeXMPPConnectionListeners(connectionState);
                     setLeaveConferenceManually(true);
-                    connectionState.hasConferenceListeners = false;
                     connectionState.wasMediaConnectionInterrupted = false;
                     break;
                 }

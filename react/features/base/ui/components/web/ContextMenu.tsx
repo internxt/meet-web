@@ -141,7 +141,7 @@ const useStyles = makeStyles()((theme) => {
             //border: `1px solid ${theme.palette.ui04}`,
             borderRadius: `${Number(theme.shape.borderRadius)}px`,
             boxShadow: "0px 16px 32px rgba(0, 0, 0, 0.25)",
-            color: theme.palette.text01,
+            color: theme.palette.overflowMenuItemText,
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
             marginTop: "48px",
             position: "absolute",

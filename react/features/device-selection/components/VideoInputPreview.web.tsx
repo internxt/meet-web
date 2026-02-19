@@ -31,7 +31,8 @@ const useStyles = makeStyles()((theme) => {
             borderRadius: "20px",
             overflow: "hidden",
             marginBottom: theme.spacing(4),
-            backgroundColor: theme.palette.uiBackground,
+            backgroundColor: theme.palette.deviceSelectorVideoPreview,
+            // backgroundColor: theme.palette.uiBackground,
             width: "100%",
             aspectRatio: "16 / 9",
             display: "flex",
@@ -47,7 +48,7 @@ const useStyles = makeStyles()((theme) => {
         },
 
         errorText: {
-            color: theme.palette.text01,
+            color: theme.palette.deviceSelectorText,
             position: "absolute",
             top: "50%",
             left: "50%",

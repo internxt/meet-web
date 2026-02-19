@@ -67,6 +67,7 @@ const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE = [
 ];
 
 const DEFAULT_STATE = {
+    activeSpeakers: new Set<string>(),
     dominantSpeaker: undefined,
     fakeParticipants: new Map(),
     local: undefined,
@@ -85,6 +86,7 @@ const DEFAULT_STATE = {
 };
 
 export interface IParticipantsState {
+    activeSpeakers: Set<string>;
     dominantSpeaker?: string;
     fakeParticipants: Map<string, IParticipant>;
     local?: ILocalParticipant;
@@ -628,6 +630,7 @@ function _participantJoined({ participant }: { participant: IParticipant }) {
         presence,
         role,
         sources,
+        userContext
     } = participant;
     let { conference, id } = participant;
 
@@ -660,6 +663,7 @@ function _participantJoined({ participant }: { participant: IParticipant }) {
         presence,
         role: role || PARTICIPANT_ROLE.NONE,
         sources,
+        userContext
     };
 }
 
