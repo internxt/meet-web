@@ -19,6 +19,7 @@ import UnsafeRoomWarning from "../../../premeeting/components/web/UnsafeRoomWarn
 import { updateSettings } from "../../../settings/actions";
 import { getDisplayName } from "../../../settings/functions.web";
 import { withPixelLineHeight } from "../../../styles/functions.web";
+import PrivateMeetingBanner from "../../general/components/PrivateMeetingBanner";
 import MeetingButton from "../../general/containers/MeetingButton";
 import { initializeAuth, loginSuccess, logout } from "../../general/store/auth/actions";
 import { setCreateRoomError } from "../../general/store/errors/actions";
@@ -30,7 +31,6 @@ import { MeetingUser } from "../../services/types/meeting.types";
 import AuthModal from "../Home/containers/AuthModal";
 import Header from "./components/Header";
 import PreMeetingModal from "./components/PreMeetingModal";
-import SecureMeetingMessage from "./components/SecureMeetingMessage";
 import VideoEncodingToggle from "./containers/VideoEncodingToggle";
 import { useUserData } from "./hooks/useUserData";
 
@@ -209,6 +209,8 @@ const PreMeetingScreen = ({
     const [isNameInputFocused, setIsNameInputFocused] = useState(false);
     const [isCreatingMeeting, setIsCreatingMeeting] = useState(false);
     const [meetingUsersData, setMeetingUsersData] = useState<MeetingUser[]>([]);
+    const [isBannerVisible, setIsBannerVisible] = useState(true);
+
     const userData = useUserData();
     const [openLogin, setOpenLogin] = useState<boolean>(true);
 
@@ -346,6 +348,10 @@ const PreMeetingScreen = ({
                     onOpenSettings={() => dispatch(openSettingsDialog(undefined, true))}
                     planName={planName}
                 />
+                <PrivateMeetingBanner
+                    isVisible={isBannerVisible}
+                    onClose={() => setIsBannerVisible(false)}
+                />
                 <PreMeetingModal
                     videoTrack={videoTrack}
                     videoMuted={!!videoMuted}
@@ -379,9 +385,6 @@ const PreMeetingScreen = ({
                     onSignup={(credentials) => dispatch(loginSuccess(credentials))}
                     translate={t}
                 />
-                <div className="flex absolute bottom-7 right-7">
-                    <SecureMeetingMessage />
-                </div>
                 <div className={classes.videoEncodingToggleContainer}>
                     {ConfigService.instance.isDevelopment() && <VideoEncodingToggle />}
                 </div>

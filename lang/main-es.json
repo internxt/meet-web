@@ -841,7 +841,7 @@
         },
         "secureMeetingMessage": {
             "title": "Tu reunión es privada",
-            "description": "Sólo pueden participar los participantes invitados o aprobados"
+            "description": "Sólo pueden participar los participantes invitados"
         },
         "settings": {
             "video": {
@@ -954,8 +954,8 @@
         "videoUnmuteBlockedTitle": "¡Desactivar cámara y compartir pantalla bloqueados!",
         "viewLobby": "Ver lobby",
         "waitingParticipants": "{{waitingParticipants}} personas",
-        "encryptionKeySyncFailed": "La sincronización de la clave de cifrado ha fallado. Se recomienda salir de la reunión y vuelva a unirse para restaurar la comunicación segura.",
-        "encryptionKeySyncFailedTitle": "Error de Sincronización de Cifrado",
+        "encryptionKeySyncFailed": "El establecimiento de la sesión segura ha fallado. Asegúrese de que todos los participantes tengan una conexión a Internet confiable.",
+        "encryptionKeySyncFailedTitle": "Error de Establecimiento de la Sesión",
         "cryptoFailedTitle": "La operación criptográfica ha fallado",
         "cryptoFailed": "La operación criptográfica ha fallado. No puede acceder al video ni al audio de la reunión. Se recomienda reiniciar el navegador. Si eres el organizador de la reunión, vuelva a crearla.",
         "encryptionKeySyncRestored": "La sincronización de claves para el cifrado se ha restaurado con éxito. Su comunicación segura está ahora activa.",

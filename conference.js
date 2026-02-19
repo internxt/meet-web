@@ -2197,6 +2197,29 @@ export default {
 
     },
 
+    cleanup() {
+        console.log('[RELOAD_PAGE]: Starting conference cleanup');
+        APP.store.dispatch(disableReceiver());
+
+        this._stopProxyConnection();
+
+        APP.store.dispatch(destroyLocalTracks());
+        this._localTracksInitialized = false;
+
+        // Remove unnecessary event listeners from firing callbacks.
+        if (this.deviceChangeListener) {
+            JitsiMeetJS.mediaDevices.removeEventListener(
+                JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
+                this.deviceChangeListener);
+        }
+
+        this.leaveRoom().catch(() => Promise.resolve()).then(() => {
+            this._room = undefined;
+            room = undefined;
+            console.log('[RELOAD_PAGE]: Conference cleanup finished');
+        });
+    },
+
     /**
      * Leaves the room.
      *

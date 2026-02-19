@@ -68,7 +68,7 @@ const specs = [
  */
 function generateCapabilitiesFromSpecs(): Record<string, any> {
     const allSpecFiles: string[] = [];
-    const browsers = [ 'p1', 'p2', 'p3', 'p4' ];
+    const browsers = [ 'p1', 'p2', 'p3', 'p4', 'p5', 'p6' ];
 
     for (const pattern of specs) {
         const matches = glob.sync(pattern, { cwd: path.join(__dirname) });
@@ -87,7 +87,9 @@ function generateCapabilitiesFromSpecs(): Record<string, any> {
         p1: new Set(),
         p2: new Set(),
         p3: new Set(),
-        p4: new Set()
+        p4: new Set(),
+        p5: new Set(),
+        p6: new Set()
     };
 
     for (const file of allSpecFiles) {
@@ -194,6 +196,8 @@ export const config: WebdriverIO.MultiremoteConfig = {
         } ]
     ],
 
+    execArgv: [ '--stack-trace-limit=100' ],
+
     // =====
     // Hooks
     // =====
@@ -286,8 +290,22 @@ export const config: WebdriverIO.MultiremoteConfig = {
         keepAlive.forEach(clearInterval);
     },
 
-    beforeSession(c, capabilities_, specs_, cid) {
+    async beforeSession(c, capabilities_, spec, cid) {
         const originalBefore = c.before;
+
+        if (spec && spec.length == 1) {
+            const testFilePath = spec[0].replace(/^file:\/\//, '');
+            const testProperties = await getTestProperties(testFilePath);
+
+            if (testProperties.retry) {
+                c.specFileRetries = 1;
+                c.specFileRetriesDeferred = true;
+                c.specFileRetriesDelay = 1;
+                console.log(`Enabling retry for ${testFilePath}`);
+            }
+        } else {
+            console.log('No test file or multiple test files specified, will not enable retries');
+        }
 
         if (!originalBefore || !Array.isArray(originalBefore) || originalBefore.length !== 1) {
             console.warn('No before hook found or more than one found, skipping');
