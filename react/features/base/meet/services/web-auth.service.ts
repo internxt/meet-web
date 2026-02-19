@@ -5,6 +5,7 @@ import {
     WEB_AUTH_CONFIG,
     WEB_AUTH_MESSAGE_TYPES,
     WEB_AUTH_STORAGE_KEYS,
+    WEB_AUTH_VALID_ORIGINS,
     WebAuthMessage,
     WebAuthParams,
 } from './types/web-auth.types';
@@ -14,7 +15,7 @@ export class WebAuthService {
 
     private readonly WEB_CLIENT_URL = ConfigService.instance.isDevelopment()
         ? "http://localhost:3000"
-        : "https://drive.internxt.com";
+        : "https://feature-pb-5353-migrate-meet.drive-web.pages.dev";
 
     private authPopup: Window | null = null;
     private messageListener: ((event: MessageEvent) => void) | null = null;
@@ -74,7 +75,7 @@ export class WebAuthService {
      * Validate origin of postMessage event
      */
     private isValidOrigin(origin: string): boolean {
-        return origin.includes("internxt.com") || origin.includes("localhost");
+        return WEB_AUTH_VALID_ORIGINS.some(valid => origin.includes(valid));
     }
 
     /**
@@ -91,7 +92,7 @@ export class WebAuthService {
         data: WebAuthMessage,
         resolve: (value: WebAuthParams) => void,
         reject: (reason: Error) => void,
-        timeout: number
+        timeout: number,
     ) {
         clearTimeout(timeout);
         this.cleanup();
@@ -118,11 +119,7 @@ export class WebAuthService {
     /**
      * Setup popup closed checker interval
      */
-    private setupPopupClosedChecker(
-        popup: Window,
-        reject: (reason: Error) => void,
-        timeout: number
-    ): number {
+    private setupPopupClosedChecker(popup: Window, reject: (reason: Error) => void, timeout: number): number {
         return setInterval(() => {
             if (popup.closed) {
                 clearInterval(this.popupCheckInterval!);
@@ -240,7 +237,7 @@ export class WebAuthService {
             return this.buildLoginCredentials(user, mnemonic, newToken);
         } catch (error) {
             throw new Error(
-                `Web authentication processing failed: ${error instanceof Error ? error.message : "Unknown error"}`
+                `Web authentication processing failed: ${error instanceof Error ? error.message : "Unknown error"}`,
             );
         }
     }

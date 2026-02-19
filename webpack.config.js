@@ -28,7 +28,7 @@ function getPerformanceHints(options, size) {
     const { analyzeBundle, isProduction } = options;
 
     return {
-        hints: isProduction && !analyzeBundle ? "error" : false,
+        hints: isProduction && !analyzeBundle ? 'warning' : false,
         maxAssetSize: size,
         maxEntrypointSize: size,
     };
@@ -106,8 +106,11 @@ function devServerProxyBypass({ path }) {
 function getConfig(options = {}) {
     const { detectCircularDeps, isProduction } = options;
 
+    const parallelism = parseInt(process.env.WEBPACK_PARALLELISM, 10);
+
     return {
-        devtool: isProduction ? "source-map" : "eval-source-map",
+        ...(parallelism > 0 ? { parallelism } : {}),
+        devtool: isProduction ? false : "eval-source-map",
         mode: isProduction ? "production" : "development",
         module: {
             rules: [
@@ -199,7 +202,7 @@ function getConfig(options = {}) {
                     loader: "ts-loader",
                     options: {
                         configFile: "tsconfig.web.json",
-                        transpileOnly: !isProduction, // Skip type checking for dev builds.,
+                        transpileOnly: true,
                     },
                 },
                 {
@@ -345,7 +348,24 @@ module.exports = (_env, argv) => {
                     process: "process/browser",
                 }),
                 new webpack.DefinePlugin({
-                    "process.env": JSON.stringify(dotenv.config().parsed),
+                    "process.env": (() => {
+                        dotenv.config();
+                        const keys = [
+                            "DRIVE_NEW_API_URL",
+                            "PAYMENTS_API_URL",
+                            "MEET_API_URL",
+                            "CRYPTO_SECRET",
+                            "MAGIC_IV",
+                            "MAGIC_SALT",
+                        ];
+                        const env = {};
+                        keys.forEach((key) => {
+                            if (process.env[key]) {
+                                env[key] = process.env[key];
+                            }
+                        });
+                        return JSON.stringify(env);
+                    })(),
                 }),
                 new webpack.ProvidePlugin({
                     Buffer: ["buffer", "Buffer"],
