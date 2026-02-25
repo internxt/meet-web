@@ -28,7 +28,7 @@
         "@internxt/css-config": "^1.1.0",
         "@internxt/eslint-config-internxt": "^2.0.1",
         "@internxt/lib": "^1.4.1",
-        "@internxt/sdk": "=1.11.17",
+        "@internxt/sdk": "=1.14.2",
         "@internxt/ui": "0.1.1",
         "@jitsi/excalidraw": "https://github.com/jitsi/excalidraw/releases/download/v0.0.19/jitsi-excalidraw-0.0.19.tgz",
         "@jitsi/js-utils": "2.6.7",
@@ -241,6 +241,10 @@
     },
     "overrides": {
         "@xmldom/xmldom": "0.8.7"
+    },
+    "resolutions": {
+        "fast-xml-parser": "5.3.6",
+        "glob/minimatch": "10.2.1"
     },
     "engines": {
         "node": ">=22.0.0",
