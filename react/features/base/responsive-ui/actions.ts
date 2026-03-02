@@ -2,6 +2,7 @@ import { batch } from 'react-redux';
 
 import { IStore } from '../../app/types';
 import { CHAT_SIZE } from '../../chat/constants';
+import { getCustomPanelWidth } from '../../custom-panel/functions';
 import { getParticipantsPaneWidth } from '../../participants-pane/functions';
 
 import {
@@ -43,6 +44,7 @@ export function clientResized(clientWidth: number, clientHeight: number) {
 
         if (navigator.product !== 'ReactNative') {
             const state = getState();
+            const { reducedUIEnabled = true } = state['features/base/config'];
             const { isOpen: isChatOpen, width } = state['features/chat'];
 
             if (isChatOpen) {
@@ -50,8 +52,9 @@ export function clientResized(clientWidth: number, clientHeight: number) {
             }
 
             availableWidth -= getParticipantsPaneWidth(state);
+            availableWidth -= getCustomPanelWidth(state);
 
-            dispatch(setReducedUI(availableWidth, clientHeight));
+            reducedUIEnabled && dispatch(setReducedUI(availableWidth, clientHeight));
         }
 
         batch(() => {
@@ -112,7 +115,7 @@ export function setReducedUI(width: number, height: number) {
         const threshold = navigator.product === 'ReactNative'
             ? REDUCED_UI_THRESHOLD
             : WEB_REDUCED_UI_THRESHOLD;
-        const reducedUI = Math.min(width, height) < threshold;
+        const reducedUI = Math.max(width, height) < threshold;
 
         if (reducedUI !== getState()['features/base/responsive-ui'].reducedUI) {
             return dispatch({

@@ -20,6 +20,7 @@ export interface IToolboxNativeButton {
 export type ToolbarButton = 'camera' |
     'chat' |
     'closedcaptions' |
+    'custom-panel' |
     'desktop' |
     'download' |
     'embedmeeting' |

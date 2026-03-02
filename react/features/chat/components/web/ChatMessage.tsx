@@ -40,6 +40,10 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         chatMessage: {
             display: 'inline-flex',
+            // Jitsi styles:
+            // padding: '12px',
+            // backgroundColor: theme.palette.chatMessageRemote,
+            // borderRadius: '4px 12px 12px 12px',
             maxWidth: '100%',
             marginTop: '4px',
             boxSizing: 'border-box' as const,
@@ -59,6 +63,26 @@ const useStyles = makeStyles()((theme: Theme) => {
                     minWidth: 0
                 }
             }
+
+            // Jitsi message type styles:
+            // '&.privatemessage': {
+            //     backgroundColor: theme.palette.chatMessagePrivate
+            // },
+            // '&.local': {
+            //     backgroundColor: theme.palette.chatMessageLocal,
+            //     borderRadius: '12px 4px 12px 12px',
+            //     '&.privatemessage': {
+            //         backgroundColor: theme.palette.chatMessagePrivate
+            //     }
+            // },
+            // '&.error': {
+            //     backgroundColor: theme.palette.actionDanger,
+            //     borderRadius: 0,
+            //     fontWeight: 100
+            // },
+            // '&.lobbymessage': {
+            //     backgroundColor: theme.palette.chatMessagePrivate
+            // }
         },
         sideBySideContainer: {
             display: 'flex',
@@ -103,7 +127,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         displayName: {
             ...theme.typography.labelBold,
-            color: theme.palette.text02,
+            color: theme.palette.chatSenderName,
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
             overflow: 'hidden',
@@ -112,18 +136,18 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         userMessage: {
             ...theme.typography.bodyShortRegular,
-            color: theme.palette.text01,
+            color: theme.palette.chatMessageText,
             whiteSpace: 'pre-wrap',
             wordBreak: 'break-word'
         },
         privateMessageNotice: {
             ...theme.typography.labelRegular,
-            color: theme.palette.text02,
+            color: theme.palette.chatPrivateNotice,
             marginTop: theme.spacing(1)
         },
         timestamp: {
             ...theme.typography.labelRegular,
-            color: theme.palette.text03,
+            color: theme.palette.chatTimestamp,
             marginTop: theme.spacing(1),
             marginLeft: theme.spacing(1),
             whiteSpace: 'nowrap',
@@ -131,12 +155,12 @@ const useStyles = makeStyles()((theme: Theme) => {
         },
         reactionsPopover: {
             padding: theme.spacing(2),
-            backgroundColor: theme.palette.ui03,
+            backgroundColor: theme.palette.chatInputBackground,
             borderRadius: theme.shape.borderRadius,
             maxWidth: '150px',
             maxHeight: '400px',
             overflowY: 'auto',
-            color: theme.palette.text01
+            color: theme.palette.chatMessageText
         },
         reactionItem: {
             display: 'flex',
@@ -336,7 +360,7 @@ const ChatMessage = ({
                     <div className = { classes.replyWrapper }>
                         <div className = { cx('messagecontent', classes.messageContent) }>
                             {/* {showDisplayName && _renderDisplayName()} */}
-                            <div className ="text-sm font-normal text-white">
+                            <div className ="text-sm font-normal text-white whitespace-pre-wrap break-words">
                                 {isFileMessage(message) ? (
                                     <FileMessage
                                         message = { message }

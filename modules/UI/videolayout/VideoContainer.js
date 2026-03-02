@@ -400,8 +400,12 @@ export class VideoContainer extends LargeContainer {
      * @returns {void}
      */
     positionRemoteStatusMessages() {
+        if (this.remoteConnectionMessage) {
         this._positionParticipantStatus(this.remoteConnectionMessage);
+    }
+    if (this.remotePresenceMessage) {
         this._positionParticipantStatus(this.remotePresenceMessage);
+    }
     }
 
     /**
@@ -615,6 +619,10 @@ export class VideoContainer extends LargeContainer {
      * @param {boolean} show
      */
     showAvatar(show) {
+        if (!this.avatar) {
+            logger.warn('Avatar not found, cannot update visibility');
+            return;
+        }
         this.avatar.style.visibility = show ? 'visible' : 'hidden';
         this.avatarDisplayed = show;
 
@@ -626,6 +634,12 @@ export class VideoContainer extends LargeContainer {
      */
     show() {
         return new Promise(resolve => {
+            if (!this.wrapperParent) {
+                logger.warn('Wrapper parent not found, cannot show');
+                resolve();
+                return;
+            }
+
             this.wrapperParent.style.visibility = 'visible';
             this.wrapperParent.classList.remove('animatedFadeOut');
             this.wrapperParent.classList.add('animatedFadeIn');
@@ -646,6 +660,11 @@ export class VideoContainer extends LargeContainer {
         this.showAvatar(false);
 
         return new Promise(resolve => {
+            if (!this.wrapperParent) {
+                logger.warn('Wrapper parent not found, cannot hide');
+                resolve();
+                return;
+            }
             this.wrapperParent.classList.remove('animatedFadeIn');
             this.wrapperParent.classList.add('animatedFadeOut');
             setTimeout(() => {

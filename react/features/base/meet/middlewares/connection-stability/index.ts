@@ -13,7 +13,6 @@ import './connection-notifications';
 import './middleware.datachannel';
 import './middleware.error-handling';
 import './middleware.poor-connection';
-import './middleware.auto-reconnect';
 
 export { };
 

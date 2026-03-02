@@ -439,7 +439,7 @@ function _addChatMsgListener(conference: IJitsiConference, store: IStore) {
         }
     );
 
-     conference.on(
+     conference.once(
         JitsiConferenceEvents.E2EE_CHAT_KEY_RECEIVED,
         () => {
             _onKeyReceived(store);

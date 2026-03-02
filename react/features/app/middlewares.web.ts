@@ -27,5 +27,6 @@ import '../talk-while-muted/middleware';
 import '../toolbox/middleware';
 import '../web-hid/middleware';
 import '../whiteboard/middleware.web';
+import '../custom-panel/middleware.web';
 
 import "./middlewares.any";

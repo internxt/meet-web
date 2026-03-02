@@ -26,20 +26,65 @@ export const setupConferenceMediaListeners = (
     state: ConnectionState
 ) => {
     if (state.hasConferenceListeners || !conference) {
+        console.log("[LISTENER_SETUP] Skipping conference media listeners setup", {
+            alreadyHasListeners: state.hasConferenceListeners,
+            noConference: !conference
+        });
         return;
     }
 
-    conference.addEventListener(JitsiConferenceEvents.CONNECTION_INTERRUPTED, () =>
-        handleMediaConnectionInterrupted(dispatch, state)
-    );
+    console.log("[LISTENER_SETUP] Setting up conference media listeners (ICE events)");
 
-    conference.addEventListener(JitsiConferenceEvents.CONNECTION_RESTORED, () =>
-        handleMediaConnectionRestored(dispatch, state)
-    );
+    const interruptedHandler = () => handleMediaConnectionInterrupted(dispatch, state);
+    const restoredHandler = () => handleMediaConnectionRestored(dispatch, state);
+    const suspendHandler = () => handleDeviceSuspended(dispatch);
 
-    conference.addEventListener(JitsiConferenceEvents.SUSPEND_DETECTED, () => handleDeviceSuspended(dispatch));
+    conference.addEventListener(JitsiConferenceEvents.CONNECTION_INTERRUPTED, interruptedHandler);
+    conference.addEventListener(JitsiConferenceEvents.CONNECTION_RESTORED, restoredHandler);
+    conference.addEventListener(JitsiConferenceEvents.SUSPEND_DETECTED, suspendHandler);
 
+    state.conferenceHandlers = {
+        interruptedHandler,
+        restoredHandler,
+        suspendHandler
+    };
+    state.conferenceRef = conference;
     state.hasConferenceListeners = true;
+    console.log("[LISTENER_SETUP] Conference media listeners registered successfully");
+};
+
+/**
+ * Removes event listeners for conference media connection events
+ *
+ * @param state - Connection state containing handler references
+ */
+export const removeConferenceMediaListeners = (state: ConnectionState) => {
+    if (!state.conferenceRef || !state.conferenceHandlers) {
+        console.log("[LISTENER_SETUP] Skipping conference media listeners removal - no refs");
+        return;
+    }
+
+    console.log("[LISTENER_SETUP] Removing conference media listeners");
+
+    const { conferenceRef, conferenceHandlers } = state;
+
+    conferenceRef.removeEventListener(
+        JitsiConferenceEvents.CONNECTION_INTERRUPTED,
+        conferenceHandlers.interruptedHandler
+    );
+    conferenceRef.removeEventListener(
+        JitsiConferenceEvents.CONNECTION_RESTORED,
+        conferenceHandlers.restoredHandler
+    );
+    conferenceRef.removeEventListener(
+        JitsiConferenceEvents.SUSPEND_DETECTED,
+        conferenceHandlers.suspendHandler
+    );
+
+    state.conferenceHandlers = undefined;
+    state.conferenceRef = undefined;
+    state.hasConferenceListeners = false;
+    console.log("[LISTENER_SETUP] Conference media listeners removed successfully");
 };
 
 /**
@@ -52,18 +97,63 @@ export const setupConferenceMediaListeners = (
  */
 export const setupXMPPConnectionListeners = (connection: any, dispatch: IStore["dispatch"], state: ConnectionState) => {
     if (!connection || state.hasConnectionListeners) {
+        console.log("[LISTENER_SETUP] Skipping XMPP listeners setup", {
+            noConnection: !connection,
+            alreadyHasListeners: state.hasConnectionListeners
+        });
         return;
     }
 
-    connection.addEventListener(JitsiConnectionEvents.CONNECTION_ESTABLISHED, () => handleXMPPConnected());
+    console.log("[LISTENER_SETUP] Setting up XMPP connection listeners");
 
-    connection.addEventListener(JitsiConnectionEvents.CONNECTION_DISCONNECTED, (message: string) =>
-        handleXMPPDisconnected(dispatch, message)
-    );
+    const connectedHandler = () => handleXMPPConnected();
+    const disconnectedHandler = (message: string) => handleXMPPDisconnected(dispatch, message);
+    const failedHandler = (error: any, message: string) => handleXMPPConnectionFailed(dispatch, error, message);
 
-    connection.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, (error: any, message: string) =>
-        handleXMPPConnectionFailed(dispatch, error, message)
-    );
+    connection.addEventListener(JitsiConnectionEvents.CONNECTION_ESTABLISHED, connectedHandler);
+    connection.addEventListener(JitsiConnectionEvents.CONNECTION_DISCONNECTED, disconnectedHandler);
+    connection.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, failedHandler);
 
+    state.connectionHandlers = {
+        connectedHandler,
+        disconnectedHandler,
+        failedHandler
+    };
+    state.connectionRef = connection;
     state.hasConnectionListeners = true;
+    console.log("[LISTENER_SETUP] XMPP connection listeners registered successfully");
+};
+
+/**
+ * Removes event listeners for XMPP connection events
+ *
+ * @param state - Connection state containing handler references
+ */
+export const removeXMPPConnectionListeners = (state: ConnectionState) => {
+    if (!state.connectionRef || !state.connectionHandlers) {
+        console.log("[LISTENER_SETUP] Skipping XMPP listeners removal - no refs");
+        return;
+    }
+
+    console.log("[LISTENER_SETUP] Removing XMPP connection listeners");
+
+    const { connectionRef, connectionHandlers } = state;
+
+    connectionRef.removeEventListener(
+        JitsiConnectionEvents.CONNECTION_ESTABLISHED,
+        connectionHandlers.connectedHandler
+    );
+    connectionRef.removeEventListener(
+        JitsiConnectionEvents.CONNECTION_DISCONNECTED,
+        connectionHandlers.disconnectedHandler
+    );
+    connectionRef.removeEventListener(
+        JitsiConnectionEvents.CONNECTION_FAILED,
+        connectionHandlers.failedHandler
+    );
+
+    state.connectionHandlers = undefined;
+    state.connectionRef = undefined;
+    state.hasConnectionListeners = false;
+    console.log("[LISTENER_SETUP] XMPP connection listeners removed successfully");
 };

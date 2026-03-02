@@ -121,7 +121,7 @@ const useStyles = makeStyles()((theme) => {
             },
 
             "&:hover": {
-                //backgroundColor: theme.palette.ui02,
+                // backgroundColor: theme.palette.overflowMenuItemHover,
                 borderRadius: theme.shape.borderRadius,
                 backgroundColor: "rgba(255, 255, 255, 0.15)",
             },
@@ -157,19 +157,19 @@ const useStyles = makeStyles()((theme) => {
         contextMenuItemIconDisabled: {
             marginRight: "8px",
             "& svg": {
-                fill: `${theme.palette.text03} !important`,
+                fill: `${theme.palette.overflowMenuItemDisabled} !important`,
             },
         },
 
         contextMenuItemLabelDisabled: {
-            color: theme.palette.text03,
+            color: theme.palette.overflowMenuItemDisabled,
 
             "&:hover": {
                 background: "none",
             },
 
             "& svg": {
-                fill: theme.palette.text03,
+                fill: theme.palette.overflowMenuItemDisabled,
             },
         },
 
@@ -179,7 +179,7 @@ const useStyles = makeStyles()((theme) => {
 
         contextMenuItemIcon: {
             "& svg": {
-                fill: theme.palette.icon01,
+                fill: theme.palette.overflowMenuItemIcon,
             },
         },
 
@@ -192,16 +192,16 @@ const useStyles = makeStyles()((theme) => {
 
         text: {
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
-            // color: theme.palette.text01,
+            // color: theme.palette.overflowMenuItemText,
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
-            color: theme.palette.text01,
+            color: theme.palette.overflowMenuItemText,
             width: "100%",
         },
         textSelected: {
             ...withPixelLineHeight(theme.typography.bodyShortRegular),
-            // color: theme.palette.text01,
+            // color: theme.palette.overflowMenuItemText,
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",

@@ -35,6 +35,8 @@ export const P1 = 'p1';
 export const P2 = 'p2';
 export const P3 = 'p3';
 export const P4 = 'p4';
+export const P5 = 'p5';
+export const P6 = 'p6';
 
 /**
  * Participant.
@@ -112,9 +114,6 @@ export class Participant {
             useStunTurn: false
         },
         pcStatsInterval: 1500,
-        prejoinConfig: {
-            enabled: false
-        },
         toolbarConfig: {
             alwaysVisible: true
         }
@@ -252,6 +251,9 @@ export class Participant {
             // For the iFrame API the tenant is passed in a different way.
             url = `/${options.tenant}/${url}`;
         }
+        if (options.urlAppendString) {
+            url = `${url}${options.urlAppendString}`;
+        }
 
         await this.driver.url(url);
 
@@ -259,6 +261,20 @@ export class Participant {
 
         if (this._iFrameApi) {
             await this.switchToIFrame();
+        }
+
+        if (!options.skipPrejoinButtonClick
+            // @ts-ignore
+            && !Boolean(await this.execute(() => config.prejoinConfig?.enabled === false))) {
+            // if prejoin is enabled we want to click the join button
+            const p1PreJoinScreen = this.getPreJoinScreen();
+
+            await p1PreJoinScreen.waitForLoading();
+
+            const joinButton = p1PreJoinScreen.getJoinButton();
+
+            await joinButton.waitForDisplayed();
+            await joinButton.click();
         }
 
         if (!options.skipWaitToJoin) {
@@ -672,6 +688,10 @@ export class Participant {
      */
     getIframeAPI() {
         return new IframeAPI(this);
+    }
+
+    async getRoomMetadata() {
+        return this.execute(() => window.APP?.conference?._room?.getMetadataHandler()?.getMetadata());
     }
 
     /**
