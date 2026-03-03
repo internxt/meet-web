@@ -1,6 +1,7 @@
 BUILD_DIR = build
 CLEANCSS = ./node_modules/.bin/cleancss
 DEPLOY_DIR = libs
+DIST_DIR = dist
 ONNX_DIR= node_modules/onnxruntime-web
 LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet
 TF_WASM_DIR = node_modules/@tensorflow/tfjs-backend-wasm/dist/
@@ -20,8 +21,8 @@ ifeq ($(OS),Windows_NT)
 	WEBPACK = .\node_modules\.bin\webpack --progress
 	WEBPACK_DEV_SERVER = .\node_modules\.bin\webpack serve --mode development --progress
 else
-	WEBPACK = ./node_modules/.bin/webpack --progress
-	WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack serve --mode development --progress
+	WEBPACK = npx webpack-cli --progress
+	WEBPACK_DEV_SERVER = npx webpack-cli serve --mode development --progress
 endif
 
 all: compile deploy
@@ -46,24 +47,8 @@ deploy-init:
 		$(DEPLOY_DIR)
 
 deploy-appbundle:
-	cp \
-		$(BUILD_DIR)/app.bundle.min.js \
-		$(BUILD_DIR)/app.bundle.min.js.map \
-		$(BUILD_DIR)/external_api.min.js \
-		$(BUILD_DIR)/external_api.min.js.map \
-		$(BUILD_DIR)/alwaysontop.min.js \
-		$(BUILD_DIR)/alwaysontop.min.js.map \
-		$(BUILD_DIR)/face-landmarks-worker.min.js \
-		$(BUILD_DIR)/face-landmarks-worker.min.js.map \
-		$(BUILD_DIR)/noise-suppressor-worklet.min.js \
-		$(BUILD_DIR)/noise-suppressor-worklet.min.js.map \
-		$(BUILD_DIR)/screenshot-capture-worker.min.js \
-		$(BUILD_DIR)/screenshot-capture-worker.min.js.map \
-		$(DEPLOY_DIR)
-	cp \
-		$(BUILD_DIR)/close3.min.js \
-		$(BUILD_DIR)/close3.min.js.map \
-		$(DEPLOY_DIR) || true
+	cp $(BUILD_DIR)/*.min.js $(DEPLOY_DIR)
+	-cp $(BUILD_DIR)/*.min.js.map $(DEPLOY_DIR)
 
 deploy-lib-jitsi-meet:
 	cp \
@@ -127,3 +112,17 @@ source-package:
 	cp css/all.css source_package/meet/css && \
 	(cd source_package ; tar cjf ../meet.tar.bz2 meet) && \
 	rm -rf source_package
+
+deploy-cloudflare:
+	rm -rf $(DIST_DIR)
+	mkdir -p $(DIST_DIR)/css
+	cp index.html base.html body.html fonts.html head.html title.html plugin.head.html $(DIST_DIR)/
+	cp favicon.ico config.js interface_config.js manifest.json pwa-worker.js $(DIST_DIR)/
+	cp css/all.css $(DIST_DIR)/css/
+	cp -r libs $(DIST_DIR)/
+	cp -r images $(DIST_DIR)/
+	cp -r fonts $(DIST_DIR)/
+	cp -r sounds $(DIST_DIR)/
+	cp -r lang $(DIST_DIR)/
+	cp -r resources $(DIST_DIR)/
+	cp -r static $(DIST_DIR)/
