@@ -15,7 +15,7 @@ export class WebAuthService {
 
     private readonly WEB_CLIENT_URL = ConfigService.instance.isDevelopment()
         ? "http://localhost:3000"
-        : "https://feature-pb-5353-migrate-meet.drive-web.pages.dev";
+        : "https://drive.internxt.com";
 
     private authPopup: Window | null = null;
     private messageListener: ((event: MessageEvent) => void) | null = null;
@@ -75,7 +75,7 @@ export class WebAuthService {
      * Validate origin of postMessage event
      */
     private isValidOrigin(origin: string): boolean {
-        return WEB_AUTH_VALID_ORIGINS.some(valid => origin.includes(valid));
+        return WEB_AUTH_VALID_ORIGINS.some((valid) => origin.includes(valid));
     }
 
     /**
