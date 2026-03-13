@@ -150,7 +150,11 @@ class MessageContainer extends Component<IProps, IState> {
      */
     override componentDidMount() {
         if (this.props.messages.length > 0) {
-            this.scrollToElement(false, null);
+            const container = this._messageListRef.current;
+
+            if (container) {
+                container.scrollTop = container.scrollHeight;
+            }
             this._createBottomListObserver();
         }
     }

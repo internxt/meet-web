@@ -4,13 +4,25 @@ import { WithTranslation } from "react-i18next";
 import { throttle } from "lodash-es";
 // @ts-ignore
 import VideoLayout from "../../../../../modules/UI/videolayout/VideoLayout";
-import { IReduxState } from "../../../app/types";
+import { IReduxState, IStore } from "../../../app/types";
 import { getConferenceNameForTitle } from "../../../base/conference/functions";
 import { hangup } from "../../../base/connection/actions.web";
 import { isMobileBrowser } from "../../../base/environment/utils";
+import { translate } from "../../../base/i18n/functions";
 import { setColorAlpha } from "../../../base/util/helpers";
+// Jitsi new chat actions:
+// import { openChat, setFocusedTab } from '../../../chat/actions.web';
+// import { ChatTabs } from '../../../chat/constants';
 import Chat from "../../../chat/components/web/Chat";
+import CustomPanel from '../../../custom-panel/components/web/CustomPanel';
+// Jitsi file sharing:
+// import { isFileUploadingEnabled, processFiles } from '../../../file-sharing/functions.any';
+// Jitsi filmstrip components:
+// import MainFilmstrip from '../../../filmstrip/components/web/MainFilmstrip';
+// import ScreenshareFilmstrip from '../../../filmstrip/components/web/ScreenshareFilmstrip';
+// import StageFilmstrip from '../../../filmstrip/components/web/StageFilmstrip';
 import CalleeInfoContainer from "../../../invite/components/callee-info/CalleeInfoContainer";
+// import LargeVideo from '../../../large-video/components/LargeVideo.web';
 import LobbyScreen from "../../../lobby/components/web/LobbyScreen";
 import { getIsLobbyVisible } from "../../../lobby/functions";
 import { getOverlayToRender } from "../../../overlay/functions.web";
@@ -21,26 +33,26 @@ import ReactionAnimations from "../../../reactions/components/web/ReactionsAnima
 import { toggleToolboxVisible } from "../../../toolbox/actions.any";
 import { fullScreenChanged, showToolbox } from "../../../toolbox/actions.web";
 import JitsiPortal from "../../../toolbox/components/web/JitsiPortal";
+// import Toolbox from '../../../toolbox/components/web/Toolbox';
 import { LAYOUT_CLASSNAMES } from "../../../video-layout/constants";
 import { getCurrentLayout } from "../../../video-layout/functions.any";
+// import VisitorsQueue from '../../../visitors/components/web/VisitorsQueue';
+import { showVisitorsQueue } from "../../../visitors/functions";
 import { init } from "../../actions.web";
 import { maybeShowSuboptimalExperienceNotification } from "../../functions.web";
 import type { AbstractProps } from "../AbstractConference";
 import { AbstractConference, abstractMapStateToProps } from "../AbstractConference";
-
-import { IStore } from "../../../app/types";
 
 import Header, { Mode } from "../../../base/meet/views/Conference/components/Header";
 import ConferenceInfo from "./ConferenceInfo";
 import { default as Notice } from "./Notice";
 
 import { connect as reactReduxConnect } from "react-redux";
-import { translate } from "../../../base/i18n/functions";
 import ConferenceControlsWrapper from "../../../base/meet/views/Conference/containers/ConferenceControlsWrapper";
 import VideoGalleryWrapper from "../../../base/meet/views/Conference/containers/VideoGalleryWrapper";
 import { setConferenceViewMode } from "../../../filmstrip/actions.web";
 import { ViewMode } from "../../../filmstrip/reducer";
-import { showVisitorsQueue } from "../../../visitors/functions";
+import LargeVideoWeb from "../../../large-video/components/LargeVideo.web";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -82,6 +94,11 @@ interface IProps extends AbstractProps, WithTranslation {
      *Whether or not the notifications should be displayed in the overflow drawer.
      */
     _overflowDrawer: boolean;
+
+    /**
+     * The indicator which determines whether the UI is reduced.
+     */
+    _reducedUI: boolean;
 
     /**
      * Name for this conference room.
@@ -222,12 +239,47 @@ class Conference extends AbstractConference<IProps, any> {
             _layoutClassName,
             _notificationsVisible,
             _overflowDrawer,
+            _reducedUI,
             _showLobby,
             _showPrejoin,
             viewMode,
             _showVisitorsQueue,
             t,
         } = this.props;
+
+        if (_reducedUI) {
+            return (
+                <div
+                    id="layout_wrapper"
+                    onMouseEnter={this._onMouseEnter}
+                    onMouseLeave={this._onMouseLeave}
+                    onMouseMove={this._onMouseMove}
+                    ref={this._setBackground}
+                >
+                    <Chat />
+                    <div
+                        className={_layoutClassName}
+                        id="videoconference_page"
+                        onMouseMove={isMobileBrowser() ? undefined : this._onShowToolbar}
+                    >
+                        <ConferenceInfo />
+                        <Notice />
+                        <div id="videospace" onTouchStart={this._onVideospaceTouchStart}>
+                            <LargeVideoWeb />
+                            {/* Jitsi filmstrips:
+                            <StageFilmstrip />
+                            <ScreenshareFilmstrip />
+                            <MainFilmstrip />
+                            */}
+                        </div>
+                        <span aria-level={1} className="sr-only" role="heading">
+                            {t("toolbar.accessibilityLabel.heading")}
+                        </span>
+                        {/* <Toolbox /> */}
+                    </div>
+                </div>
+            );
+        }
 
         return (
             <div
@@ -293,6 +345,7 @@ class Conference extends AbstractConference<IProps, any> {
                     {/* // { (_showLobby && !_showVisitorsQueue) && <LobbyScreen />} */}
                 </div>
                 <ParticipantsPane />
+                <CustomPanel />
                 <ReactionAnimations />
             </div>
         );
@@ -427,6 +480,8 @@ function _mapStateToProps(state: IReduxState) {
     const { viewMode } = state["features/filmstrip"];
     const { overflowDrawer } = state["features/toolbox"];
     const room = state["features/base/conference"].room;
+    const { reducedUI } = state['features/base/responsive-ui'];
+
     return {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: backgroundAlpha,
@@ -434,6 +489,7 @@ function _mapStateToProps(state: IReduxState) {
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state) ?? ""],
         _mouseMoveCallbackInterval: mouseMoveCallbackInterval,
         _overflowDrawer: overflowDrawer,
+        _reducedUI: reducedUI,
         _roomName: getConferenceNameForTitle(state),
         _showLobby: getIsLobbyVisible(state),
         _showPrejoin: isPrejoinPageVisible(state),

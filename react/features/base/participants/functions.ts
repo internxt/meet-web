@@ -60,7 +60,6 @@ const AVATAR_CHECKER_FUNCTIONS = [
         return null;
     }
 ];
-/* eslint-enable arrow-body-style */
 
 /**
  * Resolves the first loadable avatar URL for a participant.
@@ -759,7 +758,7 @@ export const addPeopleFeatureControl = (stateful: IStateful) => {
  * @param {Function} dispatch - The Redux dispatch function.
  * @returns {Function}
  */
-export const setShareDialogVisiblity = (addPeopleFeatureEnabled: boolean, dispatch: IStore['dispatch']) => {
+export const setShareDialogVisiblity = (addPeopleFeatureEnabled: boolean | undefined, dispatch: IStore['dispatch']) => {
     if (addPeopleFeatureEnabled) {
         dispatch(toggleShareDialog(false));
     } else {

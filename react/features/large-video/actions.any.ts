@@ -19,7 +19,6 @@ import {
     SET_LARGE_VIDEO_DIMENSIONS,
     UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION
 } from './actionTypes';
-import { shouldHideLargeVideo } from './functions';
 
 /**
  * Action to select the participant to be displayed in LargeVideo based on the
@@ -41,18 +40,19 @@ export function selectParticipantInLargeVideo(participant?: string) {
         }
 
         // Keep Etherpad open.
-        if (state['features/etherpad'].editing) {
+        if (state["features/etherpad"].editing) {
             return;
         }
 
         // Skip large video updates when the large video container is hidden.
-        if (shouldHideLargeVideo(state)) {
-            return;
-        }
+        // TODO: CHECK WHY shouldHideLargeVideo NOT EXISTS AFTER MERGE WITH JITSI/MASTER
+        // if (shouldHideLargeVideo(state)) {
+        //     return;
+        // }
 
         const participantId = participant ?? _electParticipantInLargeVideo(state);
-        const largeVideo = state['features/large-video'];
-        const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
+        const largeVideo = state["features/large-video"];
+        const remoteScreenShares = state["features/video-layout"].remoteScreenShares;
         let latestScreenshareParticipantId;
 
         if (remoteScreenShares?.length) {
@@ -68,7 +68,7 @@ export function selectParticipantInLargeVideo(participant?: string) {
         if (participantId !== largeVideo.participantId || participantId === latestScreenshareParticipantId) {
             dispatch({
                 type: SELECT_LARGE_VIDEO_PARTICIPANT,
-                participantId
+                participantId,
             });
         }
     };
@@ -172,26 +172,18 @@ function _electParticipantInLargeVideo(state: IReduxState) {
         }
     }
 
-    // Next, pick the dominant speaker or the last active speaker if the dominant speaker is local.
+    // Next, pick the dominant speaker (other than self).
     participant = getDominantSpeakerParticipant(state);
-    let speakerId: string | undefined;
+    if (participant && !participant.local) {
+        // Return the screensharing participant id associated with this endpoint if multi-stream is enabled and
+        // auto_pin_latest_screen_share setting is disabled.
+        const screenshareParticipant = getVirtualScreenshareParticipantByOwnerId(state, participant.id);
 
-    if (participant?.local) {
-        const { previousSpeakers } = state['features/base/participants'];
-
-        if (previousSpeakers?.size) {
-            speakerId = previousSpeakers.keys().next().value;
-        }
-    } else if (participant) {
-        speakerId = participant.id;
+        return screenshareParticipant?.id ?? participant.id;
     }
 
-    // Return the screensharing participant id associated with this endpoint.
-    if (speakerId) {
-        const screenshareParticipant = getVirtualScreenshareParticipantByOwnerId(state, speakerId);
-
-        return screenshareParticipant?.id ?? speakerId;
-    }
+    // In case this is the local participant.
+    participant = undefined;
 
     // Next, pick the most recent participant with video.
     const lastVisibleRemoteParticipant = _electLastVisibleRemoteParticipant(state);

@@ -12,6 +12,8 @@ export const DUMMY_9_BUTTONS_THRESHOLD_VALUE = Symbol('9_BUTTONS_THRESHOLD_VALUE
  */
 export const DUMMY_10_BUTTONS_THRESHOLD_VALUE = Symbol('10_BUTTONS_THRESHOLD_VALUE');
 
+export const DEFAULT_REDUCED_UI_MAIN_TOOLBAR_BUTTONS = [ 'microphone', 'camera' ];
+
 /**
  * Thresholds for displaying toolbox buttons.
  */
@@ -121,7 +123,8 @@ export const MAIN_TOOLBAR_BUTTONS_PRIORITY = [
     'embedmeeting',
     'feedback',
     'download',
-    'help'
+    'help',
+    'custom-panel'
 ];
 
 export const TOOLBAR_TIMEOUT = 4000;
@@ -146,11 +149,13 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'camera',
     'chat',
     'closedcaptions',
+    'custom-panel',
     'desktop',
     'download',
     'embedmeeting',
     'etherpad',
     'feedback',
+    'filesharing',
     'filmstrip',
     'fullscreen',
     'hangup',
@@ -163,6 +168,7 @@ export const TOOLBAR_BUTTONS: ToolbarButton[] = [
     'mute-everyone',
     'mute-video-everyone',
     'participants-pane',
+    'polls',
     'profile',
     'raisehand',
     'recording',

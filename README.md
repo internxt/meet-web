@@ -56,7 +56,7 @@ Our development standards include:
 
 #### `yarn start` or `make dev`
 Runs the app in development mode using webpack-dev-server.
-Open [http://127.0.0.1:8080/](http://127.0.0.1:8080/) to view it in the browser.
+Open [https://localhost:8080/](https://localhost:8080/) to view it in the browser.
 The page will reload if you make edits.
 
 #### `yarn test`
@@ -68,7 +68,7 @@ Runs tests with coverage reports generated in the `coverage` directory.
 #### `yarn lint`
 Runs ESLint to check code quality and style issues across JavaScript and TypeScript files.
 
-#### `yar lint-fix`
+#### `yarn lint-fix`
 Automatically fixes linting issues where possible.
 
 #### `make`

@@ -175,6 +175,11 @@ describe('Start muted', () => {
         await p1.getParticipantsPane().assertVideoMuteIconIsDisplayed(p2);
         await p2.getParticipantsPane().assertVideoMuteIconIsDisplayed(p1);
 
+        await Promise.all([
+            p1.getLargeVideo().waitForSwitchTo(await p2.getEndpointId()),
+            p2.getLargeVideo().waitForSwitchTo(await p1.getEndpointId())
+        ]);
+
         await unmuteVideoAndCheck(p2, p1);
         await p1.getLargeVideo().assertPlaying();
     });
@@ -185,6 +190,7 @@ describe('Start muted', () => {
         const options = {
             configOverwrite: {
                 startWithAudioMuted: true,
+                startWithVideoMuted: false,
                 testing: {
                     testMode: true,
                     debugAudioLevels: true
@@ -223,7 +229,9 @@ describe('Start muted', () => {
                 },
                 p2p: {
                     enabled: true
-                }
+                },
+                startWithAudioMuted: false,
+                startWithVideoMuted: false
             }
         });
 

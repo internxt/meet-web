@@ -6,9 +6,12 @@ import ChromeExtensionBanner from "../../chrome-extension-banner/components/Chro
 import OverlayContainer from "../../overlay/components/web/OverlayContainer";
 import { AbstractApp } from "./AbstractApp";
 
+import PiP from '../../pip/components/PiP';
+
+
 // Register middlewares and reducers.
-import MobileView from "../../base/meet/views/mobile/MobileView";
 import GlobalLoader from "../../base/meet/loader/components/GlobalLoader";
+import MobileView from "../../base/meet/views/mobile/MobileView";
 import "../middlewares";
 import "../reducers";
 
@@ -68,7 +71,8 @@ export class App extends AbstractApp {
             <JitsiThemeProvider>
                 <GlobalStyles />
                 <ChromeExtensionBanner />
-                {super._createMainElement(component, props)}
+                <PiP />
+                { super._createMainElement(component, props) }
             </JitsiThemeProvider>
         );
     }

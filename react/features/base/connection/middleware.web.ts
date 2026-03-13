@@ -35,15 +35,7 @@ MiddlewareRegistry.register(({ getState, dispatch }) => (next) => (action) => {
         }
 
         case CONNECTION_DISCONNECTED: {
-            if (isLeavingConferenceManually()) {
-                setLeaveConferenceManually(false);
-
-                setTimeout(() => {
-                    dispatch(redirectToStaticPage("/"));
-                }, 2000);
-            } else {
-                console.warn("Connection disconnected unexpectedly - waiting for reconnection");
-            }
+            setLeaveConferenceManually(false);
 
             break;
         }
