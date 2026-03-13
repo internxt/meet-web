@@ -123,3 +123,4 @@ react-native-sdk/sounds
 tests/.env
 test-results
 
+.env.playwright
