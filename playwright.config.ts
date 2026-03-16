@@ -10,12 +10,21 @@ export default defineConfig({
   expect: { timeout: 10_000 },
   use: {
     baseURL: 'https://meet.internxt.com/',
+    permissions: ['camera', 'microphone'],
+  launchOptions: {
+    args: [
+      '--use-fake-ui-for-media-stream',
+      '--use-fake-device-for-media-stream',
+    ],
+  },
     ignoreHTTPSErrors: true,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
-  },
+  
+},
   projects: [
     { name: 'chromium', use: { browserName: 'chromium' } },
+    
   ],
 });
