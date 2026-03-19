@@ -2,6 +2,7 @@ import {
     CreateCallResponse,
     JoinCallPayload,
     JoinCallResponse,
+    LeaveCallPayload,
     UsersInCallResponse,
 } from "@internxt/sdk/dist/meet/types";
 import { SdkManager } from "./sdk-manager.service";
@@ -33,9 +34,9 @@ class MeetingService {
         return await meetClient.joinCall(callId, payload);
     };
 
-    public leaveCall = async (callId: string): Promise<void> => {
+    public leaveCall = async (callId: string, payload?: LeaveCallPayload): Promise<void> => {
         const meetClient = SdkManager.instance.getMeet();
-        return await meetClient.leaveCall(callId);
+        return await meetClient.leaveCall(callId, payload);
     };
 
     /**

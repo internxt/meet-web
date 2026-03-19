@@ -2,6 +2,7 @@ import {
     CreateCallResponse,
     JoinCallPayload,
     JoinCallResponse,
+    LeaveCallPayload,
     UsersInCallResponse,
 } from "@internxt/sdk/dist/meet/types";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -197,10 +198,29 @@ describe("MeetingService", () => {
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
             expect(mockMeetClient.leaveCall).toHaveBeenCalledTimes(1);
-            expect(mockMeetClient.leaveCall).toHaveBeenCalledWith(mockCallId);
-            expect(mockMeetClient.leaveCall.mock.calls[0].length).toBe(1);
+            expect(mockMeetClient.leaveCall).toHaveBeenCalledWith(mockCallId, undefined);
             expect(mockMeetClient.leaveCall.mock.calls[0][0]).toBe(mockCallId);
+            expect(mockMeetClient.leaveCall.mock.calls[0][1]).toBeUndefined();
             expect(result).toEqual(mockLeaveCallResponse);
+        });
+
+        it("When an anonymous user leaves a call with a userId payload, then the payload is forwarded to the SDK", async () => {
+            const mockCallId = "call-456";
+            const mockPayload: LeaveCallPayload = { userId: "anon-uuid-789" };
+
+            const mockMeetClient = {
+                leaveCall: vi.fn().mockResolvedValue(undefined),
+            };
+
+            mockedGetMeet.mockReturnValue(mockMeetClient);
+
+            await MeetingService.instance.leaveCall(mockCallId, mockPayload);
+
+            expect(mockedGetMeet).toHaveBeenCalledTimes(1);
+            expect(mockMeetClient.leaveCall).toHaveBeenCalledTimes(1);
+            expect(mockMeetClient.leaveCall).toHaveBeenCalledWith(mockCallId, mockPayload);
+            expect(mockMeetClient.leaveCall.mock.calls[0][0]).toBe(mockCallId);
+            expect(mockMeetClient.leaveCall.mock.calls[0][1]).toEqual(mockPayload);
         });
 
         it("When leaving a call fails, then an error is thrown", async () => {
@@ -217,8 +237,7 @@ describe("MeetingService", () => {
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
             expect(mockMeetClient.leaveCall).toHaveBeenCalledTimes(1);
-            expect(mockMeetClient.leaveCall).toHaveBeenCalledWith(mockCallId);
-            expect(mockMeetClient.leaveCall.mock.calls[0].length).toBe(1);
+            expect(mockMeetClient.leaveCall).toHaveBeenCalledWith(mockCallId, undefined);
             expect(mockMeetClient.leaveCall.mock.calls[0][0]).toBe(mockCallId);
         });
     });
