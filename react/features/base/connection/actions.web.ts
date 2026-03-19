@@ -119,7 +119,10 @@ export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?:
         if (!roomId) {
             return Promise.reject(new Error("No roomId provided to hangup"));
         }
-        MeetingService.instance.leaveCall(roomId);
+
+        const user = LocalStorageManager.instance.getUser();
+        const anonymousUserId = user ? undefined : LocalStorageManager.instance.getAnonymousUUID();
+        MeetingService.instance.leaveCall(roomId, anonymousUserId ? { userId: anonymousUserId } : undefined);
 
         return APP.conference.hangup(requestFeedback, feedbackTitle, notifyOnConferenceTermination);
     };
@@ -128,7 +131,9 @@ export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?:
 export async function cleanupAndReload(roomId: string) {
     try{
         console.log('[RELOAD_PAGE]: Leaving the call');
-        await MeetingService.instance.leaveCall(roomId);
+        const user = LocalStorageManager.instance.getUser();
+        const anonymousUserId = user ? undefined : LocalStorageManager.instance.getAnonymousUUID();
+        await MeetingService.instance.leaveCall(roomId, anonymousUserId ? { userId: anonymousUserId } : undefined);
         console.log('[RELOAD_PAGE]: Cleaning up the conference');
         await APP.conference.cleanup();
     } catch (error) {
