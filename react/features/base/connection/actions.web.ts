@@ -15,6 +15,17 @@ import MeetingService from "../meet/services/meeting.service";
 import { _connectInternal } from "./actions.any";
 import logger from './logger';
 
+/**
+ * Helper function to leave a call with proper user identification (authenticated or anonymous)
+ * @param {string} roomId - The room ID to leave
+ * @returns {Promise<void>}
+ */
+async function leaveCallWithUserIdentification(roomId: string): Promise<void> {
+    const user = LocalStorageManager.instance.getUser();
+    const anonymousUserId = user ? undefined : LocalStorageManager.instance.getAnonymousUUID();
+    return await MeetingService.instance.leaveCall(roomId, anonymousUserId ? { userId: anonymousUserId } : undefined);
+}
+
 export * from "./actions.any";
 
 /**
@@ -120,9 +131,7 @@ export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?:
             return Promise.reject(new Error("No roomId provided to hangup"));
         }
 
-        const user = LocalStorageManager.instance.getUser();
-        const anonymousUserId = user ? undefined : LocalStorageManager.instance.getAnonymousUUID();
-        MeetingService.instance.leaveCall(roomId, anonymousUserId ? { userId: anonymousUserId } : undefined);
+        await leaveCallWithUserIdentification(roomId);
 
         return APP.conference.hangup(requestFeedback, feedbackTitle, notifyOnConferenceTermination);
     };
@@ -131,9 +140,7 @@ export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?:
 export async function cleanupAndReload(roomId: string) {
     try{
         console.log('[RELOAD_PAGE]: Leaving the call');
-        const user = LocalStorageManager.instance.getUser();
-        const anonymousUserId = user ? undefined : LocalStorageManager.instance.getAnonymousUUID();
-        await MeetingService.instance.leaveCall(roomId, anonymousUserId ? { userId: anonymousUserId } : undefined);
+        await leaveCallWithUserIdentification(roomId);
         console.log('[RELOAD_PAGE]: Cleaning up the conference');
         await APP.conference.cleanup();
     } catch (error) {
