@@ -2532,14 +2532,13 @@
   dependencies:
     uuid "^11.1.0"
 
-"@internxt/sdk@=1.14.2":
-  version "1.14.2"
-  resolved "https://registry.yarnpkg.com/@internxt/sdk/-/sdk-1.14.2.tgz#0ed6a0d7740d60124672dc385fa9a250aa1db82c"
-  integrity sha512-lqCFBiiuezyU79lMuxLa5fb1OOxtWtZyrUeEpxjV67wqoIrx/dTeCKIY32Ctq288x3VkOfILdHLrJ1BqNfC7GQ==
+"@internxt/sdk@1.15.6":
+  version "1.15.6"
+  resolved "https://registry.yarnpkg.com/@internxt/sdk/-/sdk-1.15.6.tgz#f895cf12b160fd23c386e6d4d007ec29e51d9158"
+  integrity sha512-DRGlj2XArmBNa9wM55MbR9E4scNPDer+emtrugG1MSZvP/YOSv5XOes5j/df5ZUgMyRs9G0O7hwCtjn9XvW9YA==
   dependencies:
-    axios "1.13.5"
-    internxt-crypto "0.0.13"
-    uuid "13.0.0"
+    axios "1.13.6"
+    internxt-crypto "0.0.14"
 
 "@internxt/ui@0.1.1":
   version "0.1.1"
@@ -2990,7 +2989,7 @@
   dependencies:
     eslint-scope "5.1.1"
 
-"@noble/ciphers@^2.0.1":
+"@noble/ciphers@^2.0.1", "@noble/ciphers@^2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@noble/ciphers/-/ciphers-2.1.1.tgz#c8c74fcda8c3d1f88797d0ecda24f9fc8b92b052"
   integrity sha512-bysYuiVfhxNJuldNXlFEitTVdNnYUc+XNJZd7Qm2a5j1vZHgY+fazadNFWFaMK/2vye0JVlxV3gHmC0WDfAOQw==
@@ -6543,10 +6542,10 @@ available-typed-arrays@^1.0.7:
   dependencies:
     possible-typed-array-names "^1.0.0"
 
-axios@1.13.5:
-  version "1.13.5"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.13.5.tgz#5e464688fa127e11a660a2c49441c009f6567a43"
-  integrity sha512-cz4ur7Vb0xS4/KUN0tPWe44eqxrIu31me+fbang3ijiNscE129POzipJJA6zniq2C/Z6sJCjMimjS8Lc/GAs8Q==
+axios@1.13.6:
+  version "1.13.6"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.13.6.tgz#c3f92da917dc209a15dd29936d20d5089b6b6c98"
+  integrity sha512-ChTCHMouEe2kn713WHbQGcuYrr6fXTBiu460OTwWrWob16g1bXn4vtz07Ope7ewMozJAnEquLk5lWQWtBig9DQ==
   dependencies:
     follow-redirects "^1.15.11"
     form-data "^4.0.5"
@@ -10415,11 +10414,12 @@ internal-slot@^1.1.0:
     hasown "^2.0.2"
     side-channel "^1.1.0"
 
-internxt-crypto@0.0.13:
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/internxt-crypto/-/internxt-crypto-0.0.13.tgz#90c83828a34667ecf6938ad7c22d94c9f0d9808b"
-  integrity sha512-V8Epf4oFZQZwMyIt8mcw7w36M+tryQ9VcfaiKtcruNW/129bawZnPXEeoOfLvAV+9OYlY2ZAwIYP0EtOD2ec6g==
+internxt-crypto@0.0.14:
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/internxt-crypto/-/internxt-crypto-0.0.14.tgz#1290b2a70190c23d25b83483de8200d9eafae00f"
+  integrity sha512-gIvqgou0r86kSk6x2t6pxAh9dJiob/sQ1Y3TdGnAF4Qq2RD++4Aq1b6NY2UqfUYV4vPhWsd2BkFS71jAyVrXpA==
   dependencies:
+    "@noble/ciphers" "^2.1.1"
     "@noble/hashes" "^2.0.1"
     "@noble/post-quantum" "^0.5.2"
     "@scure/bip39" "^2.0.1"
@@ -16182,11 +16182,6 @@ utils-merge@1.0.1:
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==
 
-uuid@13.0.0, uuid@^13.0.0:
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-13.0.0.tgz#263dc341b19b4d755eb8fe36b78d95a6b65707e8"
-  integrity sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==
-
 uuid@8.3.2, uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
@@ -16196,6 +16191,11 @@ uuid@^11.1.0:
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-11.1.0.tgz#9549028be1753bb934fc96e2bca09bb4105ae912"
   integrity sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==
+
+uuid@^13.0.0:
+  version "13.0.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-13.0.0.tgz#263dc341b19b4d755eb8fe36b78d95a6b65707e8"
+  integrity sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==
 
 uuid@^9.0.0:
   version "9.0.1"
