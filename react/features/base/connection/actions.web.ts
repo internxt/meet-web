@@ -17,13 +17,17 @@ import logger from './logger';
 
 /**
  * Helper function to leave a call with proper user identification (authenticated or anonymous)
+ * If authenticated user - uuid is taken from the token, else - sent anonymous uuid from local storage
  * @param {string} roomId - The room ID to leave
  * @returns {Promise<void>}
  */
 async function leaveCallWithUserIdentification(roomId: string): Promise<void> {
     const user = LocalStorageManager.instance.getUser();
-    const anonymousUserId = user ? undefined : LocalStorageManager.instance.getAnonymousUUID();
-    return await MeetingService.instance.leaveCall(roomId, anonymousUserId ? { userId: anonymousUserId } : undefined);
+    let payload = undefined;
+    if (!user){
+        payload = { userId: LocalStorageManager.instance.getAnonymousUUID() || '' }; 
+    }
+    return await MeetingService.instance.leaveCall(roomId, payload);
 }
 
 export * from "./actions.any";
@@ -139,14 +143,13 @@ export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?:
 
 export async function cleanupAndReload(roomId: string) {
     try{
-        console.log('[RELOAD_PAGE]: Leaving the call');
+        console.log('[RELOAD] cleanupAndReload is called:', roomId);
         await leaveCallWithUserIdentification(roomId);
-        console.log('[RELOAD_PAGE]: Cleaning up the conference');
         await APP.conference.cleanup();
     } catch (error) {
-        console.error("[RELOAD_PAGE]: Error during cleanup and reload", error);
+        console.error("[RELOAD]: Error during cleanup and reload", error);
     } finally {
-        console.log("[RELOAD_PAGE]: Reloading the page");
+        console.log("[RELOAD]: Reloading the page");
         window.location.reload();
     }
 }

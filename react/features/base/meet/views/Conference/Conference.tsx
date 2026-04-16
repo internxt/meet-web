@@ -20,6 +20,8 @@ import { init } from "../../../../conference/actions.web";
 import CreateConference from "./containers/CreateConference";
 import JoinConference from "./containers/JoinConference";
 import { appNavigate } from "../../../../app/actions.web";
+import { LocalStorageManager } from "../../LocalStorageManager";
+import { ConfigService } from "../../services/config.service";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -165,6 +167,7 @@ class Conference extends AbstractConference<IProps, any> {
 
         window.addEventListener("beforeunload", this._handleBeforeUnload, true);
         window.addEventListener("popstate", this._handlePopState);
+        window.addEventListener("pagehide", this._handlePageHide, true);
     }
 
     /**
@@ -193,14 +196,18 @@ class Conference extends AbstractConference<IProps, any> {
      * @inheritdoc
      */
     override componentWillUnmount() {
+        console.log('[RELOAD] Conference component will unmount, leaving the call and cleaning up');
         APP.UI.unbindEvents();
 
         FULL_SCREEN_EVENTS.forEach((name) => document.removeEventListener(name, this._onFullScreenChange));
 
         window.removeEventListener("beforeunload", this._handleBeforeUnload, true);
         window.removeEventListener("popstate", this._handlePopState);
+        window.removeEventListener("pagehide", this._handlePageHide, true);
 
-        APP.conference.isJoined() && this.props.dispatch(hangup(true, this.props.roomId));
+        if (APP.conference.isJoined()) {
+            this.props.dispatch(hangup(true, this.props.roomId));
+        }
     }
 
     /**
@@ -216,10 +223,36 @@ class Conference extends AbstractConference<IProps, any> {
             event.preventDefault();
             event.stopImmediatePropagation();
 
-            event.returnValue = '';
             return '';
         }
         return "";
+    };
+
+    _handlePageHide = (): void => {
+        console.log("[RELOAD]: Page is being hidden, sending leave call request");
+
+        const callId = this.props.roomId;
+        const token =  LocalStorageManager.instance.getNewToken();
+        let body = '';
+        if(!token) {
+            const anonymousUserId = LocalStorageManager.instance.getAnonymousUUID();
+            body = JSON.stringify({ userId: anonymousUserId });
+        }
+        
+        const MEET_API_URL = ConfigService.instance.get("MEET_API_URL");
+    
+        fetch(`${MEET_API_URL}/call/${callId}/users/leave`, {
+            method: "POST",
+            keepalive: true,
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                Accept: "application/json, text/plain, */*",
+                Authorization: `Bearer ${token}`,
+                "internxt-version": "0.0.1",
+                "internxt-client": "internxt-meet",
+            },
+            body,
+        });
     };
 
     /**
@@ -230,6 +263,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @returns {void}
      */
     _leaveMeeting(): void {
+        window.removeEventListener("pagehide", this._handlePageHide, true);
         this.props.dispatch(hangup(true, this.props.roomId));
     }
 
