@@ -44,9 +44,11 @@ export function connect(id?: string, password?: string) {
         const state = getState();
         const { jwt } = state["features/base/jwt"];
         const { iAmRecorder, iAmSipGateway } = state["features/base/config"];
-        // TODO: CHECK WHY USER REDUCER IS NULL IN THIS POINT, initializers are not executing as expected
-        // const { user } = state["features/user"];
+
         const user = LocalStorageManager.instance.getUser();
+        const isAnonymous: boolean = !user;
+        const name = user?.name || 'Internxt Meet User';
+
         if (!iAmRecorder && !iAmSipGateway && isVpaasMeeting(state)) {
             return dispatch(getCustomerDetails())
                 .then(() => {
@@ -54,25 +56,11 @@ export function connect(id?: string, password?: string) {
                         return getJaasJWT(state);
                     }
                 })
-                .then((j) => j && dispatch(setJWT(j)))
-                .then(() =>
-                    dispatch(
-                        _connectInternal({
-                            id,
-                            password,
-                            name: user?.name,
-                            lastname: user?.lastname,
-                            isAnonymous: !user,
-                        })
-                    )
-                )
-                // latest jitsi changes, test if not works current ones
-                // .then(j => {
-                //     j && dispatch(setJWT(j));
+                .then(j => {
+                    j && dispatch(setJWT(j));
 
-                //     return dispatch(_connectInternal(id, password));
-                // })
-                .catch(e => {
+                    return dispatch(_connectInternal(id, name, password, isAnonymous));
+                }).catch(e => {
                     logger.error('Connection error', e);
                 });
         }
@@ -88,15 +76,7 @@ export function connect(id?: string, password?: string) {
             password = passwordOverride; // eslint-disable-line no-param-reassign
         }
 
-        return dispatch(
-            _connectInternal({
-                id,
-                password,
-                name: user?.name,
-                lastname: user?.lastname,
-                isAnonymous: !user,
-            })
-        );
+        return dispatch(_connectInternal(id, name, password, isAnonymous));
     };
 }
 

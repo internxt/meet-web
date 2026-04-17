@@ -17,13 +17,14 @@ import {
 import { setJoinRoomError } from "../meet/general/store/errors/actions";
 import { LocalStorageManager } from "../meet/LocalStorageManager";
 import MeetingService from "../meet/services/meeting.service";
-import { clearNewMeetingFlowSession, isNewMeetingFlow } from "../meet/services/sessionStorage.service";
+import { clearNewMeetingFlowSession } from "../meet/services/sessionStorage.service";
 import {
     CONNECTION_DISCONNECTED,
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
     CONNECTION_PROPERTIES_UPDATED,
     CONNECTION_WILL_CONNECT,
+    CONNECTION_TOKEN_EXPIRED,
     SET_LOCATION_URL,
     SET_PREFER_VISITOR,
 } from "./actionTypes";
@@ -219,19 +220,7 @@ export function setPreferVisitor(preferVisitor: boolean) {
  * @param {string} [password] - The XMPP user's password.
  * @returns {Function}
  */
-export function _connectInternal({
-    id,
-    password,
-    name,
-    lastname,
-    isAnonymous,
-}: {
-    id?: string;
-    password?: string;
-    name?: string;
-    lastname?: string;
-    isAnonymous?: boolean;
-}) {
+export function _connectInternal(id?: string, name?: string, password?: string, isAnonymous?: boolean) {
     return async (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
         const options = constructOptions(state);
@@ -249,7 +238,7 @@ export function _connectInternal({
                 }
                 const { token: jwt, appId } = await MeetingService.instance.joinCall(room, {
                     name: displayName ?? name ?? "",
-                    lastname: lastname ?? "",
+                    lastname: "Internxt Meet User",
                     anonymous: !!isAnonymous,
                     anonymousId: userUUID,
                 });
@@ -271,6 +260,7 @@ export function _connectInternal({
                     connection.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _onConnectionFailed);
                     connection.addEventListener(JitsiConnectionEvents.CONNECTION_REDIRECTED, _onConnectionRedirected);
                     connection.addEventListener(JitsiConnectionEvents.PROPERTIES_UPDATED, _onPropertiesUpdate);
+                    connection.addEventListener(JitsiConnectionEvents.CONNECTION_TOKEN_EXPIRED, _onTokenExpired);
 
                     /**
                      * Unsubscribe the connection instance from
@@ -366,6 +356,16 @@ export function _connectInternal({
                     }
 
                     /**
+                     * Connection will resume.
+                     *
+                     * @private
+                     * @returns {void}
+                     */
+                    function _onTokenExpired(): void {
+                        dispatch(_connectionTokenExpired(connection));
+                    }
+
+                    /**
                      * Connection properties were updated.
                      *
                      * @param {Object} properties - The properties which were updated.
@@ -419,6 +419,23 @@ export function _connectInternal({
 function _connectionWillConnect(connection: Object) {
     return {
         type: CONNECTION_WILL_CONNECT,
+        connection,
+    };
+}
+
+/**
+ * Create an action for when a connection token is expired.
+ *
+ * @param {JitsiConnection} connection - The {@code JitsiConnection} token is expired.
+ * @private
+ * @returns {{
+ *     type: CONNECTION_TOKEN_EXPIRED,
+ *     connection: JitsiConnection
+ * }}
+ */
+function _connectionTokenExpired(connection: Object) {
+    return {
+        type: CONNECTION_TOKEN_EXPIRED,
         connection
     };
 }
