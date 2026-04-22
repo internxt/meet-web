@@ -220,13 +220,19 @@ export function setPreferVisitor(preferVisitor: boolean) {
  * @param {string} [password] - The XMPP user's password.
  * @returns {Function}
  */
-export function _connectInternal(
-    id?: string,
-    name?: string,
-    lastname?: string,
-    password?: string,
-    isAnonymous?: boolean,
-) {
+export function _connectInternal({
+    id,
+    password,
+    name,
+    lastname,
+    isAnonymous,
+}: {
+    id?: string;
+    password?: string;
+    name?: string;
+    lastname?: string;
+    isAnonymous?: boolean;
+}) {
     return async (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
         const options = constructOptions(state);

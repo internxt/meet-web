@@ -46,9 +46,6 @@ export function connect(id?: string, password?: string) {
         const { iAmRecorder, iAmSipGateway } = state["features/base/config"];
 
         const user = LocalStorageManager.instance.getUser();
-        const isAnonymous: boolean = !user;
-        const name = user?.name;
-        const lastname =  user?.lastname;
 
         if (!iAmRecorder && !iAmSipGateway && isVpaasMeeting(state)) {
             return dispatch(getCustomerDetails())
@@ -60,7 +57,15 @@ export function connect(id?: string, password?: string) {
                 .then(j => {
                     j && dispatch(setJWT(j));
 
-                    return dispatch(_connectInternal(id, name, lastname, password, isAnonymous));
+                    return dispatch(
+                        _connectInternal({
+                            id,
+                            password,
+                            name: user?.name,
+                            lastname: user?.lastname,
+                            isAnonymous: !user,
+                        })
+                    );
                 }).catch(e => {
                     logger.error('Connection error', e);
                 });
@@ -77,7 +82,15 @@ export function connect(id?: string, password?: string) {
             password = passwordOverride; // eslint-disable-line no-param-reassign
         }
 
-        return dispatch(_connectInternal(id, name, lastname, password, isAnonymous));
+        return dispatch(
+            _connectInternal({
+                id,
+                password,
+                name: user?.name,
+                lastname: user?.lastname,
+                isAnonymous: !user,
+            })
+        );
     };
 }
 
