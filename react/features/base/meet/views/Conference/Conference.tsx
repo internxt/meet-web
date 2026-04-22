@@ -139,6 +139,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @returns {void}
      */
     _handlePopState = () => {
+        console.log("[RELOAD]: Popstate event triggered, handling back/forward navigation");
         const { t } = this.props;
 
         if (APP.conference.isJoined()) {
@@ -146,6 +147,7 @@ class Conference extends AbstractConference<IProps, any> {
                 t('dialog.leaveMeetingConfirmation')
             );
             if (confirmLeave) {
+                window.removeEventListener("pagehide", this._handlePageHide, true);
                 this.props.dispatch(hangup(false, this.props.roomId));
                 window.history.pushState(null, '', '/');
             } else {
@@ -165,7 +167,6 @@ class Conference extends AbstractConference<IProps, any> {
         document.title = `${interfaceConfig.APP_NAME}`;
         this._start();
 
-        window.addEventListener("beforeunload", this._handleBeforeUnload, true);
         window.addEventListener("popstate", this._handlePopState);
         window.addEventListener("pagehide", this._handlePageHide, true);
     }
@@ -201,33 +202,21 @@ class Conference extends AbstractConference<IProps, any> {
 
         FULL_SCREEN_EVENTS.forEach((name) => document.removeEventListener(name, this._onFullScreenChange));
 
-        window.removeEventListener("beforeunload", this._handleBeforeUnload, true);
         window.removeEventListener("popstate", this._handlePopState);
         window.removeEventListener("pagehide", this._handlePageHide, true);
 
         if (APP.conference.isJoined()) {
+            window.removeEventListener("pagehide", this._handlePageHide, true);
             this.props.dispatch(hangup(true, this.props.roomId));
         }
     }
 
     /**
-     * Handler for beforeunload event that shows a confirmation dialog
-     * when user tries to close the tab or browser during a meeting.
-     *
-     * @param {BeforeUnloadEvent} event - The beforeunload event.
+     * 
+     * Handler for pagehide event that sends a leave call request to the server when the page is being unloaded.
      * @private
      * @returns {string}
      */
-    _handleBeforeUnload = (event: BeforeUnloadEvent): string => {
-        if (APP.conference.isJoined()) {
-            event.preventDefault();
-            event.stopImmediatePropagation();
-
-            return '';
-        }
-        return "";
-    };
-
     _handlePageHide = (): void => {
         console.log("[RELOAD]: Page is being hidden, sending leave call request");
 

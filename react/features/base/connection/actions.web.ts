@@ -47,7 +47,8 @@ export function connect(id?: string, password?: string) {
 
         const user = LocalStorageManager.instance.getUser();
         const isAnonymous: boolean = !user;
-        const name = user?.name || 'Internxt Meet User';
+        const name = user?.name;
+        const lastname =  user?.lastname;
 
         if (!iAmRecorder && !iAmSipGateway && isVpaasMeeting(state)) {
             return dispatch(getCustomerDetails())
@@ -59,7 +60,7 @@ export function connect(id?: string, password?: string) {
                 .then(j => {
                     j && dispatch(setJWT(j));
 
-                    return dispatch(_connectInternal(id, name, password, isAnonymous));
+                    return dispatch(_connectInternal(id, name, lastname, password, isAnonymous));
                 }).catch(e => {
                     logger.error('Connection error', e);
                 });
@@ -76,7 +77,7 @@ export function connect(id?: string, password?: string) {
             password = passwordOverride; // eslint-disable-line no-param-reassign
         }
 
-        return dispatch(_connectInternal(id, name, password, isAnonymous));
+        return dispatch(_connectInternal(id, name, lastname, password, isAnonymous));
     };
 }
 

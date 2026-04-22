@@ -220,7 +220,13 @@ export function setPreferVisitor(preferVisitor: boolean) {
  * @param {string} [password] - The XMPP user's password.
  * @returns {Function}
  */
-export function _connectInternal(id?: string, name?: string, password?: string, isAnonymous?: boolean) {
+export function _connectInternal(
+    id?: string,
+    name?: string,
+    lastname?: string,
+    password?: string,
+    isAnonymous?: boolean,
+) {
     return async (dispatch: IStore["dispatch"], getState: IStore["getState"]) => {
         const state = getState();
         const options = constructOptions(state);
@@ -238,7 +244,7 @@ export function _connectInternal(id?: string, name?: string, password?: string, 
                 }
                 const { token: jwt, appId } = await MeetingService.instance.joinCall(room, {
                     name: displayName ?? name ?? "",
-                    lastname: "Internxt Meet User",
+                    lastname: lastname ?? "",
                     anonymous: !!isAnonymous,
                     anonymousId: userUUID,
                 });
