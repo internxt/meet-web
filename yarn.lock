@@ -6040,10 +6040,10 @@
   resolved "https://registry.yarnpkg.com/@webpack-cli/serve/-/serve-2.0.5.tgz#325db42395cd49fe6c14057f9a900e427df8810e"
   integrity sha512-lqaoKnRYBdo1UgDX8uF24AfGMifWK19TxPmM5FHc2vAGxrJ/qtyUyFBWoY1tISZdelsQ5fBcOusifo5o5wSJxQ==
 
-"@xmldom/xmldom@0.8.7":
-  version "0.8.7"
-  resolved "https://registry.yarnpkg.com/@xmldom/xmldom/-/xmldom-0.8.7.tgz#8b1e39c547013941974d83ad5e9cf5042071a9a0"
-  integrity sha512-sI1Ly2cODlWStkINzqGrZ8K6n+MTSbAeQnAipGyL+KZCXuHaRlj2gyyy8B/9MvsFFqN7XHryQnB2QwhzvJXovg==
+"@xmldom/xmldom@0.8.13":
+  version "0.8.13"
+  resolved "https://registry.yarnpkg.com/@xmldom/xmldom/-/xmldom-0.8.13.tgz#00d1dd940b218dff2e49309d410d8bb212159225"
+  integrity sha512-KRYzxepc14G/CEpEGc3Yn+JKaAeT63smlDr+vjB8jRfgTBBI9wRj/nkQEO+ucV8p8I9bfKLWp37uHgFrbntPvw==
 
 "@xobotyi/scrollbar-width@^1.9.5":
   version "1.9.5"
