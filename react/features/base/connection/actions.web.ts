@@ -44,9 +44,9 @@ export function connect(id?: string, password?: string) {
         const state = getState();
         const { jwt } = state["features/base/jwt"];
         const { iAmRecorder, iAmSipGateway } = state["features/base/config"];
-        // TODO: CHECK WHY USER REDUCER IS NULL IN THIS POINT, initializers are not executing as expected
-        // const { user } = state["features/user"];
+
         const user = LocalStorageManager.instance.getUser();
+
         if (!iAmRecorder && !iAmSipGateway && isVpaasMeeting(state)) {
             return dispatch(getCustomerDetails())
                 .then(() => {
@@ -54,9 +54,10 @@ export function connect(id?: string, password?: string) {
                         return getJaasJWT(state);
                     }
                 })
-                .then((j) => j && dispatch(setJWT(j)))
-                .then(() =>
-                    dispatch(
+                .then(j => {
+                    j && dispatch(setJWT(j));
+
+                    return dispatch(
                         _connectInternal({
                             id,
                             password,
@@ -64,15 +65,8 @@ export function connect(id?: string, password?: string) {
                             lastname: user?.lastname,
                             isAnonymous: !user,
                         })
-                    )
-                )
-                // latest jitsi changes, test if not works current ones
-                // .then(j => {
-                //     j && dispatch(setJWT(j));
-
-                //     return dispatch(_connectInternal(id, password));
-                // })
-                .catch(e => {
+                    );
+                }).catch(e => {
                     logger.error('Connection error', e);
                 });
         }

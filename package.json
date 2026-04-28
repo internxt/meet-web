@@ -264,7 +264,7 @@
         "validate": "npm ls",
         "tsc-test:web": "tsc --project tsconfig.web.json --listFilesOnly | grep -v node_modules | grep native",
         "tsc-test:native": "tsc --project tsconfig.native.json --listFilesOnly | grep -v node_modules | grep web",
-        "start": "make dev",
+        "start": "WEBPACK_DEV_SERVER_PROXY_TARGET=https://meet.internxt.com make dev",
         "test": "vitest run",
         "test:ui": "vitest --ui",
         "test:coverage": "vitest run --coverage",

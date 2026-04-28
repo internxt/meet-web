@@ -7,6 +7,7 @@ const process = require("process");
 const webpack = require("webpack");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const dotenv = require("dotenv");
+dotenv.config();
 
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
@@ -64,12 +65,16 @@ function getBundleAnalyzerPlugin(analyzeBundle, name) {
  * @returns {string|undefined} If the request is to be served by the proxy
  * target, undefined; otherwise, the path to the local file to be served.
  */
-function devServerProxyBypass({ path }) {
+function devServerProxyBypass({ path, headers }) {
     let tpath = path;
 
     if (tpath.startsWith("/v1/_cdn/")) {
         // The CDN is not available in the dev server, so we need to bypass it.
         tpath = tpath.replace(/\/v1\/_cdn\/[^/]+\//, "/");
+    }
+
+    if (headers?.accept?.includes("text/html")) {
+        return "/index.html";
     }
 
     if (
@@ -279,6 +284,7 @@ function getConfig(options = {}) {
  * @returns {Object} the dev server configuration.
  */
 function getDevServerConfig() {
+    console.log('[RELOAD]: Building dev server config with proxy target', devServerProxyTarget);
     return {
         client: {
             overlay: {
@@ -349,7 +355,6 @@ module.exports = (_env, argv) => {
                 }),
                 new webpack.DefinePlugin({
                     "process.env": (() => {
-                        dotenv.config();
                         const keys = [
                             "DRIVE_NEW_API_URL",
                             "PAYMENTS_API_URL",

@@ -136,7 +136,7 @@ export const CONFERENCE_UNIQUE_ID_SET = 'CONFERENCE_UNIQUE_ID_SET';
  *     }
  * }
  */
-export const E2E_RTT_CHANGED = 'E2E_RTT_CHANGED'
+export const E2E_RTT_CHANGED = 'E2E_RTT_CHANGED';
 
 /**
  * The type of (redux) action which signals that a conference will be initialized.
