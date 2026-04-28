@@ -284,7 +284,6 @@ function getConfig(options = {}) {
  * @returns {Object} the dev server configuration.
  */
 function getDevServerConfig() {
-    console.log('[RELOAD]: Building dev server config with proxy target', devServerProxyTarget);
     return {
         client: {
             overlay: {
