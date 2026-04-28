@@ -65,12 +65,16 @@ function getBundleAnalyzerPlugin(analyzeBundle, name) {
  * @returns {string|undefined} If the request is to be served by the proxy
  * target, undefined; otherwise, the path to the local file to be served.
  */
-function devServerProxyBypass({ path }) {
+function devServerProxyBypass({ path, headers }) {
     let tpath = path;
 
     if (tpath.startsWith("/v1/_cdn/")) {
         // The CDN is not available in the dev server, so we need to bypass it.
         tpath = tpath.replace(/\/v1\/_cdn\/[^/]+\//, "/");
+    }
+
+    if (headers?.accept?.includes("text/html")) {
+        return "/index.html";
     }
 
     if (

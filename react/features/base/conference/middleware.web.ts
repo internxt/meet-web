@@ -138,9 +138,7 @@ MiddlewareRegistry.register(store => next => action => {
                     Object.values(TRIGGER_READY_TO_CLOSE_REASONS).indexOf(reason)
                 ];
             const roomId = room ?? "";
-            dispatch(hangup(true, roomId, i18next.t(titlekey) || reason));
-            // new jitsi change, test aht does notifyOnConferenceDestruction
-            // dispatch(hangup(true, i18next.t(titlekey) || reason, notifyOnConferenceDestruction));
+            dispatch(hangup(true, roomId, i18next.t(titlekey) || reason, notifyOnConferenceDestruction));
         }
 
         releaseScreenLock();
