@@ -240,9 +240,6 @@
         "webpack-dev-server": "5.2.1",
         "wrangler": "^4.0.0"
     },
-    "overrides": {
-        "@xmldom/xmldom": "0.8.7"
-    },
     "resolutions": {
         "fast-xml-parser": "5.3.6",
         "glob/minimatch": "10.2.1"
