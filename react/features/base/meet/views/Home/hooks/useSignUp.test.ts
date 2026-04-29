@@ -1,4 +1,4 @@
-import { act, renderHook } from "@testing-library/react-hooks";
+import { act, renderHook } from "@testing-library/react";
 import * as bip39 from "bip39";
 import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import "../../../__tests__/setup";
