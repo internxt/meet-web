@@ -158,66 +158,61 @@ function getConfig(options = {}) {
                                     // with core-js.
                                     useBuiltIns: "usage",
 
-                                    // core-js version to use, must be in sync with the version in package.json.
-                                    corejs: "3.40",
-                                },
-                            ],
-                            require.resolve("@babel/preset-react"),
+                                // core-js version to use, must be in sync with the version in package.json.
+                                corejs: '3.40'
+                            }
                         ],
-                    },
-                    test: /\.jsx?$/,
-                    exclude: /node_modules/,
+                        require.resolve('@babel/preset-react')
+                    ]
                 },
-                {
-                    // Allow CSS to be imported into JavaScript.
-                    test: /\.css$/,
-                    use: [
-                        "style-loader",
-                        {
-                            loader: "css-loader",
-                            options: {
-                                importLoaders: 1,
-                            },
-                        },
-                        "postcss-loader", // For tailwindcss
-                    ],
-                },
-                // SVG with ?raw query will be loaded as raw string
-                {
-                    test: /\.svg$/,
-                    resourceQuery: /raw/,
-                    type: "asset/source",
-                },
-                {
-                    test: /\.svg$/,
-                    resourceQuery: { not: [/raw/] },
-                    use: [
-                        {
-                            loader: "@svgr/webpack",
-                            options: {
-                                dimensions: false,
-                                expandProps: "start",
-                            },
-                        },
-                    ],
-                },
-                {
-                    test: /\.tsx?$/,
-                    exclude: /node_modules/,
-                    loader: "ts-loader",
+                test: /\.(j|t)sx?$/,
+                exclude: /node_modules/
+            }, {
+                // Emit woff2 fonts to excalidraw/fonts/ preserving the subdirectory
+                // structure so they land at the same path that deploy-excalidraw copies
+                // them to (libs/excalidraw/fonts/...) and CSS @font-face URLs resolve.
+                test: /\.woff2$/,
+                type: 'asset/resource',
+                generator: {
+                    filename: pathData => {
+                        const match = pathData.filename?.match(/\/fonts\/(.*)/);
+
+                        return match ? `excalidraw/fonts/${match[1]}` : 'excalidraw/fonts/[name][ext]';
+                    }
+                }
+            }, {
+                // Allow CSS to be imported into JavaScript.
+
+                test: /\.css$/,
+                use: [
+                    'style-loader',
+                    'css-loader'
+                ]
+            }, {
+                // Import SVG as raw text when using ?raw query parameter.
+                test: /\.svg$/,
+                resourceQuery: /raw/,
+                type: 'asset/source'
+            }, {
+                // Import SVG as React component (default).
+                test: /\.svg$/,
+                resourceQuery: { not: [ /raw/ ] },
+                use: [ {
+                    loader: '@svgr/webpack',
                     options: {
-                        configFile: "tsconfig.web.json",
-                        transpileOnly: true,
-                    },
-                },
-                {
-                    test: /\.(woff|woff2|eot|ttf|otf)$/i,
-                    type: "asset/resource",
-                    generator: {
-                        publicPath: "/build/",
-                    },
-                },
-            ],
+                        dimensions: false,
+                        expandProps: 'start'
+                    }
+                } ]
+            }, {
+                test: /\.tsx?$/,
+                exclude: /node_modules/,
+                loader: 'ts-loader',
+                options: {
+                    configFile: 'tsconfig.web.json',
+                    transpileOnly: !isProduction // Skip type checking for dev builds.,
+                }
+            } ]
         },
         node: {
             // Allow the use of the real filename of the module being executed. By
@@ -230,10 +225,11 @@ function getConfig(options = {}) {
             minimize: isProduction,
         },
         output: {
-            filename: `[name]${isProduction ? ".min" : ""}.js`,
+            filename: `[name]${isProduction ? '.min' : ''}.js`,
+            chunkFilename: `chunks/[id]${isProduction ? '.min' : ''}.js`,
             path: `${__dirname}/build`,
-            publicPath: "/libs/",
-            sourceMapFilename: "[file].map",
+            publicPath: isProduction ? 'auto' : '/libs/',
+            sourceMapFilename: '[file].map'
         },
         plugins: [
             detectCircularDeps &&
@@ -245,8 +241,13 @@ function getConfig(options = {}) {
         ].filter(Boolean),
         resolve: {
             alias: {
-                "focus-visible": "focus-visible/dist/focus-visible.min.js",
-                "@giphy/js-analytics": resolve(__dirname, "giphy-analytics-stub.js"),
+                'focus-visible': 'focus-visible/dist/focus-visible.min.js',
+                '@giphy/js-analytics': resolve(__dirname, 'giphy-analytics-stub.js'),
+                'react': resolve(__dirname, 'node_modules/react'),
+                'react-dom': resolve(__dirname, 'node_modules/react-dom'),
+                'roughjs/bin/rough': 'roughjs/bin/rough.js',
+                'roughjs/bin/generator': 'roughjs/bin/generator.js',
+                'roughjs/bin/math': 'roughjs/bin/math.js'
             },
             aliasFields: ["browser"],
             extensions: [
@@ -291,7 +292,8 @@ function getDevServerConfig() {
                 warnings: false,
             },
         },
-        host: "localhost",
+        allowedHosts: 'all',
+        host: 'localhost',
         hot: true,
         proxy: [
             {
@@ -304,7 +306,10 @@ function getDevServerConfig() {
                 },
             },
         ],
-        server: process.env.CODESPACES ? "http" : "https",
+        server: process.env.CODESPACES ? 'http' : 'https',
+        setupMiddlewares: (middlewares, _devServer) => middlewares.filter(
+            m => m.name !== 'cross-origin-header-check'
+        ),
         static: {
             directory: process.cwd(),
             watch: {

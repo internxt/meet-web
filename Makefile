@@ -6,8 +6,8 @@ ONNX_DIR= node_modules/onnxruntime-web
 LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet
 TF_WASM_DIR = node_modules/@tensorflow/tfjs-backend-wasm/dist/
 RNNOISE_WASM_DIR = node_modules/@jitsi/rnnoise-wasm/dist
-EXCALIDRAW_DIR = node_modules/@jitsi/excalidraw/dist/excalidraw-assets
-EXCALIDRAW_DIR_DEV = node_modules/@jitsi/excalidraw/dist/excalidraw-assets-dev
+EXCALIDRAW_DIR = node_modules/@jitsi/excalidraw/dist/prod
+EXCALIDRAW_DIR_DEV = node_modules/@jitsi/excalidraw/dist/dev
 TFLITE_WASM = react/features/stream-effects/virtual-background/vendor/tflite
 MEET_MODELS_DIR  = react/features/stream-effects/virtual-background/vendor/models
 FACE_MODELS_DIR = node_modules/@vladmandic/human-models/models
@@ -72,14 +72,12 @@ deploy-tflite:
 		$(DEPLOY_DIR)
 
 deploy-excalidraw:
-	cp -R \
-		$(EXCALIDRAW_DIR) \
-		$(DEPLOY_DIR)/
+	mkdir -p $(DEPLOY_DIR)/excalidraw
+	cp -R $(EXCALIDRAW_DIR)/fonts $(DEPLOY_DIR)/excalidraw/
 
 deploy-excalidraw-dev:
-	cp -R \
-		$(EXCALIDRAW_DIR_DEV) \
-		$(DEPLOY_DIR)/
+	mkdir -p $(DEPLOY_DIR)/excalidraw
+	cp -R $(EXCALIDRAW_DIR_DEV)/fonts $(DEPLOY_DIR)/excalidraw/
 
 deploy-meet-models:
 	cp \
