@@ -11,7 +11,8 @@ import { isEmbedded } from '../util/embedUtils';
 import { parseURLParams } from '../util/parseURLParams';
 import {
     appendURLParam,
-    getBackendSafeRoomName
+    getBackendSafeRoomName,
+    getNormalizedRoomName
 } from '../util/uri';
 
 import { setJoinRoomError } from "../meet/general/store/errors/actions";
@@ -23,8 +24,8 @@ import {
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
     CONNECTION_PROPERTIES_UPDATED,
-    CONNECTION_WILL_CONNECT,
     CONNECTION_TOKEN_EXPIRED,
+    CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL,
     SET_PREFER_VISITOR,
 } from "./actionTypes";
@@ -149,7 +150,7 @@ export function constructOptions(state: IReduxState) {
     const { room } = state["features/base/conference"];
 
     if (serviceUrl && room) {
-        const roomName = getBackendSafeRoomName(room);
+        const roomName = getNormalizedRoomName(room);
 
         options.serviceUrl = appendURLParam(serviceUrl, "room", roomName ?? "");
 
@@ -263,16 +264,25 @@ export function _connectInternal({
 
                 dispatch(_connectionWillConnect(connection));
 
-                return new Promise((resolve, reject) => {
-                    connection.addEventListener(
-                        JitsiConnectionEvents.CONNECTION_DISCONNECTED,
-                        _onConnectionDisconnected
-                    );
-                    connection.addEventListener(JitsiConnectionEvents.CONNECTION_ESTABLISHED, _onConnectionEstablished);
-                    connection.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _onConnectionFailed);
-                    connection.addEventListener(JitsiConnectionEvents.CONNECTION_REDIRECTED, _onConnectionRedirected);
-                    connection.addEventListener(JitsiConnectionEvents.PROPERTIES_UPDATED, _onPropertiesUpdate);
-                    connection.addEventListener(JitsiConnectionEvents.CONNECTION_TOKEN_EXPIRED, _onTokenExpired);
+        return new Promise((resolve, reject) => {
+            connection.addEventListener(
+                JitsiConnectionEvents.CONNECTION_DISCONNECTED,
+                _onConnectionDisconnected);
+            connection.addEventListener(
+                JitsiConnectionEvents.CONNECTION_ESTABLISHED,
+                _onConnectionEstablished);
+            connection.addEventListener(
+                JitsiConnectionEvents.CONNECTION_FAILED,
+                _onConnectionFailed);
+            connection.addEventListener(
+                JitsiConnectionEvents.CONNECTION_REDIRECTED,
+                _onConnectionRedirected);
+            connection.addEventListener(
+                JitsiConnectionEvents.PROPERTIES_UPDATED,
+                _onPropertiesUpdate);
+            connection.addEventListener(
+                JitsiConnectionEvents.CONNECTION_TOKEN_EXPIRED,
+                _onTokenExpired);
 
                     /**
                      * Unsubscribe the connection instance from
@@ -349,33 +359,30 @@ export function _connectInternal({
                         resolve(connection);
                     }
 
-                    /**
-                     * Connection was redirected.
-                     *
-                     * @param {string|undefined} vnode - The vnode to connect to.
-                     * @param {string} focusJid - The focus jid to use.
-                     * @param {string|undefined} username - The username to use when joining. This is after promotion from
-                     * visitor to main participant.
-                     * @private
-                     * @returns {void}
-                     */
-                    function _onConnectionRedirected(vnode: string, focusJid: string, username: string) {
-                        connection.removeEventListener(
-                            JitsiConnectionEvents.CONNECTION_REDIRECTED,
-                            _onConnectionRedirected
-                        );
-                        dispatch(redirect(vnode, focusJid, username));
-                    }
+            /**
+             * Connection was redirected.
+             *
+             * @param {string|undefined} vnode - The vnode to connect to.
+             * @param {string} focusJid - The focus jid to use.
+             * @param {string|undefined} username - The username to use when joining. This is after promotion from
+             * visitor to main participant.
+             * @private
+             * @returns {void}
+             */
+            function _onConnectionRedirected(vnode: string, focusJid: string, username: string) {
+                connection.removeEventListener(JitsiConnectionEvents.CONNECTION_REDIRECTED, _onConnectionRedirected);
+                dispatch(redirect(vnode, focusJid, username));
+            }
 
-                    /**
-                     * Connection will resume.
-                     *
-                     * @private
-                     * @returns {void}
-                     */
-                    function _onTokenExpired(): void {
-                        dispatch(_connectionTokenExpired(connection));
-                    }
+            /**
+             * Connection will resume.
+             *
+             * @private
+             * @returns {void}
+             */
+            function _onTokenExpired(): void {
+                dispatch(_connectionTokenExpired(connection));
+            }
 
                     /**
                      * Connection properties were updated.
@@ -431,7 +438,7 @@ export function _connectInternal({
 function _connectionWillConnect(connection: Object) {
     return {
         type: CONNECTION_WILL_CONNECT,
-        connection,
+        connection
     };
 }
 
