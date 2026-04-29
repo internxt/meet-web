@@ -5,12 +5,14 @@ local room_jid_match_rewrite = util.room_jid_match_rewrite;
 local is_jibri = util.is_jibri;
 local is_healthcheck_room = util.is_healthcheck_room;
 local process_host_module = util.process_host_module;
-local is_transcriber_jigasi = util.is_transcriber_jigasi;
+local is_transcriber = util.is_transcriber;
 local jid_resource = require "util.jid".resource;
 local st = require "util.stanza";
 local socket = require "socket";
 local json = require 'cjson.safe';
 local jid_split = require 'util.jid'.split;
+local queue = require "prosody.util.queue";
+local array = require "prosody.util.array";
 
 -- we use async to detect Prosody 0.10 and earlier
 local have_async = pcall(require, "util.async");
@@ -27,6 +29,7 @@ if muc_component_host == nil or main_virtual_host == nil then
     return;
 end
 local breakout_room_component_host = "breakout." .. main_virtual_host;
+local face_landmarks_history_size = module:get_option_number('faceLandmarks_history_size', 20);
 
 module:log("info", "Starting speakerstats for %s", muc_component_host);
 
@@ -122,7 +125,7 @@ function on_message(event)
             return false;
         end
         local faceLandmarks = room.speakerStats[occupant.jid].faceLandmarks;
-        table.insert(faceLandmarks,
+        faceLandmarks:push(
             {
                 faceExpression = newFaceLandmarks.attr.faceExpression,
                 timestamp = tonumber(newFaceLandmarks.attr.timestamp),
@@ -146,7 +149,7 @@ function new_SpeakerStats(nick, context_user)
         nick = nick;
         context_user = context_user;
         displayName = nil;
-        faceLandmarks = {};
+        faceLandmarks = queue.new(face_landmarks_history_size);
     }, SpeakerStats);
 end
 
@@ -223,7 +226,7 @@ function occupant_joined(event)
 
     if is_healthcheck_room(room.jid)
         or is_admin(occupant.bare_jid)
-        or is_transcriber_jigasi(stanza)
+        or is_transcriber(occupant.jid)
         or is_jibri(occupant) then
         return;
     end
@@ -252,7 +255,7 @@ function occupant_joined(event)
                         users_json[values.nick] =  {
                             displayName = values.displayName,
                             totalDominantSpeakerTime = totalDominantSpeakerTime,
-                            faceLandmarks = faceLandmarks
+                            faceLandmarks = array(faceLandmarks:items())
                         };
                     end
                 end
