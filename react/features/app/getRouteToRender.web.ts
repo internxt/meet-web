@@ -5,7 +5,6 @@ import { IStateful } from '../base/app/types';
 import { isRoomValid } from '../base/conference/functions';
 import { isSupportedBrowser } from '../base/environment/environment';
 import { toState } from '../base/redux/functions';
-import Conference from '../conference/components/web/Conference';
 import { getDeepLinkingPage } from '../deep-linking/functions';
 import UnsupportedDesktopBrowser from '../unsupported-browser/components/UnsupportedDesktopBrowser';
 import BlankPage from '../welcome/components/BlankPage.web';

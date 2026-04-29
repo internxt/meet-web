@@ -63,7 +63,6 @@ import VideoQualityDialog from '../video-quality/components/VideoQualityDialog.w
 import { useVirtualBackgroundButton } from '../virtual-background/hooks';
 import { useWhiteboardButton } from '../whiteboard/hooks';
 
-import ChatButton from '../chat/components/web/ChatButton';
 import { setFullScreen } from './actions.web';
 import DownloadButton from './components/DownloadButton';
 import HelpButton from './components/HelpButton';
@@ -82,36 +81,25 @@ import { ICustomToolbarButton, IToolboxButton, ToolbarButton } from './types';
 const microphone = {
     key: 'microphone',
     Content: AudioSettingsButton,
-    group: 0,
-    display: true
+    group: 0
 };
 
 const camera = {
     key: 'camera',
     Content: VideoSettingsButton,
-    group: 0,
-    display: true
+    group: 0
 };
 
 const profile = {
     key: 'profile',
     Content: ProfileButton,
-    group: 1,
-    display: true
-};
-
-const chat = {
-    key: 'chat',
-    Content: ChatButton,
-    group: 2,
-    display: true
+    group: 1
 };
 
 const desktop = {
     key: 'desktop',
     Content: ShareDesktopButton,
-    group: 2,
-    display: true
+    group: 2
 };
 
 // In Narrow layout and mobile web we are using drawer for popups and that is why it is better to include
@@ -120,78 +108,67 @@ const desktop = {
 const raisehand = {
     key: 'raisehand',
     Content: RaiseHandContainerButton,
-    group: 2,
-    display: true
+    group: 2
 };
 
 const invite = {
     key: 'invite',
     Content: InviteButton,
-    group: 2,
-    display: true
+    group: 2
 };
 
 const toggleCamera = {
     key: 'toggle-camera',
     Content: ToggleCameraButton,
-    group: 2,
-    display: true
+    group: 2
 };
 
 const videoQuality = {
     key: 'videoquality',
     Content: VideoQualityButton,
-    group: 2,
-    display: true
+    group: 2
 };
 
 const fullscreen = {
     key: 'fullscreen',
     Content: FullscreenButton,
-    group: 2,
-    display: true
+    group: 2
 };
 
 const linkToSalesforce = {
     key: 'linktosalesforce',
     Content: LinkToSalesforceButton,
-    group: 2,
-    display: true
+    group: 2
 };
 
 const shareAudio = {
     key: 'shareaudio',
     Content: ShareAudioButton,
-    group: 3,
-    display: true
+    group: 3
 };
 
 const noiseSuppression = {
     key: 'noisesuppression',
     Content: NoiseSuppressionButton,
-    group: 3,
-    display: true
+    group: 3
 };
 
 const settings = {
     key: 'settings',
     Content: SettingsButton,
-    group: 4,
-    display: true
+    group: 4
 };
 
 const download = {
     key: 'download',
     Content: DownloadButton,
-    group: 4,
-    display: true
+    group: 4
 };
 
 const help = {
     key: 'help',
     Content: HelpButton,
-    group: 4,
-    display: true
+    group: 4
 };
 
 /**

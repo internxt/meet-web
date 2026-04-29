@@ -531,7 +531,6 @@ function mapStateToProps(state: IReduxState) {
         showUnsafeRoomWarning: isInsecureRoomName(room) && isUnsafeRoomWarningEnabled(state),
         unsafeRoomConsent,
         videoTrack: getLocalJitsiVideoTrack(state),
-        audioTrack,
     };
 }
 
