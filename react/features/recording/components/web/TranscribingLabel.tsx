@@ -6,14 +6,13 @@ import { withStyles } from 'tss-react/mui';
 import { IReduxState, IStore } from '../../../app/types';
 import { openDialog } from '../../../base/dialog/actions';
 import { translate } from '../../../base/i18n/functions';
-import { IconRecord, IconSites } from '../../../base/icons/svg';
+import { IconTranscription } from '../../../base/icons/svg';
 import Label from '../../../base/label/components/web/Label';
-import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
+import { isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
 import { hasRecordingOrTranscriptionFeature } from '../../functions';
 import AbstractRecordingLabel, {
-    IProps as AbstractProps,
-    _mapStateToProps as _abstractMapStateToProps
+    IProps as AbstractProps
 } from '../AbstractRecordingLabel';
 import StopRecordingDialog from '../Recording/web/StopRecordingDialog';
 
@@ -45,22 +44,21 @@ interface IProps extends AbstractProps {
  */
 const styles = (theme: Theme) => {
     return {
-        root: {},
-        record: {
-            background: theme.palette.actionDanger
+        transcribing: {
+            background: theme.palette.transcriptionIndicator
         }
     };
 };
 
 /**
  * Implements a React {@link Component} which displays the current state of
- * conference recording.
+ * transcription.
  *
  * @augments {Component}
  */
-class RecordingLabel extends AbstractRecordingLabel<IProps> {
+class TranscribingLabel extends AbstractRecordingLabel<IProps> {
     /**
-     * Initializes a new {@code RecordingLabel} instance.
+     * Initializes a new {@code TranscribingLabel} instance.
      *
      * @param {IProps} props - The props of the component.
      */
@@ -87,27 +85,22 @@ class RecordingLabel extends AbstractRecordingLabel<IProps> {
      * @inheritdoc
      */
     override _renderLabel() {
-        const { _status, mode, t } = this.props;
+        const { _isTranscribing, t } = this.props;
         const classes = withStyles.getClasses(this.props);
-        const isRecording = mode === JitsiRecordingConstants.mode.FILE;
-        const icon = isRecording ? IconRecord : IconSites;
-        let content;
 
-        if (_status === JitsiRecordingConstants.status.ON) {
-            content = t(isRecording ? 'videoStatus.recording' : 'videoStatus.streaming');
-        } else if (mode === JitsiRecordingConstants.mode.STREAM) {
-            return null;
-        } else {
+        if (!_isTranscribing) {
             return null;
         }
+
+        const content = t('transcribing.labelTooltip');
 
         return (
             <Tooltip
                 content = { content }
                 position = { 'bottom' }>
                 <Label
-                    className = { classes.record }
-                    icon = { icon }
+                    className = { classes.transcribing }
+                    icon = { IconTranscription }
                     onClick = { this._onClick } />
             </Tooltip>
         );
@@ -118,15 +111,19 @@ class RecordingLabel extends AbstractRecordingLabel<IProps> {
  * Maps (parts of) the Redux state to the associated props.
  *
  * @param {Object} state - The Redux state.
- * @param {Object} ownProps - The component's own props.
  * @private
  * @returns {Object}
  */
-function _mapStateToProps(state: IReduxState, ownProps: any) {
+function _mapStateToProps(state: IReduxState) {
+    const _isTranscribing = isRecorderTranscriptionsRunning(state);
+
     return {
-        ..._abstractMapStateToProps(state, ownProps),
-        _canControlRecording: hasRecordingOrTranscriptionFeature(state)
+        _isVisible: _isTranscribing,
+        _iAmRecorder: Boolean(state['features/base/config'].iAmRecorder),
+        _canControlRecording: hasRecordingOrTranscriptionFeature(state),
+        _isTranscribing,
+        mode: 'transcribing' // Custom mode for transcription
     };
 }
 
-export default withStyles(translate(connect(_mapStateToProps)(RecordingLabel)), styles);
+export default withStyles(translate(connect(_mapStateToProps)(TranscribingLabel)), styles);
