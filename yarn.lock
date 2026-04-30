@@ -6450,16 +6450,6 @@ asn1.js@^4.10.1:
     inherits "^2.0.1"
     minimalistic-assert "^1.0.0"
 
-asn1.js@^5.0.0:
-  version "5.4.1"
-  resolved "https://registry.yarnpkg.com/asn1.js/-/asn1.js-5.4.1.tgz#11a980b84ebb91781ce35b0fdc2ee294e3783f07"
-  integrity sha512-+I//4cYPccV8LdmBLiX8CYvf9Sp3vQsrqu2QNXRcrbiWvcx/UdlFiqUJJzxRQxgsZmvhXhn4cSKeSmoFjVdupA==
-  dependencies:
-    bn.js "^4.0.0"
-    inherits "^2.0.1"
-    minimalistic-assert "^1.0.0"
-    safer-buffer "^2.1.0"
-
 assertion-error@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/assertion-error/-/assertion-error-2.0.1.tgz#f641a196b335690b1070bf00b6e7593fec190bf7"
@@ -9986,11 +9976,6 @@ hash-base@~3.0.4:
     inherits "^2.0.4"
     safe-buffer "^5.2.1"
 
-hash-wasm@=4.11.0:
-  version "4.11.0"
-  resolved "https://registry.yarnpkg.com/hash-wasm/-/hash-wasm-4.11.0.tgz#7d1479b114c82e48498fdb1d2462a687d00386d5"
-  integrity sha512-HVusNXlVqHe0fzIzdQOGolnFN6mX/fqcrSAOcTBXdvzrXVHwTz11vXeKRmkR5gTuwVpvHZEIyKoePDvuAR+XwQ==
-
 hash-wasm@^4.12.0:
   version "4.12.0"
   resolved "https://registry.yarnpkg.com/hash-wasm/-/hash-wasm-4.12.0.tgz#f9f1a9f9121e027a9acbf6db5d59452ace1ef9bb"
@@ -12839,13 +12824,6 @@ opener@^1.5.2:
   resolved "https://registry.yarnpkg.com/opener/-/opener-1.5.2.tgz#5d37e1f35077b9dcac4301372271afdeb2a13598"
   integrity sha512-ur5UIdyw5Y7yEj9wLzhqXiy6GZ3Mwx0yGI+5sMn2r0N0v3cKJvUmFH5yPP+WXh9e0xfyzyJX95D8l088DNFj7A==
 
-openpgp@^5.11.1:
-  version "5.11.3"
-  resolved "https://registry.yarnpkg.com/openpgp/-/openpgp-5.11.3.tgz#a2532aa973f1f6413556eaf328b97a6955b1d8a3"
-  integrity sha512-jXOPfIteBUQ2zSmRG4+Y6PNntIIDEAvoM/lOYCnvpXAByJEruzrHQZWE/0CGOKHbubwUuty2HoPHsqBzyKHOpA==
-  dependencies:
-    asn1.js "^5.0.0"
-
 optional-require@1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/optional-require/-/optional-require-1.0.3.tgz#275b8e9df1dc6a17ad155369c2422a440f89cb07"
@@ -14583,7 +14561,7 @@ safe-regex2@^5.0.0:
   dependencies:
     ret "~0.5.0"
 
-"safer-buffer@>= 2.1.2 < 3", "safer-buffer@>= 2.1.2 < 3.0.0", safer-buffer@^2.1.0:
+"safer-buffer@>= 2.1.2 < 3", "safer-buffer@>= 2.1.2 < 3.0.0":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
