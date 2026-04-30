@@ -1,8 +1,0 @@
-{
-    "name": "meet-web",
-    "compatibility_date": "2026-01-29",
-    "assets": {
-        "directory": "./dist",
-        "not_found_handling": "single-page-application"
-    }
-}

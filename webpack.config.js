@@ -186,7 +186,13 @@ function getConfig(options = {}) {
                 test: /\.css$/,
                 use: [
                     'style-loader',
-                    'css-loader'
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            importLoaders: 1,
+                        },
+                    },
+                    'postcss-loader', // For tailwindcss
                 ]
             }, {
                 // Import SVG as raw text when using ?raw query parameter.
