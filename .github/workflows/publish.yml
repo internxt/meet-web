@@ -45,7 +45,7 @@ jobs:
           echo JITSI_APP_ID="${{ secrets.JITSI_APP_ID }}" >> .env
 
       - name: Build application
-        run: make compile deploy deploy-cloudflare
+        run: make compile deploy
 
       - name: Publish to Cloudflare Pages
         id: cloudflare
