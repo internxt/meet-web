@@ -3,7 +3,7 @@ CLEANCSS = ./node_modules/.bin/cleancss
 DEPLOY_DIR = libs
 DIST_DIR = dist
 ONNX_DIR= node_modules/onnxruntime-web
-LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet
+LIBJITSIMEET_DIR = node_modules/lib-meet
 TF_WASM_DIR = node_modules/@tensorflow/tfjs-backend-wasm/dist/
 RNNOISE_WASM_DIR = node_modules/@jitsi/rnnoise-wasm/dist
 EXCALIDRAW_DIR = node_modules/@jitsi/excalidraw/dist/prod
@@ -35,7 +35,7 @@ clean:
 	rm -fr $(BUILD_DIR)
 
 .NOTPARALLEL:
-deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-excalidraw deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-tf-wasm deploy-css deploy-local deploy-face-landmarks
+deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-excalidraw deploy-tflite deploy-meet-models deploy-lib-meet deploy-tf-wasm deploy-css deploy-local deploy-face-landmarks
 
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
@@ -50,9 +50,9 @@ deploy-appbundle:
 	cp $(BUILD_DIR)/*.min.js $(DEPLOY_DIR)
 	-cp $(BUILD_DIR)/*.min.js.map $(DEPLOY_DIR)
 
-deploy-lib-jitsi-meet:
+deploy-lib-meet:
 	cp \
-		$(LIBJITSIMEET_DIR)/dist/umd/lib-jitsi-meet.* \
+		$(LIBJITSIMEET_DIR)/dist/umd/lib-meet.* \
 		$(LIBJITSIMEET_DIR)/dist/umd/vodozemac.wasm \
 		$(DEPLOY_DIR)
 
@@ -101,7 +101,7 @@ deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 .NOTPARALLEL:
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-tf-wasm deploy-excalidraw-dev deploy-face-landmarks
+dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-meet deploy-tf-wasm deploy-excalidraw-dev deploy-face-landmarks
 	$(WEBPACK_DEV_SERVER)
 
 source-package:
