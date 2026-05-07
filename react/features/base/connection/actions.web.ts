@@ -14,6 +14,7 @@ import { LocalStorageManager } from "../meet/LocalStorageManager";
 import MeetingService from "../meet/services/meeting.service";
 import { _connectInternal } from "./actions.any";
 import logger from './logger';
+import { SessionStorageManager } from '../meet/SessionStorageManager';
 
 /**
  * Helper function to leave a call with proper user identification (authenticated or anonymous)
@@ -25,7 +26,7 @@ export async function leaveCallWithUserIdentification(roomId: string): Promise<v
     const user = LocalStorageManager.instance.getUser();
     let payload = undefined;
     if (!user){
-        payload = { userId: LocalStorageManager.instance.getAnonymousUUID() || '' }; 
+        payload = { userId: SessionStorageManager.instance.getAnonymousUUID() || '' }; 
     }
     return await MeetingService.instance.leaveCall(roomId, payload);
 }
