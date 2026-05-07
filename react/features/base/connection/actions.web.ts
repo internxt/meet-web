@@ -21,7 +21,7 @@ import logger from './logger';
  * @param {string} roomId - The room ID to leave
  * @returns {Promise<void>}
  */
-async function leaveCallWithUserIdentification(roomId: string): Promise<void> {
+export async function leaveCallWithUserIdentification(roomId: string): Promise<void> {
     const user = LocalStorageManager.instance.getUser();
     let payload = undefined;
     if (!user){

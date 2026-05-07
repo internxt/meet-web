@@ -11,7 +11,7 @@ import { AbstractConference, abstractMapStateToProps } from "../../../../confere
 import { maybeShowSuboptimalExperienceNotification } from "../../../../conference/functions.web";
 import { toggleToolboxVisible } from "../../../../toolbox/actions.any";
 import { fullScreenChanged, showToolbox } from "../../../../toolbox/actions.web";
-import { hangup } from "../../../connection/actions.web";
+import { hangup, leaveCallWithUserIdentification } from "../../../connection/actions.web";
 import { translate } from "../../../i18n/functions";
 import { setColorAlpha } from "../../../util/helpers";
 import { Mode } from "./components/Header";
@@ -20,8 +20,6 @@ import { init } from "../../../../conference/actions.web";
 import CreateConference from "./containers/CreateConference";
 import JoinConference from "./containers/JoinConference";
 import { appNavigate } from "../../../../app/actions.web";
-import { LocalStorageManager } from "../../LocalStorageManager";
-import { ConfigService } from "../../services/config.service";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -218,30 +216,12 @@ class Conference extends AbstractConference<IProps, any> {
      * @returns {string}
      */
     _handlePageHide = (): void => {
-        console.log("[RELOAD]: Page is being hidden, sending leave call request");
-
         const callId = this.props.roomId;
-        const token =  LocalStorageManager.instance.getNewToken();
-        let body = '';
-        if(!token) {
-            const anonymousUserId = LocalStorageManager.instance.getAnonymousUUID();
-            body = JSON.stringify({ userId: anonymousUserId });
+        if (callId) {
+            console.log("[RELOAD]: _handlePageHide calls leaveCall with callID:", callId);
+            leaveCallWithUserIdentification(callId);
         }
-        
-        const MEET_API_URL = ConfigService.instance.get("MEET_API_URL");
-    
-        fetch(`${MEET_API_URL}/call/${callId}/users/leave`, {
-            method: "POST",
-            keepalive: true,
-            headers: {
-                "Content-Type": "application/json; charset=utf-8",
-                Accept: "application/json, text/plain, */*",
-                Authorization: `Bearer ${token}`,
-                "internxt-version": "0.0.1",
-                "internxt-client": "internxt-meet",
-            },
-            body,
-        });
+         console.log("[RELOAD]: _handlePageHide done");
     };
 
     /**
