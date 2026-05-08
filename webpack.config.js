@@ -369,9 +369,6 @@ module.exports = (_env, argv) => {
                             "DRIVE_NEW_API_URL",
                             "PAYMENTS_API_URL",
                             "MEET_API_URL",
-                            "CRYPTO_SECRET",
-                            "MAGIC_IV",
-                            "MAGIC_SALT",
                         ];
                         const env = {};
                         keys.forEach((key) => {

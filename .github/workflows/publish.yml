@@ -39,9 +39,6 @@ jobs:
           echo DRIVE_NEW_API_URL="${{ secrets.DRIVE_NEW_API_URL }}" >> .env
           echo PAYMENTS_API_URL="${{ secrets.PAYMENTS_API_URL }}" >> .env
           echo MEET_API_URL="${{ secrets.MEET_API_URL }}" >> .env
-          echo CRYPTO_SECRET="${{ secrets.CRYPTO_SECRET }}" >> .env
-          echo MAGIC_IV="${{ secrets.MAGIC_IV }}" >> .env
-          echo MAGIC_SALT="${{ secrets.MAGIC_SALT }}" >> .env
           echo JITSI_APP_ID="${{ secrets.JITSI_APP_ID }}" >> .env
 
       - name: Build application
