@@ -20,6 +20,10 @@ import { init } from "../../../../conference/actions.web";
 import CreateConference from "./containers/CreateConference";
 import JoinConference from "./containers/JoinConference";
 import { appNavigate } from "../../../../app/actions.web";
+import { SdkManager } from "../../services/sdk-manager.service";
+import { ConfigService } from "../../services/config.service";
+import { SessionStorageManager } from "../../SessionStorageManager";
+import { LocalStorageManager } from "../../LocalStorageManager";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -218,12 +222,44 @@ class Conference extends AbstractConference<IProps, any> {
     _handlePageHide = (): void => {
         const callId = this.props.roomId;
         if (callId) {
-            console.log("[RELOAD]: _handlePageHide calls leaveCall with callID:", callId);
-            leaveCallWithUserIdentification(callId);
+            const isFirefox = navigator.userAgent.toLowerCase().includes("firefox");
+            if (isFirefox) {
+                console.log("[RELOAD]: Firefox detected, calls leaveCallWithUserIdentification with callID:", callId);
+                leaveCallWithUserIdentification(callId);
+            }
+            else {
+            const userID = SessionStorageManager.instance.getAnonymousUUID() ||
+            LocalStorageManager.instance.getUser()?.userId;
+            if (userID) {
+                console.log("[RELOAD]: Not firefox, sending beacon with userID:", userID);
+                this.sendLeaveCallBeacon(callId, userID);
+            }   
+        }
+            
         }
          console.log("[RELOAD]: _handlePageHide done");
     };
 
+
+sendLeaveCallBeacon(callId: string, userID: string): boolean {
+  const MEET_API_URL = ConfigService.instance.get("MEET_API_URL");
+  const appDetails = SdkManager.getAppDetails();
+
+  const params = new URLSearchParams({
+    clientName: appDetails.clientName,
+    clientVersion: appDetails.clientVersion,
+  });
+
+  const blob = new Blob(
+    [JSON.stringify({ userId: userID })],
+    { type: "application/json" },
+  );
+
+  return navigator.sendBeacon(
+    `${MEET_API_URL}call/${callId}/users/leave?${params.toString()}`,
+    blob,
+  );
+}
     /**
      * Handles the action to leave the meeting immediately.
      * This is triggered when the user clicks the "X" button.
