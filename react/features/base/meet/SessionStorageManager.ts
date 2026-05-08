@@ -1,6 +1,6 @@
 import { v4 } from "uuid";
 
-const ANON_UUID_KEY = "xAnonymousUserUUID";
+export const ANON_UUID_KEY = "xAnonymousUserUUID";
 
 export class SessionStorageManager {
   private static _instance: SessionStorageManager;
