@@ -15,7 +15,6 @@ import {
 } from '../util/uri';
 
 import { setJoinRoomError } from "../meet/general/store/errors/actions";
-import { LocalStorageManager } from "../meet/LocalStorageManager";
 import MeetingService from "../meet/services/meeting.service";
 import { clearNewMeetingFlowSession } from "../meet/services/sessionStorage.service";
 import {
@@ -33,6 +32,7 @@ import logger from "./logger";
 import { get8x8Options } from "./options8x8";
 import { ConnectionFailedError, IIceServers } from "./types";
 import { ConfigService } from '../meet/services/config.service';
+import { SessionStorageManager } from '../meet/SessionStorageManager';
 
 /**
  * The options that will be passed to the JitsiConnection instance.
@@ -246,7 +246,7 @@ export function _connectInternal({
                 let userUUID: string | undefined;
 
                 if (isAnonymous) {
-                    userUUID = LocalStorageManager.instance.getOrCreateAnonymousUUID();
+                    userUUID = SessionStorageManager.instance.getOrCreateAnonymousUUID();
                 }
                 const { token: jwt, appId } = await MeetingService.instance.joinCall(room, {
                     name: displayName ?? name ?? "",
