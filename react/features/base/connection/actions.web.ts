@@ -14,16 +14,21 @@ import { LocalStorageManager } from "../meet/LocalStorageManager";
 import MeetingService from "../meet/services/meeting.service";
 import { _connectInternal } from "./actions.any";
 import logger from './logger';
+import { SessionStorageManager } from '../meet/SessionStorageManager';
 
 /**
  * Helper function to leave a call with proper user identification (authenticated or anonymous)
+ * If authenticated user - uuid is taken from the token, else - sent anonymous uuid from local storage
  * @param {string} roomId - The room ID to leave
  * @returns {Promise<void>}
  */
-async function leaveCallWithUserIdentification(roomId: string): Promise<void> {
+export async function leaveCallWithUserIdentification(roomId: string): Promise<void> {
     const user = LocalStorageManager.instance.getUser();
-    const anonymousUserId = user ? undefined : LocalStorageManager.instance.getAnonymousUUID();
-    return await MeetingService.instance.leaveCall(roomId, anonymousUserId ? { userId: anonymousUserId } : undefined);
+    let payload = undefined;
+    if (!user){
+        payload = { userId: SessionStorageManager.instance.getAnonymousUUID() || '' }; 
+    }
+    return await MeetingService.instance.leaveCall(roomId, payload);
 }
 
 export * from "./actions.any";
@@ -40,9 +45,9 @@ export function connect(id?: string, password?: string) {
         const state = getState();
         const { jwt } = state["features/base/jwt"];
         const { iAmRecorder, iAmSipGateway } = state["features/base/config"];
-        // TODO: CHECK WHY USER REDUCER IS NULL IN THIS POINT, initializers are not executing as expected
-        // const { user } = state["features/user"];
+
         const user = LocalStorageManager.instance.getUser();
+
         if (!iAmRecorder && !iAmSipGateway && isVpaasMeeting(state)) {
             return dispatch(getCustomerDetails())
                 .then(() => {
@@ -50,9 +55,10 @@ export function connect(id?: string, password?: string) {
                         return getJaasJWT(state);
                     }
                 })
-                .then((j) => j && dispatch(setJWT(j)))
-                .then(() =>
-                    dispatch(
+                .then(j => {
+                    j && dispatch(setJWT(j));
+
+                    return dispatch(
                         _connectInternal({
                             id,
                             password,
@@ -60,15 +66,8 @@ export function connect(id?: string, password?: string) {
                             lastname: user?.lastname,
                             isAnonymous: !user,
                         })
-                    )
-                )
-                // latest jitsi changes, test if not works current ones
-                // .then(j => {
-                //     j && dispatch(setJWT(j));
-
-                //     return dispatch(_connectInternal(id, password));
-                // })
-                .catch(e => {
+                    );
+                }).catch(e => {
                     logger.error('Connection error', e);
                 });
         }
@@ -139,14 +138,13 @@ export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?:
 
 export async function cleanupAndReload(roomId: string) {
     try{
-        console.log('[RELOAD_PAGE]: Leaving the call');
+        console.log('[RELOAD] cleanupAndReload is called:', roomId);
         await leaveCallWithUserIdentification(roomId);
-        console.log('[RELOAD_PAGE]: Cleaning up the conference');
         await APP.conference.cleanup();
     } catch (error) {
-        console.error("[RELOAD_PAGE]: Error during cleanup and reload", error);
+        console.error("[RELOAD]: Error during cleanup and reload", error);
     } finally {
-        console.log("[RELOAD_PAGE]: Reloading the page");
+        console.log("[RELOAD]: Reloading the page");
         window.location.reload();
     }
 }
