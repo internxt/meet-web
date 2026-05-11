@@ -2916,10 +2916,10 @@
   resolved "https://registry.yarnpkg.com/@jitsi/rnnoise-wasm/-/rnnoise-wasm-0.2.1.tgz#55b1991e5b66de57e730eeaf91a7b1846e005eda"
   integrity sha512-iEj77www43pS2Yq+cfLZb+hFuI7L5ccisBzzPMcOjjLsG4/LAlkD1CY58/8gc84nHdLBGmD/OPIWGnvYnXvB0A==
 
-"@jitsi/rtcstats@9.7.0":
-  version "9.7.0"
-  resolved "https://registry.yarnpkg.com/@jitsi/rtcstats/-/rtcstats-9.7.0.tgz#4ded1f83660badf8d50c297a9cf09c3dc58105ff"
-  integrity sha512-OPURb3GO7zciPYoF/5IWLl2VVd90GD9KFlOnLQPalI2gUQDfxYNqn7JqeKAug1peTgml6I2o55lWYINuzPETWQ==
+"@jitsi/rtcstats@9.7.1":
+  version "9.7.1"
+  resolved "https://registry.yarnpkg.com/@jitsi/rtcstats/-/rtcstats-9.7.1.tgz#0b66f343fe31ea5994219987217f43f5663c22c4"
+  integrity sha512-a8LVqzlBNh/fLnDfE4HcnutQ8Dpki31wmHw2pMS5Qu+shhzfZKUSb2NimPXT0l7WwkFqVflYGiQhfsavXPcMog==
   dependencies:
     "@jitsi/js-utils" "^2.2.0"
     "@jitsi/logger" "2.0.2"
@@ -12459,6 +12459,11 @@ jwt-decode@2.2.0:
   resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-2.2.0.tgz#7d86bd56679f58ce6a84704a657dd392bba81a79"
   integrity sha512-86GgN2vzfUu7m9Wcj63iUkuDzFNYFVmjeDm2GzWpUk+opB0pEpMsw6ePCMrhYkumz2C1ihqtZzOMAg7FiXcNoQ==
 
+jwt-decode@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-4.0.0.tgz#2270352425fd413785b2faf11f6e755c5151bd4b"
+  integrity sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==
+
 katex@^0.16.9:
   version "0.16.45"
   resolved "https://registry.yarnpkg.com/katex/-/katex-0.16.45.tgz#ba60d39c54746b6b8d39ce0e7f6eace07143149c"
@@ -12541,15 +12546,15 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-"lib-jitsi-meet@https://github.com/internxt/lib-jitsi-meet/releases/download/v.0.0.21/lib-jitsi-meet-0.0.21.tgz":
-  version "0.0.21"
-  resolved "https://github.com/internxt/lib-jitsi-meet/releases/download/v.0.0.21/lib-jitsi-meet-0.0.21.tgz#dae342382a2c8447bef59cacbf3b1d0a858520b9"
+"lib-meet@https://github.com/internxt/lib-meet/releases/download/v.1.0.0/lib-meet-1.0.0.tgz":
+  version "1.0.0"
+  resolved "https://github.com/internxt/lib-meet/releases/download/v.1.0.0/lib-meet-1.0.0.tgz#c93f97512cc5e3dcf19af4b8c7b3f815869e82dd"
   dependencies:
     "@hexagon/base64" "^2.0.4"
     "@jitsi/js-utils" "^2.6.7"
     "@jitsi/logger" "2.1.1"
     "@jitsi/precall-test" "1.0.6"
-    "@jitsi/rtcstats" "9.7.0"
+    "@jitsi/rtcstats" "9.7.1"
     "@noble/ciphers" "^2.0.1"
     "@noble/hashes" "^2.0.1"
     "@noble/post-quantum" "^0.5.2"
@@ -12558,11 +12563,12 @@ levn@^0.4.1:
     base64-js "1.5.1"
     current-executing-script "0.1.3"
     emoji-regex "10.4.0"
-    lodash-es "4.17.21"
+    jwt-decode "4.0.0"
+    lodash-es "4.18.1"
     onnxruntime-web "=1.23.0"
     sdp-transform "2.3.0"
     strophe.js "https://github.com/jitsi/strophejs/releases/download/v1.5-jitsi-3/strophe.js-1.5.0.tgz"
-    uuid "8.3.2"
+    uuid "14.0.0"
     vodozemac-wasm "git+https://github.com/internxt/vodozemac-wasm"
     webrtc-adapter "8.1.1"
 
@@ -12725,11 +12731,6 @@ locate-path@^7.1.0:
   integrity sha512-gvVijfZvn7R+2qyPX8mAuKcFGDf6Nc61GdvGafQsHL0sBIxfKzA+usWn4GFC/bk+QdwPUD4kWFJLhElipq+0VA==
   dependencies:
     p-locate "^6.0.0"
-
-lodash-es@4.17.21:
-  version "4.17.21"
-  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
-  integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
 
 lodash-es@4.18.1, lodash-es@^4.17.21:
   version "4.18.1"
@@ -14234,20 +14235,20 @@ onetime@^5.1.0, onetime@^5.1.2:
   dependencies:
     mimic-fn "^2.1.0"
 
-onnxruntime-common@1.24.3:
-  version "1.24.3"
-  resolved "https://registry.yarnpkg.com/onnxruntime-common/-/onnxruntime-common-1.24.3.tgz#fb93319a2d041fc9fe2a209167ba6ef2f1a47fee"
-  integrity sha512-GeuPZO6U/LBJXvwdaqHbuUmoXiEdeCjWi/EG7Y1HNnDwJYuk6WUbNXpF6luSUY8yASul3cmUlLGrCCL1ZgVXqA==
+onnxruntime-common@1.23.0:
+  version "1.23.0"
+  resolved "https://registry.yarnpkg.com/onnxruntime-common/-/onnxruntime-common-1.23.0.tgz#ab254b0725fc837597000e705f885db523d6c37e"
+  integrity sha512-Auz8S9D7vpF8ok7fzTobvD1XdQDftRf/S7pHmjeCr3Xdymi4z1C7zx4vnT6nnUjbpelZdGwda0BmWHCCTMKUTg==
 
-onnxruntime-web@^1.23.0:
-  version "1.24.3"
-  resolved "https://registry.yarnpkg.com/onnxruntime-web/-/onnxruntime-web-1.24.3.tgz#83e4e60d07ba97b9db89ea3a6795555c9d258fea"
-  integrity sha512-41dDq7fxtTm0XzGE7N0d6m8FcOY8EWtUA65GkOixJPB/G7DGzBmiDAnVVXHznRw9bgUZpb+4/1lQK/PNxGpbrQ==
+onnxruntime-web@=1.23.0:
+  version "1.23.0"
+  resolved "https://registry.yarnpkg.com/onnxruntime-web/-/onnxruntime-web-1.23.0.tgz#7e3dd04df7e6d659f7acf1cab6caa706898344e0"
+  integrity sha512-w0bvC2RwDxphOUFF8jFGZ/dYw+duaX20jM6V4BIZJPCfK4QuCpB/pVREV+hjYbT3x4hyfa2ZbTaWx4e1Vot0fQ==
   dependencies:
     flatbuffers "^25.1.24"
     guid-typescript "^1.0.9"
     long "^5.2.3"
-    onnxruntime-common "1.24.3"
+    onnxruntime-common "1.23.0"
     platform "^1.3.6"
     protobufjs "^7.2.4"
 
@@ -17730,11 +17731,6 @@ uuid@14.0.0:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-14.0.0.tgz#0af883220163d264ffe0c084f6b8a89b9666966d"
   integrity sha512-Qo+uWgilfSmAhXCMav1uYFynlQO7fMFiMVZsQqZRMIXp0O7rR7qjkj+cPvBHLgBqi960QCoo/PH2/6ZtVqKvrg==
 
-uuid@8.3.2, uuid@^8.3.2:
-  version "8.3.2"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
-  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
-
 uuid@^11.1.0:
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-11.1.0.tgz#9549028be1753bb934fc96e2bca09bb4105ae912"
@@ -17744,6 +17740,11 @@ uuid@^13.0.0:
   version "13.0.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-13.0.2.tgz#41bc9c07b12f665089c205f6507976adbdf84ff8"
   integrity sha512-vzi9uRZ926x4XV73S/4qQaTwPXM2JBj6/6lI/byHH1jOpCzb0zDbfytgA9LcN/hzb2l7WQSQnxITOVx5un/wGw==
+
+uuid@^8.3.2:
+  version "8.3.2"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
+  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
 uuid@^9.0.0:
   version "9.0.1"
