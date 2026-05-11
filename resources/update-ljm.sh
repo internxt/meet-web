@@ -16,12 +16,12 @@ fi
 THIS_DIR=$(cd -P "$(dirname "$(readlink "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)
 
 pushd ${THIS_DIR}/..
-CURRENT_LJM_DEP=$(jq -r '.dependencies."lib-jitsi-meet"' package.json)
+CURRENT_LJM_DEP=$(jq -r '.dependencies."lib-meet"' package.json)
 popd
 
-NEW_LJM_RELEASE=$(gh release list --limit 1 --repo jitsi/lib-jitsi-meet | awk {'print $1'})
-GH_LINK="https://github.com/jitsi/lib-jitsi-meet/releases/tag/${NEW_LJM_RELEASE}"
-LATEST_LJM_DEP="https://github.com/jitsi/lib-jitsi-meet/releases/download/${NEW_LJM_RELEASE}/lib-jitsi-meet.tgz"
+NEW_LJM_RELEASE=$(gh release list --limit 1 --repo jitsi/lib-meet | awk {'print $1'})
+GH_LINK="https://github.com/internxt/lib-meet/releases/tag/${NEW_LJM_RELEASE}"
+LATEST_LJM_DEP="https://github.com/internxt/lib-meet/releases/download/${NEW_LJM_RELEASE}/lib-meet.tgz"
 
 if [[ "${CURRENT_LJM_DEP}" == "${LATEST_LJM_DEP}" ]]; then
     echo "No need to update, already on the latest commit!"
