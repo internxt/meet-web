@@ -4,6 +4,15 @@ import { LocalStorageManager } from "../../../../LocalStorageManager";
 import { AUTH_ACTIONS } from "../../../../middlewares";
 import { initializeAuth, loginSuccess, logout, refreshTokenSuccess } from "../actions";
 
+vi.mock("../../../../middlewares", () => ({
+    AUTH_ACTIONS: {
+        INITIALIZE_AUTH: "INITIALIZE_AUTH",
+        LOGIN_SUCCESS: "LOGIN_SUCCESS",
+        LOGOUT: "LOGOUT",
+        REFRESH_TOKEN_SUCCESS: "REFRESH_TOKEN_SUCCESS",
+    },
+}));
+
 vi.mock("../../../../LocalStorageManager", () => {
     const mockInstance = {
         getNewToken: vi.fn(),
