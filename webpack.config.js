@@ -111,10 +111,8 @@ function devServerProxyBypass({ path, headers }) {
 function getConfig(options = {}) {
     const { detectCircularDeps, isProduction } = options;
 
-    const parallelism = parseInt(process.env.WEBPACK_PARALLELISM, 10);
-
     return {
-        ...(parallelism > 0 ? { parallelism } : {}),
+        parallelism: 4,
         devtool: isProduction ? false : "eval-source-map",
         mode: isProduction ? "production" : "development",
         module: {
