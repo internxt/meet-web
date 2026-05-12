@@ -125,6 +125,7 @@ function getConfig(options = {}) {
                     options: {
                         // Avoid loading babel.config.js, since we only use it for React Native.
                         configFile: false,
+                        cacheDirectory: true,
 
                         // XXX The require.resolve below solves failures to locate the
                         // presets when lib-jitsi-meet, for example, is npm linked in
