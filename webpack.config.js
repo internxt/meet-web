@@ -112,7 +112,6 @@ function getConfig(options = {}) {
     const { detectCircularDeps, isProduction } = options;
 
     return {
-        parallelism: 4,
         devtool: isProduction ? false : "eval-source-map",
         mode: isProduction ? "production" : "development",
         module: {
@@ -157,8 +156,8 @@ function getConfig(options = {}) {
                                     // with core-js.
                                     useBuiltIns: "usage",
 
-                                // core-js version to use, must be in sync with the version in package.json.
-                                corejs: '3.40'
+                                    // core-js version to use, must be in sync with the version in package.json.
+                                    corejs: '3.40'
                             }
                         ],
                         require.resolve('@babel/preset-react')
@@ -350,9 +349,6 @@ module.exports = (_env, argv) => {
             plugins: [
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, "app"),
-                new webpack.DefinePlugin({
-                    __DEV__: !isProduction,
-                }),
                 new webpack.IgnorePlugin({
                     resourceRegExp: /^canvas$/,
                     contextRegExp: /resemblejs$/,
@@ -365,20 +361,14 @@ module.exports = (_env, argv) => {
                     process: "process/browser",
                 }),
                 new webpack.DefinePlugin({
-                    "process.env": (() => {
-                        const keys = [
-                            "DRIVE_NEW_API_URL",
-                            "PAYMENTS_API_URL",
-                            "MEET_API_URL",
-                        ];
-                        const env = {};
-                        keys.forEach((key) => {
-                            if (process.env[key]) {
-                                env[key] = process.env[key];
-                            }
-                        });
-                        return JSON.stringify(env);
-                    })(),
+                    __DEV__: !isProduction,
+                    "process.env": JSON.stringify(
+                        Object.fromEntries(
+                            ["DRIVE_NEW_API_URL", "PAYMENTS_API_URL", "MEET_API_URL"]
+                                .filter((k) => process.env[k])
+                                .map((k) => [k, process.env[k]]),
+                        ),
+                    ),
                 }),
                 new webpack.ProvidePlugin({
                     Buffer: ["buffer", "Buffer"],
