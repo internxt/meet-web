@@ -325,6 +325,8 @@ function getDevServerConfig() {
 }
 
 module.exports = (_env, argv) => {
+    const bundleFilter = _env?.bundle;
+
     const analyzeBundle = Boolean(process.env.ANALYZE_BUNDLE);
     const mode = typeof argv.mode === "undefined" ? "production" : argv.mode;
     const isProduction = mode === "production";
@@ -338,7 +340,7 @@ module.exports = (_env, argv) => {
         isProduction,
     };
 
-    return [
+    const allConfigs = [
         {
             ...config,
             entry: {
@@ -463,4 +465,18 @@ module.exports = (_env, argv) => {
             performance: getPerformanceHints(perfHintOptions, 30 * 1024),
         },
     ];
+
+    if (bundleFilter) {
+        const filterMap = {
+            app: ['app.bundle', 'alwaysontop', 'close3'],
+            api: ['external_api'],
+            workers: ['face-landmarks-worker', 'noise-suppressor-worklet', 
+                      'screenshot-capture-worker'],
+        };
+        const allowed = new Set(filterMap[bundleFilter] ?? []);
+        return allConfigs.filter(c => 
+            Object.keys(c.entry).some(k => allowed.has(k))
+        );
+    }
+    return allConfigs;
 };
