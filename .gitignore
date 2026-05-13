@@ -13,6 +13,9 @@ all.css
 # Coverage
 coverage
 
+#Build artifacts
+dist/
+
 # CocoaPods
 Pods/
 

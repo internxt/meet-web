@@ -28,8 +28,10 @@ endif
 all: compile deploy
 
 compile: clean
-	NODE_OPTIONS=--max-old-space-size=8192 \
-	$(WEBPACK)
+	NODE_OPTIONS=--max-old-space-size=8192 $(WEBPACK) --env bundle=app & \
+    NODE_OPTIONS=--max-old-space-size=8192 $(WEBPACK) --env bundle=api & \
+    NODE_OPTIONS=--max-old-space-size=8192 $(WEBPACK) --env bundle=workers & \
+    wait
 
 clean:
 	rm -fr $(BUILD_DIR)

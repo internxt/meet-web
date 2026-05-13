@@ -111,10 +111,7 @@ function devServerProxyBypass({ path, headers }) {
 function getConfig(options = {}) {
     const { detectCircularDeps, isProduction } = options;
 
-    const parallelism = parseInt(process.env.WEBPACK_PARALLELISM, 10);
-
     return {
-        ...(parallelism > 0 ? { parallelism } : {}),
         devtool: isProduction ? false : "eval-source-map",
         mode: isProduction ? "production" : "development",
         module: {
@@ -127,6 +124,7 @@ function getConfig(options = {}) {
                     options: {
                         // Avoid loading babel.config.js, since we only use it for React Native.
                         configFile: false,
+                        cacheDirectory: true,
 
                         // XXX The require.resolve below solves failures to locate the
                         // presets when lib-jitsi-meet, for example, is npm linked in
@@ -158,8 +156,8 @@ function getConfig(options = {}) {
                                     // with core-js.
                                     useBuiltIns: "usage",
 
-                                // core-js version to use, must be in sync with the version in package.json.
-                                corejs: '3.40'
+                                    // core-js version to use, must be in sync with the version in package.json.
+                                    corejs: '3.40'
                             }
                         ],
                         require.resolve('@babel/preset-react')
@@ -326,6 +324,8 @@ function getDevServerConfig() {
 }
 
 module.exports = (_env, argv) => {
+    const bundleFilter = _env?.bundle;
+
     const analyzeBundle = Boolean(process.env.ANALYZE_BUNDLE);
     const mode = typeof argv.mode === "undefined" ? "production" : argv.mode;
     const isProduction = mode === "production";
@@ -339,7 +339,7 @@ module.exports = (_env, argv) => {
         isProduction,
     };
 
-    return [
+    const allConfigs = [
         {
             ...config,
             entry: {
@@ -349,9 +349,6 @@ module.exports = (_env, argv) => {
             plugins: [
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, "app"),
-                new webpack.DefinePlugin({
-                    __DEV__: !isProduction,
-                }),
                 new webpack.IgnorePlugin({
                     resourceRegExp: /^canvas$/,
                     contextRegExp: /resemblejs$/,
@@ -364,20 +361,14 @@ module.exports = (_env, argv) => {
                     process: "process/browser",
                 }),
                 new webpack.DefinePlugin({
-                    "process.env": (() => {
-                        const keys = [
-                            "DRIVE_NEW_API_URL",
-                            "PAYMENTS_API_URL",
-                            "MEET_API_URL",
-                        ];
-                        const env = {};
-                        keys.forEach((key) => {
-                            if (process.env[key]) {
-                                env[key] = process.env[key];
-                            }
-                        });
-                        return JSON.stringify(env);
-                    })(),
+                    __DEV__: !isProduction,
+                    "process.env": JSON.stringify(
+                        Object.fromEntries(
+                            ["DRIVE_NEW_API_URL", "PAYMENTS_API_URL", "MEET_API_URL"]
+                                .filter((k) => process.env[k])
+                                .map((k) => [k, process.env[k]]),
+                        ),
+                    ),
                 }),
                 new webpack.ProvidePlugin({
                     Buffer: ["buffer", "Buffer"],
@@ -464,4 +455,18 @@ module.exports = (_env, argv) => {
             performance: getPerformanceHints(perfHintOptions, 30 * 1024),
         },
     ];
+
+    if (bundleFilter) {
+        const filterMap = {
+            app: ['app.bundle', 'alwaysontop', 'close3'],
+            api: ['external_api'],
+            workers: ['face-landmarks-worker', 'noise-suppressor-worklet', 
+                      'screenshot-capture-worker'],
+        };
+        const allowed = new Set(filterMap[bundleFilter] ?? []);
+        return allConfigs.filter(c => 
+            Object.keys(c.entry).some(k => allowed.has(k))
+        );
+    }
+    return allConfigs;
 };
