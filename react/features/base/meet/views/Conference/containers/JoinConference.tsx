@@ -1,4 +1,3 @@
-import _ from "lodash";
 import React from "react";
 import { WithTranslation } from "react-i18next";
 import { connect as reactReduxConnect } from "react-redux";
@@ -21,10 +20,9 @@ import ReactionAnimations from "../../../../../reactions/components/web/Reaction
 import { toggleToolboxVisible } from "../../../../../toolbox/actions.any";
 import { fullScreenChanged, showToolbox } from "../../../../../toolbox/actions.web";
 import JitsiPortal from "../../../../../toolbox/components/web/JitsiPortal";
-import Toolbox from "../../../../../toolbox/components/web/Toolbox";
 import { LAYOUT_CLASSNAMES } from "../../../../../video-layout/constants";
 import { getCurrentLayout } from "../../../../../video-layout/functions.any";
-import { getConferenceNameForTitle } from "../../../../conference/functions";
+import { getConferenceNameForTitle, getConferenceState } from "../../../../conference/functions";
 import { isMobileBrowser } from "../../../../environment/utils";
 import { translate } from "../../../../i18n/functions";
 
@@ -41,6 +39,7 @@ import { isNewMeetingFlow } from "../../../services/sessionStorage.service";
 import PrivateMeetingBanner from "../../../general/components/PrivateMeetingBanner";
 import ConferenceControlsWrapper from "./ConferenceControlsWrapper";
 import VideoGalleryWrapper from "./VideoGalleryWrapper";
+import StateListenerRegistry from "../../../../redux/StateListenerRegistry";
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need
@@ -97,6 +96,15 @@ interface IProps extends AbstractProps, WithTranslation {
     dispatch: any;
 }
 
+StateListenerRegistry.register(
+    state => getConferenceState(state).room,
+    (room, { dispatch }) => {
+        if (room && room !== 'new-meeting' && isNewMeetingFlow()) {
+            dispatch(init(true));
+        }
+    }
+);
+
 /**
  * The conference page of the Web application.
  */
@@ -152,18 +160,6 @@ class Conference extends AbstractConference<IProps, any> {
         );
         this.props.dispatch(setCreateRoomError(false));
         this.props.dispatch(setJoinRoomError(false));
-    }
-
-    override componentDidUpdate(prevProps: IProps) {
-        const isComingFromNewMeetingFlow = isNewMeetingFlow();
-        const hasRoomChanged = prevProps._roomName !== this.props._roomName;
-        const hasValidRoom = this.props._roomName && this.props._roomName !== "new-meeting";
-
-        const shouldAutoConnect = isComingFromNewMeetingFlow && hasRoomChanged && hasValidRoom;
-
-        if (shouldAutoConnect) {
-            this.props.dispatch(init(true));
-        }
     }
 
     /**
