@@ -112,6 +112,7 @@ function getConfig(options = {}) {
     const { detectCircularDeps, isProduction } = options;
 
     return {
+        parallelism: 4,
         devtool: isProduction ? false : "eval-source-map",
         mode: isProduction ? "production" : "development",
         module: {
