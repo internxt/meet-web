@@ -215,7 +215,7 @@ function getConfig(options = {}) {
                 loader: 'ts-loader',
                 options: {
                     configFile: 'tsconfig.web.json',
-                    transpileOnly: !isProduction // Skip type checking for dev builds.,
+                    transpileOnly: true,
                 }
             } ]
         },
@@ -346,6 +346,11 @@ module.exports = (_env, argv) => {
                 "app.bundle": "./app.js",
             },
             devServer: isProduction ? {} : getDevServerConfig(),
+            optimization: {
+                ...config.optimization,
+                splitChunks: false,
+                runtimeChunk: false,
+            },
             plugins: [
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, "app"),

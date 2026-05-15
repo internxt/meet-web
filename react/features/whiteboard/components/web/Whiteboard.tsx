@@ -25,7 +25,7 @@ import {
 const LazyExcalidrawApp = React.lazy(async () => {
     const [ { ExcalidrawApp } ] = await Promise.all([
         import(/* webpackChunkName: "excalidraw" */ '@jitsi/excalidraw'),
-        import(/* webpackChunkName: "excalidraw" */ '@jitsi/excalidraw/index.css')
+       //import(/* webpackChunkName: "excalidraw" */ '@jitsi/excalidraw/index.css')
     ]);
 
     return { default: ExcalidrawApp };
