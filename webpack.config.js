@@ -358,6 +358,16 @@ module.exports = (_env, argv) => {
                     resourceRegExp: /^\.\/locale$/,
                     contextRegExp: /moment$/,
                 }),
+                new webpack.IgnorePlugin({
+                    resourceRegExp: /\.(native|ios|android)\.(js|ts|tsx)$/,
+                }),
+                new webpack.IgnorePlugin({
+                    resourceRegExp: /react-native/,
+                    contextRegExp: /node_modules/,
+                }),
+                new webpack.IgnorePlugin({
+                    resourceRegExp: /^react-native$/,
+                }),
                 new webpack.ProvidePlugin({
                     process: "process/browser",
                 }),
