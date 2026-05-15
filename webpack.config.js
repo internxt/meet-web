@@ -112,6 +112,7 @@ function getConfig(options = {}) {
     const { detectCircularDeps, isProduction } = options;
 
     return {
+        parallelism: 4,
         devtool: isProduction ? false : "eval-source-map",
         mode: isProduction ? "production" : "development",
         module: {
@@ -232,7 +233,7 @@ function getConfig(options = {}) {
             filename: `[name]${isProduction ? '.min' : ''}.js`,
             chunkFilename: `chunks/[id]${isProduction ? '.min' : ''}.js`,
             path: `${__dirname}/build`,
-            publicPath: isProduction ? 'auto' : '/libs/',
+            publicPath: '/libs/',
             sourceMapFilename: '[file].map'
         },
         plugins: [
