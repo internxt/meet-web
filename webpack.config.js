@@ -215,7 +215,7 @@ function getConfig(options = {}) {
                 loader: 'ts-loader',
                 options: {
                     configFile: 'tsconfig.web.json',
-                    transpileOnly: !isProduction // Skip type checking for dev builds.,
+                    transpileOnly: true,
                 }
             } ]
         },
@@ -357,6 +357,16 @@ module.exports = (_env, argv) => {
                 new webpack.IgnorePlugin({
                     resourceRegExp: /^\.\/locale$/,
                     contextRegExp: /moment$/,
+                }),
+                new webpack.IgnorePlugin({
+                    resourceRegExp: /\.(native|ios|android)\.(js|ts|tsx)$/,
+                }),
+                new webpack.IgnorePlugin({
+                    resourceRegExp: /react-native/,
+                    contextRegExp: /node_modules/,
+                }),
+                new webpack.IgnorePlugin({
+                    resourceRegExp: /^react-native$/,
                 }),
                 new webpack.ProvidePlugin({
                     process: "process/browser",
