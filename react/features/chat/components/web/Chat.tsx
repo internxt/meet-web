@@ -610,10 +610,10 @@ function renderChat() {
                     role="tabpanel"
                     tabIndex={0}
                 >
-                    <div className={classes.messageContainerWrapper}>
+                    <MessageContainer
                         isVisible = { _focusedTab === ChatTabs.CHAT }
-                        <MessageContainer messages={_messages} translate={t} />
-                    </div>
+                        messages = { _messages }  translate={t} />
+                    <MessageRecipient />
 
                     <MessageRecipient />
 
