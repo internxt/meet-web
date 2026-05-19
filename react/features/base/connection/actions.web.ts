@@ -23,12 +23,10 @@ import { SessionStorageManager } from '../meet/SessionStorageManager';
  * @returns {Promise<void>}
  */
 export async function leaveCallWithUserIdentification(roomId: string): Promise<void> {
-    const user = LocalStorageManager.instance.getUser();
-    let payload = undefined;
-    if (!user){
-        payload = { userId: SessionStorageManager.instance.getAnonymousUUID() || '' }; 
+    const userId = SessionStorageManager.instance.getUserID();
+    if (userId) {
+        return await MeetingService.instance.leaveCall(roomId, { userId });
     }
-    return await MeetingService.instance.leaveCall(roomId, payload);
 }
 
 export * from "./actions.any";

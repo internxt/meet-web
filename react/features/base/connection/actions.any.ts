@@ -247,14 +247,16 @@ export function _connectInternal({
                 let userUUID: string | undefined;
 
                 if (isAnonymous) {
-                    userUUID = SessionStorageManager.instance.getOrCreateAnonymousUUID();
+                    userUUID = SessionStorageManager.instance.getOrCreateUserID();
                 }
-                const { token: jwt, appId } = await MeetingService.instance.joinCall(room, {
+                const { token: jwt, appId, userId } = await MeetingService.instance.joinCall(room, {
                     name: displayName ?? name ?? "",
                     lastname: lastname ?? "",
                     anonymous: !!isAnonymous,
                     anonymousId: userUUID,
                 });
+
+                SessionStorageManager.instance.setUserID(userId);
 
                 const newOptions = get8x8Options(options, appId, room);
 
