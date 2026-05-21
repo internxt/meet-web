@@ -376,6 +376,8 @@
         "incorrectRoomLockPassword": "Incorrect password",
         "internalError": "Oops! Something went wrong. The following error occurred: {{error}}",
         "internalErrorTitle": "Internal error",
+        "kickDuplicateTitle": "Oops! You are already in the meeting",
+        "kickDuplicateMessage": "It looks like you already joined this meeting. Try looking into other open windows where you might have the meeting running",
         "kickMessage": "You can contact {{participantDisplayName}} for more details.",
         "kickParticipantButton": "Kick",
         "kickParticipantDialog": "Are you sure you want to kick this participant?",
