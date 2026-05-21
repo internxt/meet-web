@@ -10,6 +10,12 @@ const useStyles = makeStyles()(theme => {
             marginBottom: theme.spacing(1)
         },
 
+        title: {
+            fontSize: '1.25rem',
+            fontWeight: 'bold',
+            textAlign: 'left'
+        },
+
         text: {
             fontSize: '1.25rem'
         }
@@ -55,7 +61,7 @@ const LeaveReasonDialog = ({ onClose, title, message }: IProps) => {
             size = 'medium'
             testId = 'dialog.leaveReason'>
             <div className = { classes.dialog }>
-                {title ? <div className = { classes.text }>{t(title)}</div> : null}
+                {title ? <div className = { classes.title }>{t(title)}</div> : null}
                 {message ? <div className = { classes.text }>{t(message)}</div> : null}
             </div>
         </Dialog>
