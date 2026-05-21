@@ -2133,7 +2133,7 @@ export default {
      * @param {boolean} [notifyOnConferenceTermination] whether to notify
      * the user on conference termination
      */
-    hangup(requestFeedback = false, hangupReason, notifyOnConferenceTermination) {
+    hangup(requestFeedback = false, hangupReason, notifyOnConferenceTermination, hangupMessage) {
         APP.store.dispatch(disableReceiver());
 
         this._stopProxyConnection();
@@ -2154,7 +2154,7 @@ export default {
             const feedbackDialogClosed = (feedbackResult = {}) => {
                 if (!feedbackResult.wasDialogShown && hangupReason && notifyOnConferenceTermination) {
                     return APP.store.dispatch(
-                        openLeaveReasonDialog(hangupReason)).then(() => feedbackResult);
+                        openLeaveReasonDialog(hangupReason, hangupMessage)).then(() => feedbackResult);
                 }
 
                 return Promise.resolve(feedbackResult);

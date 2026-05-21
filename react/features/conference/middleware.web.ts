@@ -7,7 +7,6 @@ import { openAllowToggleCameraDialog, setCameraFacingMode } from '../base/tracks
 import { CAMERA_FACING_MODE_MESSAGE } from '../base/tracks/constants';
 
 import './middleware.any';
-import { showKickoutDuplicateNotification } from '../base/meet/general/components/KickoutDuplicate';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
