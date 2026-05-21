@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { makeStyles } from 'tss-react/mui';
 
-import Dialog from '../../../../../base/ui/components/web/Dialog';
+import Dialog from '../../../../ui/components/web/Dialog';
 
 const useStyles = makeStyles()(theme => {
     return {
