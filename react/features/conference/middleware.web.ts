@@ -7,6 +7,8 @@ import { openAllowToggleCameraDialog, setCameraFacingMode } from '../base/tracks
 import { CAMERA_FACING_MODE_MESSAGE } from '../base/tracks/constants';
 
 import './middleware.any';
+import { openDialog } from '../base/dialog/actions';
+import { KickoutDuplicate } from '../base/meet/general/components/KickoutDuplicate';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
@@ -31,14 +33,12 @@ MiddlewareRegistry.register(store => next => action => {
 
         const roomId = room ?? "";
 
-        dispatch(
-            hangup(
-                true,
-                roomId,
-                i18next.t("dialog.kickDuplicateTitle"),
-                true
-            )
-        );
+        dispatch(openDialog('KickoutDuplicate', KickoutDuplicate, {
+            title: i18next.t("dialog.kickDuplicateTitle"),
+            message: i18next.t("dialog.kickDuplicateMessage")
+        }));
+
+        dispatch(hangup(true,roomId));
 
         return result;
     }
