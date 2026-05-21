@@ -30,6 +30,8 @@ interface IProps {
      * The title to display in the dialog.
      */
     title?: string;
+
+    message?: string;
 }
 
 /**
@@ -38,7 +40,7 @@ interface IProps {
  * @param {IProps} props - Component's props.
  * @returns {JSX}
  */
-const LeaveReasonDialog = ({ onClose, title }: IProps) => {
+const LeaveReasonDialog = ({ onClose, title, message }: IProps) => {
     const { classes } = useStyles();
     const { t } = useTranslation();
 
@@ -54,6 +56,7 @@ const LeaveReasonDialog = ({ onClose, title }: IProps) => {
             testId = 'dialog.leaveReason'>
             <div className = { classes.dialog }>
                 {title ? <div className = { classes.text }>{t(title)}</div> : null}
+                {message ? <div className = { classes.text }>{t(message)}</div> : null}
             </div>
         </Dialog>
     );
