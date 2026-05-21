@@ -32,9 +32,15 @@ MiddlewareRegistry.register(store => next => action => {
 
         const roomId = room ?? "";
 
-        showKickoutDuplicateNotification(dispatch);
-
-        dispatch(hangup(true,roomId));
+       dispatch(
+            hangup(
+                true,
+                roomId,
+                i18next.t("dialog.kickDuplicateTitle"),
+                true,
+                i18next.t("dialog.kickDuplicateMessage"),
+            )
+        );
 
         return result;
     }

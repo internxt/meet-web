@@ -103,7 +103,7 @@ export function connect(id?: string, password?: string) {
  * the user on conference termination.
  * @returns {Function}
  */
-export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?: string, notifyOnConferenceTermination?: boolean) {
+export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?: string, notifyOnConferenceTermination?: boolean, feedbackMessage?: string) {
      // XXX For web based version we use conference hanging up logic from the old app.
     return async (dispatch: IStore["dispatch"]) => {
         if (LocalRecordingManager.isRecordingLocally()) {
@@ -130,7 +130,7 @@ export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?:
 
         await leaveCallWithUserIdentification(roomId);
 
-        return APP.conference.hangup(requestFeedback, feedbackTitle, notifyOnConferenceTermination);
+        return APP.conference.hangup(requestFeedback, feedbackTitle, notifyOnConferenceTermination, feedbackMessage);
     };
 }
 

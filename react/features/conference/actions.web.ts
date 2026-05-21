@@ -15,11 +15,12 @@ import logger from './logger';
  *
  * @returns {Promise} Resolved when the dialog is closed.
  */
-export function openLeaveReasonDialog(title?: string) {
+export function openLeaveReasonDialog(title?: string, message?: string) {
     return (dispatch: IStore['dispatch']): Promise<void> => new Promise(resolve => {
         dispatch(openDialog('LeaveReasonDialog', LeaveReasonDialog, {
             onClose: resolve,
-            title
+            title,
+            message
         }));
     });
 }
