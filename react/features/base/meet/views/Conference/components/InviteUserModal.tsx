@@ -1,5 +1,5 @@
 import { Button, TransparentModal } from "@internxt/ui";
-import { CheckIcon, LinkIcon, X } from "@phosphor-icons/react";
+import { CheckIcon, LinkIcon, XIcon } from "@phosphor-icons/react";
 import React, { useState } from "react";
 import { getDecodedURI } from "../../../../util/uri";
 import { MAX_SIZE_PARTICIPANTS } from "../../../constants";
@@ -37,7 +37,7 @@ const InviteUserModal = ({ isOpen, onClose, translate, participantsCount, invite
                     className="absolute right-5 top-4 hover:bg-gray-700 rounded-lg transition-colors text-gray-400 hover:text-white"
                     aria-label="Close dialog"
                 >
-                    <X className="w-5 h-5" />
+                    <XIcon className="w-5 h-5" />
                 </button>
                 <div className="flex flex-col items-center justify-center">
                     <span className="text-xl font-semibold text-white "> {translate("meet.invite.invitePeople")}</span>

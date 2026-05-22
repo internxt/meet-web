@@ -1,5 +1,11 @@
 import { CircleButton } from "@internxt/ui";
-import { ExclamationMarkIcon, MicrophoneIcon, MicrophoneSlashIcon, VideoCameraIcon, VideoCameraSlashIcon } from "@phosphor-icons/react";
+import { 
+    ExclamationMarkIcon, 
+    MicrophoneIcon, 
+    MicrophoneSlashIcon, 
+    VideoCameraIcon, 
+    VideoCameraSlashIcon 
+} from "@phosphor-icons/react";
 import React, { useState } from "react";
 
 import MeetAudioSettingsPopUp from "../containers/MeetAudioSettingsPopup";
