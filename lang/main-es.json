@@ -330,6 +330,8 @@
         "incorrectRoomLockPassword": "Contraseña incorrecta",
         "internalError": "¡Ups! Algo salió mal. El siguiente error ocurrió: {{error}}",
         "internalErrorTitle": "Error interno",
+        "kickDuplicateTitle": "Oops! Ya estas en la reunión ",
+        "kickDuplicateMessage": "Parece que ya estabas en la reunión. Prueba a mirar en otra ventana, quiza ya tengas la reunion iniciada.",
         "kickMessage": "Puede ponerse en contacto con {{participantDisplayName}} para obtener más detalles.",
         "kickParticipantButton": "Expulsar",
         "kickParticipantDialog": "¿Seguro que quiere expulsar a este participante?",
