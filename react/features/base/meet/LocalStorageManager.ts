@@ -18,6 +18,7 @@ export class LocalStorageManager {
         MNEMONIC: "xMnemonic",
         USER: "xUser",
         SUBSCRIPTION: "xSubscription",
+        DISPLAY_NAME: "xMeetDisplayName",
     };
 
     private constructor() {}
@@ -169,6 +170,19 @@ export class LocalStorageManager {
         this.remove(LocalStorageManager.KEYS.SUBSCRIPTION);
     }
 
+    /**
+     * Gets the user display name
+     */
+    public getDisplayName(): string | null | undefined {
+        return this.get<string>(LocalStorageManager.KEYS.DISPLAY_NAME);
+    }
+
+    /**
+     * Sets the user display name
+     */
+    public setDisplayName(displayName: string): void {
+        this.set(LocalStorageManager.KEYS.DISPLAY_NAME, displayName);
+    }
 
     /**
      * Saves the session credentials
@@ -195,6 +209,7 @@ export class LocalStorageManager {
         this.remove(LocalStorageManager.KEYS.MNEMONIC);
         this.remove(LocalStorageManager.KEYS.USER);
         this.remove(LocalStorageManager.KEYS.SUBSCRIPTION);
+        this.remove(LocalStorageManager.KEYS.DISPLAY_NAME);
     }
 
     public clearStorage(): void {
