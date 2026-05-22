@@ -1,5 +1,5 @@
 import { Button, TransparentModal } from "@internxt/ui";
-import { Check, Link, X } from "@phosphor-icons/react";
+import { CheckIcon, LinkIcon, X } from "@phosphor-icons/react";
 import React, { useState } from "react";
 import { getDecodedURI } from "../../../../util/uri";
 import { MAX_SIZE_PARTICIPANTS } from "../../../constants";
@@ -54,7 +54,7 @@ const InviteUserModal = ({ isOpen, onClose, translate, participantsCount, invite
 
                 <div className="space-y-4 pt-3">
                     <div className="relative w-full">
-                        <Link className="absolute left-3 top-1/2 transform -translate-y-1/2" size={20} color="gray" />
+                        <LinkIcon className="absolute left-3 top-1/2 transform -translate-y-1/2" size={20} color="gray" />
                         <input
                             type="text"
                             value={inviteLink}
@@ -71,7 +71,7 @@ const InviteUserModal = ({ isOpen, onClose, translate, participantsCount, invite
                     >
                         {copied ? (
                             <div className="flex items-center justify-center">
-                                <Check size={18} className="mr-1" />
+                                <CheckIcon size={18} className="mr-1" />
                                 {translate("meet.invite.copied")}
                             </div>
                         ) : (
