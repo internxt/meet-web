@@ -1,5 +1,11 @@
 import { CircleButton } from "@internxt/ui";
-import { ExclamationMark, Microphone, MicrophoneSlash, VideoCamera, VideoCameraSlash } from "@phosphor-icons/react";
+import { 
+    ExclamationMarkIcon, 
+    MicrophoneIcon, 
+    MicrophoneSlashIcon, 
+    VideoCameraIcon, 
+    VideoCameraSlashIcon 
+} from "@phosphor-icons/react";
 import React, { useState } from "react";
 
 import MeetAudioSettingsPopUp from "../containers/MeetAudioSettingsPopup";
@@ -16,7 +22,7 @@ interface MediaControlsProps {
     onAudioOptionsClick: () => void;
 }
 const indicatorProps = {
-    icon: <ExclamationMark size={12} color="white" weight="bold" />,
+    icon: <ExclamationMarkIcon size={12} color="white" weight="bold" />,
     className: "bg-orange",
 };
 const MediaControls: React.FC<MediaControlsProps> = ({
@@ -54,9 +60,9 @@ const MediaControls: React.FC<MediaControlsProps> = ({
                 }}
             >
                 {hasVideoPermissions && !isVideoMuted ? (
-                    <VideoCamera size={22} color="black" weight="fill" />
+                    <VideoCameraIcon size={22} color="black" weight="fill" />
                 ) : (
-                    <VideoCameraSlash size={22} color="white" weight="fill" />
+                    <VideoCameraSlashIcon size={22} color="white" weight="fill" />
                 )}
             </CircleButton>
             <CircleButton
@@ -77,9 +83,9 @@ const MediaControls: React.FC<MediaControlsProps> = ({
                 }}
             >
                 {isAudioMuted || !hasAudioPermissions ? (
-                    <MicrophoneSlash size={20} color="white" weight="fill" />
+                    <MicrophoneSlashIcon size={20} color="white" weight="fill" />
                 ) : (
-                    <Microphone size={22} color="black" weight="fill" />
+                    <MicrophoneIcon size={22} color="black" weight="fill" />
                 )}
             </CircleButton>
         </div>

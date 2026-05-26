@@ -1,5 +1,5 @@
 import { Button, Input, Modal } from "@internxt/ui";
-import { Copy, X } from "@phosphor-icons/react";
+import { CopyIcon, XIcon } from "@phosphor-icons/react";
 import React, { useState } from "react";
 
 interface ScheduleMeetingModalProps {
@@ -32,7 +32,7 @@ const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
     return (
         <Modal isOpen={isOpen} onClose={onClose} className="p-0 w-[384px]" width="w-[384px]">
             <button onClick={onClose} className="absolute right-5 top-5 text-gray-100 hover:text-gray-700">
-                <X size={24} />
+                <XIcon size={24} />
             </button>
             <div className="p-5">
                 <h1 className="text-2xl font-medium text-gray-100 mb-2">{translate("meet.modals.schedule.title")}</h1>
@@ -57,7 +57,7 @@ const ScheduleMeetingModal: React.FC<ScheduleMeetingModalProps> = ({
                         onClick={handleCopy}
                         className="absolute right-1.5 top-1 h-8 w-8 rounded-full items-center justify-center flex hover:bg-[#0066FF1A] active:bg-[#0066FF40] transition-colors duration-200"
                     >
-                        <Copy size={20} className="text-primary" color="#0066FF" />
+                        <CopyIcon size={20} className="text-primary" color="#0066FF" />
                     </button>
                     {copied && (
                         <div className="absolute -top-10 right-0 bg-black/70 text-white px-3 py-1 rounded-md text-sm font-medium shadow-lg animate-fade-in">

@@ -1,4 +1,4 @@
-import { Eye, EyeSlash } from "@phosphor-icons/react";
+import { EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 import React, { useState } from "react";
 import { FieldError, Path, UseFormRegister, ValidationRule } from "react-hook-form";
 import { IFormValues } from "../../types";
@@ -85,7 +85,7 @@ const PasswordInput = ({
                     tabIndex={0}
                     className="absolute right-4 top-1/2 flex -translate-y-1/2 cursor-pointer items-center justify-center text-gray-100"
                 >
-                    {showPassword ? <Eye className="h-6 w-6" /> : <EyeSlash className="h-6 w-6" />}
+                    {showPassword ? <EyeIcon className="h-6 w-6" /> : <EyeSlashIcon className="h-6 w-6" />}
                 </button>
             </div>
             {error && <p className="text-sm text-red">{error.message}</p>}

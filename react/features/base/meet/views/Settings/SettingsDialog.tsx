@@ -1,4 +1,4 @@
-import { Icon, X } from "@phosphor-icons/react";
+import { Icon, XIcon } from "@phosphor-icons/react";
 import React, { ComponentType, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -177,7 +177,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
                             className="absolute right-5 top-4 hover:bg-gray-700 rounded-lg transition-colors text-gray-400 hover:text-white"
                             aria-label="Close dialog"
                         >
-                            <X className="w-5 h-5" />
+                            <XIcon className="w-5 h-5" />
                         </button>
                     </div>
                     {/* Tab content */}

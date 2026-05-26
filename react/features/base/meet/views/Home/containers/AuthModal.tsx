@@ -1,5 +1,5 @@
 import { Modal } from "@internxt/ui";
-import { X } from "@phosphor-icons/react";
+import { XIcon } from "@phosphor-icons/react";
 import React, { useEffect, useState } from "react";
 import { LoginCredentials } from "../../../services/types/command.types";
 import { WebAuthButton } from "../components/auth/WebAuthButton";
@@ -103,7 +103,7 @@ const ModalHeader: React.FC<{
             {isLoginView ? translate("meet.auth.modal.title") : translate("meet.auth.modal.signup.createAccountTitle")}
         </h2>
         <button onClick={onClose} className="text-gray-100 hover:text-gray-700">
-            <X size={24} />
+            <XIcon size={24} />
         </button>
     </div>
 );
