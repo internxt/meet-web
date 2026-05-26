@@ -321,6 +321,8 @@
         "enterDisplayName": "Por favor ingresa tu nombre aquí",
         "error": "Error",
         "errorJoiningMeeting": "Error al unirse a la reunión",
+        "errorJoiningMeetingRoomClosedTitle": "La sala está cerrada",
+        "errorJoiningMeetingRoomClosedMsg": "Esta reunión está actualmente cerrada. Por favor, espera a que el organizador reabra la sala antes de unirte.",
         "gracefulShutdown": "Nuestro servicio se encuentra en mantenimiento. Por favor, intente más tarde.",
         "grantModeratorDialog": "¿Estás seguro de que quieres convertir a este participante en moderador?",
         "grantModeratorTitle": "Convertir en moderador",
