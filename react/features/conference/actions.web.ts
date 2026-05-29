@@ -5,7 +5,7 @@ import { getJitsiMeetGlobalNSConnectionTimes } from '../base/util/helpers';
 import { getBackendSafeRoomName } from '../base/util/uri';
 
 import { DISMISS_CALENDAR_NOTIFICATION } from './actionTypes';
-import LeaveReasonDialog from './components/web/LeaveReasonDialog.web';
+import LeaveWithMessageDialog from '../base/meet/views/Conference/components/LeaveWithMessageDialog';
 import logger from './logger';
 
 /**
@@ -15,11 +15,12 @@ import logger from './logger';
  *
  * @returns {Promise} Resolved when the dialog is closed.
  */
-export function openLeaveReasonDialog(title?: string) {
+export function openLeaveReasonDialog(title?: string, message?: string) {
     return (dispatch: IStore['dispatch']): Promise<void> => new Promise(resolve => {
-        dispatch(openDialog('LeaveReasonDialog', LeaveReasonDialog, {
+        dispatch(openDialog('LeaveWithMessageDialog', LeaveWithMessageDialog, {
             onClose: resolve,
-            title
+            title,
+            message
         }));
     });
 }

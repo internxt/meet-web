@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#2A3A4B">
     <!--#include virtual="base.html" -->
 
-    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" href="images/icon-small.png">
     <link rel="stylesheet" href="css/all.css">
     <!--#include virtual="fonts.html"-->
     <link rel="manifest" id="manifest-placeholder">
@@ -22,7 +22,7 @@
                 : pathname.substring(0, contextRootEndIndex + 1)
             );
         }
-        window.EXCALIDRAW_ASSET_PATH = 'libs/';
+        window.EXCALIDRAW_ASSET_PATH = 'libs/excalidraw/';
         // Dynamically generate the manifest location URL. It must be served from the document origin, and we may have
         // the base pointing to the CDN. This way we can generate a full URL which will bypass the base.
         document.querySelector('#manifest-placeholder').setAttribute('href', window.location.origin + contextRoot(window.location.pathname) + 'manifest.json');
@@ -82,7 +82,7 @@
             "utils.js",
             "do_external_connect.js",
             "interface_config.js",
-            "lib-jitsi-meet.min.js",
+            "lib-meet.min.js",
             "app.bundle.min.js",
             "all.css"
         ];
@@ -197,7 +197,7 @@
     </script>
     <script src="/config.js"></script><!-- adapt to your needs, i.e. set hosts and bosh path -->
     <script src="/interface_config.js"></script>
-    <script src="libs/lib-jitsi-meet.min.js?v=139"></script>
+    <script src="libs/lib-meet.min.js?v=139"></script>
     <script src="libs/app.bundle.min.js?v=139"></script>
     <!--#include virtual="title.html" -->
     <!--#include virtual="plugin.head.html" -->

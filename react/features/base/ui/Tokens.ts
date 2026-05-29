@@ -155,6 +155,7 @@ export const colorMap = {
     preMeetingBackground: 'surface02',  // Pre-meeting screen container background
     preMeetingPreview: 'ui01',          // Video preview in pre-meeting
     prejoinDialogBackground: 'uiBackground', // Prejoin dialog background
+    prejoinPreviewBackground: 'uiBackground', // Prejoin video preview background (#040404)
     prejoinDialogDelimiter: 'ui03',     // Prejoin dialog delimiter line
     prejoinDialogDelimiterText: 'text01', // Prejoin dialog delimiter text
     prejoinTitleText: 'text01',         // Prejoin title text color
@@ -213,16 +214,16 @@ export const colorMap = {
     // Visitors
     visitorsCountBadge: 'warning02',    // Visitors count badge background
     visitorsCountText: 'uiBackground',  // Visitors count badge text
-    visitorsCountIcon: 'icon04',        // Visitors count icon
+    visitorsCountIcon: 'iconSvgFill',   // Visitors count icon
     visitorsQueueBackground: 'ui01',    // Visitors queue panel background
     visitorsQueueText: 'text01',        // Visitors queue text
     visitorsArrowBackground: 'ui02',    // Visitors arrow container background
 
     // Welcome Page
     welcomeBackground: 'surface01',     // Welcome page background (same as uiBackground)
-    welcomeCard: 'ui01',                // Welcome page tab bar background
+    welcomeCard: 'surface02',           // Welcome page tab bar background
     welcomeTabActive: 'icon01',         // Welcome page active tab icon
-    welcomeTabInactive: 'icon03',       // Welcome page inactive tab icon
+    welcomeTabInactive: 'ui03',         // Welcome page inactive tab icon
 
     // ----- Form Components -----
 
@@ -354,8 +355,11 @@ export const colorMap = {
     dialInSecondaryText: 'text02',           // Dial-in summary secondary text
 
     // Reactions
-    reactionsMenuBackground: 'ui01',         // Reactions menu background
+    reactionsMenuBackground: '#242528', // Reactions menu background
     reactionsMenuBorder: 'ui02',             // Reactions menu border
+    reactionsMenuButtonToggled: 'surface01', // Reactions menu button toggled state background
+    reactionsMenuBoxShadow1: 'ui09',         // Reactions menu box shadow primary
+    reactionsMenuBoxShadow2: 'ui08',         // Reactions menu box shadow secondary
 
     // Recording / Live Stream
     recordingBackground: 'ui01',             // Recording panel background
@@ -366,6 +370,7 @@ export const colorMap = {
     recordingHighlightButtonIconDisabled: 'text03', // Recording highlight button disabled icon color
     recordingNotificationText: 'surface01',  // Recording notification text color
     recordingNotificationAction: 'action01', // Recording notification action color
+    transcriptionIndicator: 'success01',     // Transcription indicator background
 
     // Virtual Background
     virtualBackgroundBackground: 'ui01',     // Virtual background picker background
@@ -407,7 +412,7 @@ export const colorMap = {
     fileSharingItemBorder: 'ui02',           // File sharing item hover/border
 
     // Gifs
-    gifsBackground: 'ui01',                  // GIFs panel background
+    gifsBackground: '#242528',                  // GIFs panel background
     gifsText: 'text01',                      // GIFs panel text
 
     // Whiteboard
@@ -428,7 +433,7 @@ export const colorMap = {
     securityDialogBorder: 'ui07',            // Security dialog border color
 
     // Deep Linking
-    deepLinkingBackground: 'ui01',           // Deep linking page content pane background
+    deepLinkingBackground: 'uiBackground',   // Deep linking page content pane background (#1e1e1e)
     deepLinkingBorder: 'ui03',               // Deep linking page content pane border
     deepLinkingText: 'text01',               // Deep linking page text
     deepLinkingSeparator: 'ui03',            // Deep linking separator line
@@ -504,6 +509,9 @@ export const colorMap = {
 
     // High-contrast
     icon04: 'surface01',
+
+    // SVG fill color
+    iconSvgFill: 'icon01',
 
     // Error
     iconError: 'action03',

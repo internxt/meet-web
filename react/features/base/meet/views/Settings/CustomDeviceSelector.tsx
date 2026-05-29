@@ -1,4 +1,4 @@
-import { CaretDown, Check } from "@phosphor-icons/react";
+import { CaretDownIcon, CheckIcon } from "@phosphor-icons/react";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -96,7 +96,7 @@ const DeviceSelector = ({ devices, hasPermission, id, isDisabled, label, onSelec
                     aria-expanded={isOpen}
                 >
                     <span className="block truncate">{triggerText}</span>
-                    <CaretDown
+                    <CaretDownIcon
                         className={`h-6 w-6 text-gray-400 transition-transform duration-200 flex-shrink-0 ml-2 ${
                             isOpen ? "rotate-180" : ""
                         }`}
@@ -131,7 +131,7 @@ const DeviceSelector = ({ devices, hasPermission, id, isDisabled, label, onSelec
                                     >
                                         <div className="flex items-center">
                                             <div className="w-4 h-4 mr-3 flex-shrink-0 flex items-center justify-center">
-                                                {item.value === selectedDeviceId && <Check className="h-4 w-4" />}
+                                                {item.value === selectedDeviceId && <CheckIcon className="h-4 w-4" />}
                                             </div>
                                             <span className="block truncate font-medium">{item.label}</span>
                                         </div>

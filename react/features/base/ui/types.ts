@@ -26,6 +26,7 @@ export interface IPalette {
     icon02: string;
     icon03: string;
     icon04: string;
+    iconSvgFill: string;
     iconError: string;
     link01: string;
     link01Active: string;
@@ -153,6 +154,7 @@ export interface IPalette {
     prejoinDialogBackground: string;
     prejoinDialogDelimiter: string;
     prejoinDialogDelimiterText: string;
+    prejoinPreviewBackground: string;
     prejoinRecordingWarningText: string;
     prejoinRoomNameText: string;
     prejoinTitleText: string;
@@ -313,6 +315,9 @@ export interface IPalette {
     pollsVotersText: string;
     reactionsMenuBackground: string;
     reactionsMenuBorder: string;
+    reactionsMenuButtonToggled: string;
+    reactionsMenuBoxShadow1: string;
+    reactionsMenuBoxShadow2: string;
     recordingBackground: string;
     recordingHighlightButton: string;
     recordingHighlightButtonDisabled: string;
@@ -321,6 +326,7 @@ export interface IPalette {
     recordingNotificationAction: string;
     recordingNotificationText: string;
     recordingText: string;
+    transcriptionIndicator: string;
     securityDialogBackground: string;
     securityDialogBorder: string;
     securityDialogSecondaryText: string;

@@ -16,7 +16,7 @@ import { isNoiseSuppressionEnabled } from "../../../../noise-suppression/functio
 import { isPrejoinPageVisible } from "../../../../prejoin/functions";
 import { createLocalAudioTracks } from "../../../functions.web";
 
-import { Microphone, SpeakerSimpleHigh } from "@phosphor-icons/react";
+import { MicrophoneIcon, SpeakerSimpleHighIcon } from "@phosphor-icons/react";
 import MicrophoneEntry from "./MicrophoneEntry";
 import SpeakerEntry from "./SpeakerEntry";
 
@@ -254,10 +254,11 @@ const AudioSettingsContent = ({
      * @returns {void}
      */
     const _setTracks = async () => {
-        if (browser.isWebKitBased()) {
+        if (!measureAudioLevels || browser.isWebKitBased()) {
             // It appears that at the time of this writing, creating audio tracks blocks the browser's main thread for
             // long time on safari. Wasn't able to confirm which part of track creation does the blocking exactly, but
             // not creating the tracks seems to help and makes the UI much more responsive.
+            // Also skip when audio levels are disabled to avoid activating all microphones unnecessarily.
             return;
         }
 
@@ -304,7 +305,7 @@ const AudioSettingsContent = ({
                     <ContextMenuItem
                         accessibilityLabel={t("settings.speakers")}
                         className={classes.header}
-                        icon={() => <SpeakerSimpleHigh size={20} color="black" weight="fill" />}
+                        icon={() => <SpeakerSimpleHighIcon size={20} color="black" weight="fill" />}
                         id={speakerHeaderId}
                         text={t("settings.speakers")}
                     />
@@ -320,7 +321,7 @@ const AudioSettingsContent = ({
                 <ContextMenuItem
                     accessibilityLabel={t("settings.microphones")}
                     className={classes.header}
-                    icon={() => <Microphone size={20} color="black" weight="fill" />}
+                    icon={() => <MicrophoneIcon size={20} color="black" weight="fill" />}
                     id={microphoneHeaderId}
                     text={t("settings.microphones")}
                 />
