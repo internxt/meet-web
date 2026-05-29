@@ -66,6 +66,7 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore, 
     } = state['features/base/config'];
 
     const constraints = options.constraints ?? state['features/base/config'].constraints ?? {};
+     console.log('[MAX_VIDEO] Creating local tracks with constraints:', constraints);
 
     if (isAdvancedAudioSettingsEnabled(state) && typeof APP !== 'undefined') {
         constraints.audio = state['features/settings'].audioSettings ?? getLocalJitsiAudioTrackSettings(state);

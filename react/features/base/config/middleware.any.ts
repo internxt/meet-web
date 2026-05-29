@@ -62,6 +62,7 @@ function _setConfig({ dispatch, getState }: IStore, next: Function, action: AnyA
     }
 
     const resolutionFlag = getFeatureFlag(state, 'resolution');
+    console.log('[MAX_VIDEO] Resolution flag:', resolutionFlag);
 
     if (typeof resolutionFlag !== 'undefined') {
         config.resolution = resolutionFlag;

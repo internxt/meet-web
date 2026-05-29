@@ -18,6 +18,7 @@ const VideoEncodingToggle = () => {
     const toggleEncoding = () => {
         const newState = !isEncodingEnabled;
         setIsEncodingEnabled(newState);
+        console.log(`[MAX-VIDEO] Toggled video encoding to: ${newState}`);
         localStorage.set(ENCODING_KEY, newState);
     };
 
@@ -56,6 +57,7 @@ export const useVideoEncoding = () => {
     const toggleEncoding = () => {
         const newState = !isEncodingEnabled;
         setIsEncodingEnabled(newState);
+         console.log(`[MAX-VIDEO] Toggled video encoding to: ${newState}`);
         localStorage.set(ENCODING_KEY, newState);
     };
   

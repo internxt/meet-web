@@ -218,6 +218,7 @@ class ReactInstanceManagerHolder {
         options.enableMediaProjectionService = true;
         if (options.videoDecoderFactory == null || options.videoEncoderFactory == null) {
             EglBase.Context eglContext = EglUtils.getRootEglBaseContext();
+            console.log('[MAX_VIDEO] Initializing WebRTC module options with EGL context:', eglContext);
             if (options.videoDecoderFactory == null) {
                 options.videoDecoderFactory = new JitsiVideoDecoderFactory(eglContext);
             }

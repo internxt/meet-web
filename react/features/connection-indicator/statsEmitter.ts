@@ -155,6 +155,7 @@ const statsEmitter = {
                 }
 
                 const resolution = allUserResolutions[id as keyof typeof allUserResolutions];
+                console.log('[MAX_VIDEO] Stats update for user resolution:', id, resolution);
 
                 if (resolution) {
                     remoteUserStats.resolution = resolution;
@@ -178,6 +179,7 @@ const statsEmitter = {
      * @returns {void}
      */
     _updateLocalCodecs(codecs: any) {
+        console.log('[MAX_VIDEO] Updating local track codecs with:', codecs);
         if (typeof APP !== 'undefined') {
             const tracks = APP.store.getState()['features/base/tracks'];
             const localTracks = getLocalTracks(tracks);

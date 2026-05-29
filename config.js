@@ -285,7 +285,7 @@ var config = {
     // cameraFacingMode: 'user',
 
     // Sets the preferred resolution (height) for local video. Defaults to 720.
-    // resolution: 720,
+    resolution: 1080,
 
     // DEPRECATED. Please use raisedHands.disableRemoveRaisedHandOnFocus instead.
     // Specifies whether the raised hand will hide when someone becomes a dominant speaker or not
@@ -339,7 +339,7 @@ var config = {
 
     // How many participants while in the tile view mode, before the receiving video quality is reduced from HD to SD.
     // Use -1 to disable.
-    // maxFullResolutionParticipants: 2,
+    maxFullResolutionParticipants: -1,
 
     // w3c spec-compliant video constraints to use for video capture. Currently
     // used by browsers that return true from lib-jitsi-meet's
@@ -545,70 +545,70 @@ var config = {
     // startLastN: 1,
 
     // Specify the settings for video quality optimizations on the client.
-    // videoQuality: {
-    //
-    //    // Provides a way to set the codec preference on desktop based endpoints.
-    //    codecPreferenceOrder: [ 'AV1', 'VP9', 'VP8', 'H264' ],
-    //
-    //    // Provides a way to set the codec for screenshare.
-    //    screenshareCodec: 'AV1',
-    //    mobileScreenshareCodec: 'VP8',
-    //
-    //    // Enables the adaptive mode in the client that will make runtime adjustments to selected codecs and received
-    //    // videos for a better user experience. This mode will kick in only when CPU overuse is reported in the
-    //    // WebRTC statistics for the outbound video streams.
-    //    enableAdaptiveMode: false,
-    //
-    //    // Codec specific settings for scalability modes and max bitrates.
-    //    av1: {
-    //      maxBitratesVideo: {
-    //          low: 100000,
-    //          standard: 300000,
-    //          high: 1000000,
-    //          fullHd: 2000000,
-    //          ultraHd: 4000000,
-    //          ssHigh: 2500000
-    //      },
-    //      scalabilityModeEnabled: true,
-    //      useSimulcast: false,
-    //      useKSVC: true
-    //    },
-    //    h264: {
-    //      maxBitratesVideo: {
-    //          low: 200000,
-    //          standard: 500000,
-    //          high: 1500000,
-    //          fullHd: 3000000,
-    //          ultraHd: 6000000,
-    //          ssHigh: 2500000
-    //      },
-    //      scalabilityModeEnabled: true
-    //    },
-    //    vp8: {
-    //      maxBitratesVideo: {
-    //          low: 200000,
-    //          standard: 500000,
-    //          high: 1500000,
-    //          fullHd: 3000000,
-    //          ultraHd: 6000000,
-    //          ssHigh: 2500000
-    //      },
-    //      scalabilityModeEnabled: false
-    //    },
-    //    vp9: {
-    //      maxBitratesVideo: {
-    //          low: 100000,
-    //          standard: 300000,
-    //          high: 1200000,
-    //          fullHd: 2500000,
-    //          ultraHd: 5000000,
-    //          ssHigh: 2500000
-    //      },
-    //      scalabilityModeEnabled: true,
-    //      useSimulcast: false,
-    //      useKSVC: true
-    //    },
-    //
+    videoQuality: {
+    
+       // Provides a way to set the codec preference on desktop based endpoints.
+       codecPreferenceOrder: [ 'AV1', 'VP9', 'VP8', 'H264' ],
+    
+       // Provides a way to set the codec for screenshare.
+       screenshareCodec: 'AV1',
+       mobileScreenshareCodec: 'VP8',
+    
+       // Enables the adaptive mode in the client that will make runtime adjustments to selected codecs and received
+       // videos for a better user experience. This mode will kick in only when CPU overuse is reported in the
+       // WebRTC statistics for the outbound video streams.
+       enableAdaptiveMode: false,
+    
+       // Codec specific settings for scalability modes and max bitrates.
+       av1: {
+         maxBitratesVideo: {
+             low: 100000,
+             standard: 300000,
+             high: 1000000,
+             fullHd: 2000000,
+             ultraHd: 4000000,
+             ssHigh: 2500000
+         },
+         scalabilityModeEnabled: true,
+         useSimulcast: false,
+         useKSVC: true
+       },
+       h264: {
+         maxBitratesVideo: {
+             low: 200000,
+             standard: 500000,
+             high: 1500000,
+             fullHd: 3000000,
+             ultraHd: 6000000,
+             ssHigh: 2500000
+         },
+         scalabilityModeEnabled: true
+       },
+       vp8: {
+         maxBitratesVideo: {
+             low: 200000,
+             standard: 500000,
+             high: 1500000,
+             fullHd: 3000000,
+             ultraHd: 6000000,
+             ssHigh: 2500000
+         },
+         scalabilityModeEnabled: false
+       },
+       vp9: {
+         maxBitratesVideo: {
+             low: 100000,
+             standard: 300000,
+             high: 1200000,
+             fullHd: 2500000,
+             ultraHd: 5000000,
+             ssHigh: 2500000
+         },
+         scalabilityModeEnabled: true,
+         useSimulcast: false,
+         useKSVC: true
+       },
+    
     //    // The options can be used to override default thresholds of video thumbnail heights corresponding to
     //    // the video quality levels used in the application. At the time of this writing the allowed levels are:
     //    //     'low' - for the low quality level (180p at the time of this writing)
@@ -619,10 +619,10 @@ var config = {
     //    // With the default config value below the application will use 'low' quality until the thumbnails are
     //    // at least 360 pixels tall. If the thumbnail height reaches 720 pixels then the application will switch to
     //    // the high quality.
-    //    minHeightForQualityLvl: {
-    //        360: 'standard',
-    //        720: 'high',
-    //    },
+       minHeightForQualityLvl: {
+           720: 'standard',
+           1080: 'high',
+       },
     //
     //    // Provides a way to set the codec preference on mobile devices, both on RN and mobile browser based endpoint
     //    mobileCodecPreferenceOrder: [ 'VP8', 'VP9', 'H264', 'AV1' ],

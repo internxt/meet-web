@@ -17,6 +17,8 @@ export function getReceiverVideoQualityLevel(availableHeight: number, heightToLe
         }
     }
 
+    console.log('[MAX_VIDEO] Available height:', availableHeight, 'Selected quality level:', selectedLevel,
+        'Height to level mapping:', heightToLevel.entries());
     return selectedLevel;
 }
 
@@ -30,6 +32,7 @@ export function getReceiverVideoQualityLevel(availableHeight: number, heightToLe
  * {@code undefined} if the map contains invalid values.
  */
 export function validateMinHeightForQualityLvl(minHeightForQualityLvl?: { [key: number]: string; }) {
+    console.log('[MAX_VIDEO] Validating min height for quality level config:', minHeightForQualityLvl);
     if (typeof minHeightForQualityLvl !== 'object'
         || Object.keys(minHeightForQualityLvl).map(lvl => Number(lvl))
             .find(lvl => lvl === null || isNaN(lvl) || lvl < 0)) {
@@ -61,5 +64,6 @@ export function validateMinHeightForQualityLvl(minHeightForQualityLvl?: { [key: 
         map.set(level, appQuality);
     }
 
+    console.log('[MAX_VIDEO] Validated min height for quality level map:', map);
     return map;
 }

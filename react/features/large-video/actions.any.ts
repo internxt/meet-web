@@ -84,6 +84,7 @@ export function selectParticipantInLargeVideo(participant?: string) {
  * }}
  */
 export function updateKnownLargeVideoResolution(resolution: number) {
+    console.log('[MAX_VIDEO] Updating known large video resolution to:', resolution);
     return {
         type: UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION,
         resolution

@@ -155,6 +155,8 @@ StateListenerRegistry.register(
         const tileViewThumbnailSize = state['features/filmstrip']?.tileViewDimensions?.thumbnailSize;
         const { visibleRemoteParticipants } = state['features/filmstrip'];
         const { height: largeVideoHeight } = state['features/large-video'];
+        console.log('[MAX-VIDEO] Calculating max receiver video quality with largeVideoHeight:', largeVideoHeight, 
+            'features/filmstrip:', state['features/filmstrip']);
         const activeParticipantsIds = getActiveParticipantsIds(state);
         const {
             screenshareFilmstripDimensions: {
@@ -162,6 +164,10 @@ StateListenerRegistry.register(
             }
         } = state['features/filmstrip'];
         const screenshareFilmstripParticipantId = getScreenshareFilmstripParticipantId(state);
+
+        console.log('[MAX-VIDEO] HERE!!! stageFilmstripThumbnailHeight:', 
+            state['features/filmstrip'].stageFilmstripDimensions, 'THE HEIGHT IS:', 
+            state['features/filmstrip'].stageFilmstripDimensions?.thumbnailSize?.height);
 
         return {
             activeParticipantsCount: activeParticipantsIds?.length,
@@ -221,6 +227,8 @@ StateListenerRegistry.register(
                         + `is: ${newMaxRecvVideoQuality}, `
                         + `override: ${String(override)}, `
                         + `max full res N: ${maxFullResolutionParticipants}`);
+                    console.log('[MAX_VIDEO] Tile view thumbnail height:', tileViewThumbnailHeight, 
+                        newMaxRecvVideoQuality, maxFullResolutionParticipants, participantCount);
 
                     if (override) {
                         newMaxRecvVideoQuality = VIDEO_QUALITY_LEVELS.STANDARD;
@@ -245,6 +253,7 @@ StateListenerRegistry.register(
                     = newMaxRecvVideoQualityForScreenSharingFilmstrip
                     = VIDEO_QUALITY_LEVELS.LOW;
             } else {
+                console.log('[MAX_VIDEO] ALSO HERE largeVideoHeight:', largeVideoHeight);
                 newMaxRecvVideoQualityForStageFilmstrip
                     = getVideoQualityForStageThumbnails(stageFilmstripThumbnailHeight, state);
                 newMaxRecvVideoQualityForVerticalFilmstrip
@@ -443,6 +452,7 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
 
         visibleRemoteTrackSourceNames.forEach(sourceName => {
             receiverConstraints.constraints[sourceName] = { 'maxHeight': maxFrameHeightForTileView };
+            console.log('[MAX_VIDEO] Tile view - max frame height:', maxFrameHeightForTileView, preferredVideoQuality);
         });
 
         // Prioritize screenshare in tile view.
@@ -459,6 +469,8 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
         if (visibleRemoteTrackSourceNames?.length) {
             visibleRemoteTrackSourceNames.forEach(sourceName => {
                 receiverConstraints.constraints[sourceName] = { 'maxHeight': maxFrameHeightForVerticalFilmstrip };
+                console.log('[MAX_VIDEO] Staget view max frame height:', maxFrameHeightForVerticalFilmstrip, 
+                    preferredVideoQuality);
             });
         }
 
@@ -482,6 +494,8 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
                         ? VIDEO_QUALITY_UNLIMITED : maxFrameHeightForStageFilmstrip;
 
                 receiverConstraints.constraints[sourceName] = { 'maxHeight': quality };
+                console.log('[MAX_VIDEO] selectedSources max height:', quality, preferredVideoQuality, 
+                    MAX_VIDEO_QUALITY, maxFrameHeightForStageFilmstrip, isScreenSharing);
             });
 
             if (screenshareFilmstripParticipantId) {
@@ -492,6 +506,9 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
                             preferredVideoQuality >= MAX_VIDEO_QUALITY
                                 ? VIDEO_QUALITY_UNLIMITED : maxFrameHeightForScreenSharingFilmstrip
                     };
+                console.log('[MAX_VIDEO] screenshareFilmstripParticipantId max height:', 
+                    preferredVideoQuality >= MAX_VIDEO_QUALITY? VIDEO_QUALITY_UNLIMITED : 
+                    maxFrameHeightForScreenSharingFilmstrip);
             }
 
             receiverConstraints.onStageSources = onStageSources;
@@ -504,6 +521,8 @@ function _updateReceiverVideoConstraints({ getState }: IStore) {
                 quality = maxFrameHeightForLargeVideo;
             }
             receiverConstraints.constraints[largeVideoSourceName] = { 'maxHeight': quality };
+            console.log('[MAX_VIDEO] Large video max height:', quality, maxFrameHeightForLargeVideo, 
+                VIDEO_QUALITY_UNLIMITED);
             receiverConstraints.onStageSources = [ largeVideoSourceName ];
         }
     }

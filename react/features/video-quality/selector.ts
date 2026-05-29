@@ -9,6 +9,8 @@ import { shouldDisplayTileView } from '../video-layout/functions.any';
  * @returns {Map<number,number>}
  */
 export function getMinHeightForQualityLvlMap(state: IReduxState): Map<number, number> {
+    console.log('[MAX_VIDEO] Getting min height for quality level map', 
+        state['features/video-quality'].minHeightForQualityLvl, state['features/video-quality']);
     return state['features/video-quality'].minHeightForQualityLvl;
 }
 

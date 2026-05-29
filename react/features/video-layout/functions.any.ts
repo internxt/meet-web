@@ -181,7 +181,9 @@ export function isLayoutTileView(state: IReduxState) {
  * @returns {number}
  */
 function getVideoQualityForHeight(height: number) {
+    console.log('[MAX_VIDEO] Computing video quality for height:', height);
     if (!height) {
+        console.log('[MAX_VIDEO] Using low quality because height is not defined');
         return VIDEO_QUALITY_LEVELS.LOW;
     }
     const levels = Object.values(VIDEO_QUALITY_LEVELS)
@@ -190,10 +192,12 @@ function getVideoQualityForHeight(height: number) {
 
     for (const level of levels) {
         if (height <= level) {
+            console.log('[MAX_VIDEO] Selected video quality level:', level);
             return level;
         }
     }
 
+    console.log('[MAX_VIDEO] Using ultra quality level');
     return VIDEO_QUALITY_LEVELS.ULTRA;
 }
 
@@ -234,6 +238,7 @@ export function getVideoQualityForScreenSharingFilmstrip(height: number, state: 
  * @returns {number} - The video quality for the large video.
  */
 export function getVideoQualityForLargeVideo(largeVideoHeight: number) {
+    console.log('[MAX_VIDEO] Computing video quality for large video height:', largeVideoHeight);
     return getVideoQualityForHeight(largeVideoHeight);
 }
 
@@ -245,7 +250,9 @@ export function getVideoQualityForLargeVideo(largeVideoHeight: number) {
  * @returns {number}
  */
 export function getVideoQualityForStageThumbnails(height: number, state: IReduxState) {
+    console.log('[MAX_VIDEO] Computing video quality for stage thumbnail height:', height);
     if (!height) {
+        console.log('[MAX_VIDEO] Using low quality because height is not defined');
         return VIDEO_QUALITY_LEVELS.LOW;
     }
 

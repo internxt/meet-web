@@ -314,14 +314,17 @@ const ConnectionStatsTable = ({
 
         if (resolution && videoSsrc) {
             const { width, height } = resolution[videoSsrc] ?? {};
+            console.log('[MAX_VIDEO] Stats update for resolution:', videoSsrc, width, height);
 
             if (width && height) {
                 resolutionString = `${width}x${height}`;
+                console.log('[MAX_VIDEO] Computed resolution string:', resolutionString);
 
                 if (maxEnabledResolution && maxEnabledResolution < 720 && !isVirtualScreenshareParticipant) {
                     const maxEnabledResolutionTitle = t('connectionindicator.maxEnabledResolution');
 
                     resolutionString += ` (${maxEnabledResolutionTitle} ${maxEnabledResolution}p)`;
+                    console.log('[MAX_VIDEO] Resolution below 720:', resolutionString, maxEnabledResolution);
                 }
             }
         }
