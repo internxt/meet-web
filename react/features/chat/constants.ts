@@ -19,17 +19,17 @@ export const INCOMING_MSG_SOUND_ID = 'INCOMING_MSG_SOUND';
 /**
  * The {@code messageType} of error (system) messages.
  */
-export const MESSAGE_TYPE_ERROR = 'error' as const;
+export const MESSAGE_TYPE_ERROR = 'error';
 
 /**
  * The {@code messageType} of local messages.
  */
-export const MESSAGE_TYPE_LOCAL = 'local' as const;
+export const MESSAGE_TYPE_LOCAL = 'local';
 
 /**
  * The {@code messageType} of remote messages.
  */
-export const MESSAGE_TYPE_REMOTE = 'remote' as const;
+export const MESSAGE_TYPE_REMOTE = 'remote';
 
 export const SMALL_WIDTH_THRESHOLD = 580;
 

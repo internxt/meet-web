@@ -152,14 +152,26 @@ ReducerRegistry.register<IParticipantsState>(
                     };
                 }
 
-        return state;
-    }
-    case DOMINANT_SPEAKER_CHANGED: {
-        const { participant } = action;
-        const { id, previousSpeakers = [] } = participant;
-        const { dominantSpeaker, local } = state;
-        const activeSpeakers = new Set(previousSpeakers
-            .filter((speakerId: string) => state.remote.has(speakerId) && (speakerId !== local?.id)));
+                return state;
+            }
+            case DOMINANT_SPEAKER_CHANGED: {
+                const { participant } = action;
+                const { id, previousSpeakers = [] } = participant;
+                const { dominantSpeaker, local } = state;
+                const newSpeakers = [id, ...previousSpeakers];
+                const sortedSpeakersList: Array<Array<string>> = [];
+
+                for (const speaker of newSpeakers) {
+                    if (speaker !== local?.id) {
+                        const remoteParticipant = state.remote.get(speaker);
+
+                        remoteParticipant &&
+                            sortedSpeakersList.push([speaker, _getDisplayName(state, remoteParticipant?.name)]);
+                    }
+                }
+
+                // Keep the remote speaker list sorted alphabetically.
+                sortedSpeakersList.sort((a, b) => a[1].localeCompare(b[1]));
 
                 // Only one dominant speaker is allowed.
                 if (dominantSpeaker) {
@@ -170,7 +182,7 @@ ReducerRegistry.register<IParticipantsState>(
                     return {
                         ...state,
                         dominantSpeaker: id, // @ts-ignore
-                        activeSpeakers,
+                        speakersList: new Map(sortedSpeakersList),
                     };
                 }
 

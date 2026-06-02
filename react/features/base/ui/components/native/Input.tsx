@@ -164,7 +164,6 @@ const Input = forwardRef<TextInput, IProps>(({
                     focused && styles.inputFocused,
                     error && styles.inputError
                 ] as StyleProp<TextStyle> }
-                testID = { id }
                 textContentType = { textContentType }
                 value = { typeof value === 'number' ? `${value}` : value } />
             { clearable && !disabled && value !== '' && (

@@ -6,7 +6,6 @@ import { ensureTwoParticipants } from '../../helpers/participants';
 import { checkIframeApi } from './util';
 
 setTestProperties(__filename, {
-    retry: true,
     usesBrowsers: [ 'p1', 'p2' ]
 });
 

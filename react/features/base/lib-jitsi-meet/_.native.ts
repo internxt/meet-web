@@ -3,5 +3,5 @@
 //
 
 // @ts-ignore
-import JitsiMeetJS from 'lib-meet';
+import JitsiMeetJS from 'lib-jitsi-meet';
 export { JitsiMeetJS as default };

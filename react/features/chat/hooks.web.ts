@@ -3,16 +3,11 @@ import { useSelector } from 'react-redux';
 import ChatButton from './components/web/ChatButton';
 import { isChatDisabled } from './functions';
 
-interface IChatButtonEntry {
-    Content: typeof ChatButton;
-    group: number;
-    key: string;
-}
-
-const chat: IChatButtonEntry = {
-    key: 'chat',
+const chat = {
+    key: "chat",
     Content: ChatButton,
-    group: 2
+    group: 2,
+    display: true,
 };
 
 /**
@@ -20,12 +15,10 @@ const chat: IChatButtonEntry = {
  *
  * @returns {Object | undefined} - The chat button object or undefined.
  */
-export function useChatButton(): IChatButtonEntry | undefined {
+export function useChatButton() {
     const _isChatDisabled = useSelector(isChatDisabled);
 
-    if (_isChatDisabled) {
-        return;
+    if (!_isChatDisabled) {
+        return chat;
     }
-
-    return chat;
 }

@@ -232,13 +232,6 @@ class AudioDevicesSelection extends AbstractDialogTab<IProps, {}> {
             !== this.props.selectedAudioInputId) {
             this._createAudioInputTrack(this.props.selectedAudioInputId);
         }
-
-        if (!prevProps.hasAudioPermission && this.props.hasAudioPermission) {
-            this._createAudioInputTrack(this.props.selectedAudioInputId)
-                ?.then(() => {
-                    this.props.dispatch(getAvailableDevices());
-                });
-        }
     }
 
     /**

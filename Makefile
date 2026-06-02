@@ -3,11 +3,11 @@ CLEANCSS = ./node_modules/.bin/cleancss
 DEPLOY_DIR = libs
 DIST_DIR = dist
 ONNX_DIR= node_modules/onnxruntime-web
-LIBJITSIMEET_DIR = node_modules/lib-meet
+LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet
 TF_WASM_DIR = node_modules/@tensorflow/tfjs-backend-wasm/dist/
 RNNOISE_WASM_DIR = node_modules/@jitsi/rnnoise-wasm/dist
-EXCALIDRAW_DIR = node_modules/@jitsi/excalidraw/dist/prod
-EXCALIDRAW_DIR_DEV = node_modules/@jitsi/excalidraw/dist/dev
+EXCALIDRAW_DIR = node_modules/@jitsi/excalidraw/dist/excalidraw-assets
+EXCALIDRAW_DIR_DEV = node_modules/@jitsi/excalidraw/dist/excalidraw-assets-dev
 TFLITE_WASM = react/features/stream-effects/virtual-background/vendor/tflite
 MEET_MODELS_DIR  = react/features/stream-effects/virtual-background/vendor/models
 FACE_MODELS_DIR = node_modules/@vladmandic/human-models/models
@@ -28,16 +28,14 @@ endif
 all: compile deploy
 
 compile: clean
-	NODE_OPTIONS=--max-old-space-size=8192 $(WEBPACK) --env bundle=app & \
-    NODE_OPTIONS=--max-old-space-size=8192 $(WEBPACK) --env bundle=api & \
-    NODE_OPTIONS=--max-old-space-size=8192 $(WEBPACK) --env bundle=workers & \
-    wait
+	NODE_OPTIONS=--max-old-space-size=8192 \
+	$(WEBPACK)
 
 clean:
 	rm -fr $(BUILD_DIR)
 
 .NOTPARALLEL:
-deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-excalidraw deploy-tflite deploy-meet-models deploy-lib-meet deploy-tf-wasm deploy-css deploy-local deploy-face-landmarks
+deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-excalidraw deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-tf-wasm deploy-css deploy-local deploy-face-landmarks
 
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
@@ -52,9 +50,9 @@ deploy-appbundle:
 	cp $(BUILD_DIR)/*.min.js $(DEPLOY_DIR)
 	-cp $(BUILD_DIR)/*.min.js.map $(DEPLOY_DIR)
 
-deploy-lib-meet:
+deploy-lib-jitsi-meet:
 	cp \
-		$(LIBJITSIMEET_DIR)/dist/umd/lib-meet.* \
+		$(LIBJITSIMEET_DIR)/dist/umd/lib-jitsi-meet.* \
 		$(LIBJITSIMEET_DIR)/dist/umd/vodozemac.wasm \
 		$(DEPLOY_DIR)
 
@@ -74,12 +72,14 @@ deploy-tflite:
 		$(DEPLOY_DIR)
 
 deploy-excalidraw:
-	mkdir -p $(DEPLOY_DIR)/excalidraw
-	cp -R $(EXCALIDRAW_DIR)/fonts $(DEPLOY_DIR)/excalidraw/
+	cp -R \
+		$(EXCALIDRAW_DIR) \
+		$(DEPLOY_DIR)/
 
 deploy-excalidraw-dev:
-	mkdir -p $(DEPLOY_DIR)/excalidraw
-	cp -R $(EXCALIDRAW_DIR_DEV)/fonts $(DEPLOY_DIR)/excalidraw/
+	cp -R \
+		$(EXCALIDRAW_DIR_DEV) \
+		$(DEPLOY_DIR)/
 
 deploy-meet-models:
 	cp \
@@ -103,7 +103,7 @@ deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 .NOTPARALLEL:
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-meet deploy-tf-wasm deploy-excalidraw-dev deploy-face-landmarks
+dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-tf-wasm deploy-excalidraw-dev deploy-face-landmarks
 	$(WEBPACK_DEV_SERVER)
 
 source-package:

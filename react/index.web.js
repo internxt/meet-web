@@ -1,5 +1,5 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import ReactDOM from 'react-dom';
 
 import { App } from './features/app/components/App.web';
 import { getLogger } from './features/base/logging/functions';
@@ -74,22 +74,14 @@ globalNS.entryPoints = {
     WHITEBOARD: WhiteboardApp
 };
 
-/**
- * React 18 concurrent mode allows only one root per DOM node. Cache roots by
- * element ID so {@code renderEntryPoint} never calls {@code createRoot} twice
- * on the same element.
- */
-const _roots = new Map();
-
 globalNS.renderEntryPoint = ({
     Component,
     props = {},
     elementId = 'react'
 }) => {
-    const element = document.getElementById(elementId);
-
-    if (!_roots.has(elementId)) {
-        _roots.set(elementId, createRoot(element));
-    }
-    _roots.get(elementId).render(<Component { ...props } />);
+    /* eslint-disable-next-line react/no-deprecated */
+    ReactDOM.render(
+        <Component { ...props } />,
+        document.getElementById(elementId)
+    );
 };

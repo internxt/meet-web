@@ -1,6 +1,3 @@
-import { expect } from '@wdio/globals';
-
-import '../../../helpers/matchers';
 import type { Participant } from '../../../helpers/Participant';
 import { setTestProperties } from '../../../helpers/TestProperties';
 import { config as testsConfig } from '../../../helpers/TestsConfig';
@@ -51,7 +48,7 @@ describe('Dial-in', () => {
         if (expectations.dialIn.enabled !== null) {
             await assertDialInDisplayed(p1, expectations.dialIn.enabled);
         }
-        if (expectations.dialIn.moreNumbersPage) {
+        if (expectations.dialIn.enabled === true) {
             // TODO: assert the page is NOT shown when the expectation is false.
             await verifyMoreNumbersPage(p1);
         }
@@ -60,7 +57,7 @@ describe('Dial-in', () => {
     it('dial-in', async () => {
         const dialInPin = await p1.getDialInPin();
 
-        expect(dialInPin.length).toBeGreaterThanOrEqual(8);
+        expect(dialInPin.length >= 8).toBe(true);
 
         await dialIn(dialInPin);
         await waitForMedia(p1);

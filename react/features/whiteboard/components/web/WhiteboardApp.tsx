@@ -1,3 +1,4 @@
+import { generateCollaborationLinkData } from '@jitsi/excalidraw';
 import React, { ComponentType } from 'react';
 
 import BaseApp from '../../../base/app/components/BaseApp';
@@ -32,9 +33,6 @@ export default class WhiteboardApp extends BaseApp<any> {
 
         if (!roomId && !roomKey) {
             try {
-                const { generateCollaborationLinkData } = await import(
-                    /* webpackChunkName: "excalidraw" */ '@jitsi/excalidraw'
-                );
                 const collabDetails = await generateCollaborationLinkData();
 
                 roomId = collabDetails.roomId;

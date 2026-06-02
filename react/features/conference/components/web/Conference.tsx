@@ -7,9 +7,8 @@ import VideoLayout from "../../../../../modules/UI/videolayout/VideoLayout";
 import { IReduxState, IStore } from "../../../app/types";
 import { getConferenceNameForTitle } from "../../../base/conference/functions";
 import { hangup } from "../../../base/connection/actions.web";
-import { isMobileBrowser } from "../../../base/environment/utils.web";
+import { isMobileBrowser } from "../../../base/environment/utils";
 import { translate } from "../../../base/i18n/functions";
-import AudioTracksContainer from '../../../base/media/components/web/AudioTracksContainer';
 import { setColorAlpha } from "../../../base/util/helpers";
 // Jitsi new chat actions:
 // import { openChat, setFocusedTab } from '../../../chat/actions.web';
@@ -268,14 +267,13 @@ class Conference extends AbstractConference<IProps, any> {
                         <div id="videospace" onTouchStart={this._onVideospaceTouchStart}>
                             <LargeVideoWeb />
                             {/* Jitsi filmstrips:
+                            <StageFilmstrip />
+                            <ScreenshareFilmstrip />
+                            <MainFilmstrip />
                             */}
                         </div>
-                        <AudioTracksContainer />
-                        <span
-                            aria-level = { 1 }
-                            className = 'sr-only'
-                            role = 'heading'>
-                            { t('toolbar.accessibilityLabel.heading') }
+                        <span aria-level={1} className="sr-only" role="heading">
+                            {t("toolbar.accessibilityLabel.heading")}
                         </span>
                         {/* <Toolbox /> */}
                     </div>
@@ -316,8 +314,8 @@ class Conference extends AbstractConference<IProps, any> {
                             </>
                         )}
                     </div>
-                    <AudioTracksContainer />
-                    { _showPrejoin || _showLobby || (
+
+                    {_showPrejoin || _showLobby || (
                         <>
                             <span aria-level={1} className="sr-only" role="heading">
                                 {t("toolbar.accessibilityLabel.heading") as string}
@@ -337,7 +335,9 @@ class Conference extends AbstractConference<IProps, any> {
                         ) : (
                             this.renderNotificationsContainer()
                         ))}
+
                     <CalleeInfoContainer />
+
                     {_showPrejoin && <Prejoin />}
                     {_showLobby && <LobbyScreen />}
                     {/* { _showVisitorsQueue && <VisitorsQueue />} */}
@@ -513,7 +513,6 @@ export default translate(reactReduxConnect(_mapStateToProps)(Conference));
 
 //     const { isOpen: isChatOpen } = useSelector((state: IReduxState) => state['features/chat']);
 //     const isFileUploadEnabled = useSelector(isFileUploadingEnabled);
-//     const isOnPrejoin = useSelector(isPrejoinPageVisible);
 
 //     const handleDragEnter = useCallback((e: React.DragEvent) => {
 //         e.preventDefault();
@@ -531,7 +530,7 @@ export default translate(reactReduxConnect(_mapStateToProps)(Conference));
 //         e.preventDefault();
 //         e.stopPropagation();
 
-//         if (!isFileUploadEnabled || isOnPrejoin) {
+//         if (!isFileUploadEnabled) {
 //             return;
 //         }
 
@@ -541,7 +540,7 @@ export default translate(reactReduxConnect(_mapStateToProps)(Conference));
 //             }
 //             dispatch(setFocusedTab(ChatTabs.FILE_SHARING));
 //         }
-//     }, [ isChatOpen, isDragging, isFileUploadEnabled, isOnPrejoin ]);
+//     }, [ isChatOpen, isDragging, isFileUploadEnabled ]);
 
 //     const handleDrop = useCallback((e: React.DragEvent) => {
 //         e.preventDefault();
@@ -559,7 +558,6 @@ export default translate(reactReduxConnect(_mapStateToProps)(Conference));
 
 //     return (
 //         <div
-//             data-testid = 'conference-drag-zone'
 //             onDragEnter = { handleDragEnter }
 //             onDragLeave = { handleDragLeave }
 //             onDragOver = { handleDragOver }

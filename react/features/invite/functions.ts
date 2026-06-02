@@ -17,7 +17,6 @@ import { parseURLParams } from '../base/util/parseURLParams';
 import {
     StatusCode,
     appendURLParam,
-    getNormalizedRoomName,
     parseURIString
 } from '../base/util/uri';
 import { isVpaasMeeting } from '../jaas/functions';
@@ -504,9 +503,10 @@ export function isDialOutEnabled(state: IReduxState): boolean {
  * @returns {boolean} Indication of whether dial out is currently enabled.
  */
 export function isDialInEnabled(state: IReduxState): boolean {
-    const { metadata } = state['features/base/conference'];
+    const dialInDisabled = state['features/base/conference']
+        .conference?.getMetadataHandler()?.getMetadata()?.dialinEnabled === false;
 
-    if (metadata?.dialinEnabled === false) {
+    if (dialInDisabled) {
         return false;
     }
 
@@ -729,7 +729,7 @@ export function getDialInfoPageURL(state: IReduxState, roomName?: string) {
     const conferenceName = roomName ?? getRoomName(state);
     const { locationURL } = state['features/base/connection'];
     const { href = '' } = locationURL ?? {};
-    const room = getNormalizedRoomName(conferenceName) ?? '';
+    const room = _decodeRoomURI(conferenceName ?? '');
 
     const url = didPageUrl || `${href.substring(0, href.lastIndexOf('/'))}/${DIAL_IN_INFO_PAGE_PATH_NAME}`;
 

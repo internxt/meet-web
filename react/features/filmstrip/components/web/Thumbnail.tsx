@@ -12,6 +12,7 @@ import { IReduxState, IStore } from '../../../app/types';
 import Avatar from '../../../base/avatar/components/Avatar';
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n/functions';
+import { JitsiTrackEvents } from '../../../base/lib-jitsi-meet';
 import VideoTrack from '../../../base/media/components/web/VideoTrack';
 import { MEDIA_TYPE } from '../../../base/media/constants';
 import { pinParticipant } from '../../../base/participants/actions';
@@ -27,12 +28,12 @@ import {
 import { IParticipant } from '../../../base/participants/types';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import Tooltip from '../../../base/tooltip/components/Tooltip';
+import { trackStreamingStatusChanged } from '../../../base/tracks/actions';
 import {
     getLocalAudioTrack,
     getTrackByMediaTypeAndParticipant,
     getVideoTrackByParticipant
 } from '../../../base/tracks/functions';
-import { useTrackStreamingStatus } from '../../../base/tracks/hooks.any';
 import { ITrack } from '../../../base/tracks/types';
 import { getVideoObjectPosition } from '../../../face-landmarks/functions';
 import { hideGif, showGif } from '../../../gifs/actions';
@@ -352,7 +353,7 @@ const defaultStyles = (theme: Theme) => {
 
         tintBackground: {
             position: 'absolute' as const,
-            zIndex: 0,
+            zIndex: 1,
             width: '100%',
             height: '100%',
             backgroundColor: theme.palette.thumbnailTintBackground,
@@ -440,10 +441,11 @@ class Thumbnail extends Component<IProps, IState> {
         this._hidePopover = this._hidePopover.bind(this);
         this._onGifMouseEnter = this._onGifMouseEnter.bind(this);
         this._onGifMouseLeave = this._onGifMouseLeave.bind(this);
+        this.handleTrackStreamingStatusChanged = this.handleTrackStreamingStatusChanged.bind(this);
     }
 
     /**
-     * Implements React Component's componentDidMount.
+     * Starts listening for track streaming status updates after the initial render.
      *
      * @inheritdoc
      * @returns {void}
@@ -452,18 +454,80 @@ class Thumbnail extends Component<IProps, IState> {
         this._onDisplayModeChanged();
 
 
+        // Listen to track streaming status changed event to keep it updated.
+        // TODO: after converting this component to a react function component,
+        // use a custom hook to update local track streaming status.
+        const { _videoTrack, dispatch } = this.props;
+
+        if (_videoTrack && !_videoTrack.local) {
+            _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                this.handleTrackStreamingStatusChanged);
+            dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
+                _videoTrack.jitsiTrack.getTrackStreamingStatus()));
+        }
     }
 
     /**
-     * Implements React Component's componentDidUpdate.
+     * Remove listeners for track streaming status update.
      *
      * @inheritdoc
      * @returns {void}
      */
-    override componentDidUpdate(_prevProps: IProps, prevState: IState) {
+    override componentWillUnmount() {
+        // TODO: after converting this component to a react function component,
+        // use a custom hook to update local track streaming status.
+        const { _videoTrack, dispatch } = this.props;
+
+        if (_videoTrack && !_videoTrack.local) {
+            _videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                this.handleTrackStreamingStatusChanged);
+            dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
+                _videoTrack.jitsiTrack.getTrackStreamingStatus()));
+        }
+    }
+
+    /**
+     * Stops listening for track streaming status updates on the old track and starts
+     * listening instead on the new track.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    override componentDidUpdate(prevProps: IProps, prevState: IState) {
         if (prevState.displayMode !== this.state.displayMode) {
             this._onDisplayModeChanged();
         }
+
+        // TODO: after converting this component to a react function component,
+        // use a custom hook to update local track streaming status.
+        const { _videoTrack, dispatch } = this.props;
+
+        if (prevProps._videoTrack?.jitsiTrack?.getSourceName() !== _videoTrack?.jitsiTrack?.getSourceName()) {
+            if (prevProps._videoTrack && !prevProps._videoTrack.local) {
+                prevProps._videoTrack.jitsiTrack.off(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                    this.handleTrackStreamingStatusChanged);
+                dispatch(trackStreamingStatusChanged(prevProps._videoTrack.jitsiTrack,
+                    prevProps._videoTrack.jitsiTrack.getTrackStreamingStatus()));
+            }
+            if (_videoTrack && !_videoTrack.local) {
+                _videoTrack.jitsiTrack.on(JitsiTrackEvents.TRACK_STREAMING_STATUS_CHANGED,
+                    this.handleTrackStreamingStatusChanged);
+                dispatch(trackStreamingStatusChanged(_videoTrack.jitsiTrack,
+                    _videoTrack.jitsiTrack.getTrackStreamingStatus()));
+            }
+        }
+    }
+
+    /**
+     * Handle track streaming status change event by
+     * by dispatching an action to update track streaming status for the given track in app state.
+     *
+     * @param {JitsiTrack} jitsiTrack - The track with streaming status updated.
+     * @param {JitsiTrackStreamingStatus} streamingStatus - The updated track streaming status.
+     * @returns {void}
+     */
+    handleTrackStreamingStatusChanged(jitsiTrack: any, streamingStatus: any) {
+        this.props.dispatch(trackStreamingStatusChanged(jitsiTrack, streamingStatus));
     }
 
     /**
@@ -1330,8 +1394,4 @@ function _mapStateToProps(state: IReduxState, ownProps: any): Object {
     };
 }
 
-export default connect(_mapStateToProps)(withStyles(translate((props: IProps) => {
-    useTrackStreamingStatus(props._videoTrack);
-
-    return <Thumbnail { ...props } />;
-}), defaultStyles));
+export default connect(_mapStateToProps)(withStyles(translate(Thumbnail), defaultStyles));

@@ -273,13 +273,6 @@ function _mapStateToProps(state: IReduxState, ownProps: any) {
             component: ProfileTab,
             labelKey: 'profile.title',
             props: getProfileTabProps(state),
-            propsUpdateFunction: (tabState: any, newProps: ReturnType<typeof getProfileTabProps>) => {
-                return {
-                    ...newProps,
-                    displayName: tabState?.displayName,
-                    email: tabState?.email
-                };
-            },
             submit: submitProfileTab,
             icon: IconUser
         });*/

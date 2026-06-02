@@ -33,7 +33,7 @@ function insertTextMsg(id, msg) {
     const el = document.getElementById(id);
 
     if (el) {
-        el.textContent = msg;
+        el.innerHTML = msg;
     }
 }
 

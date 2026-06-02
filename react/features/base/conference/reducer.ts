@@ -52,7 +52,6 @@ const DEFAULT_STATE = {
 };
 
 export interface IConferenceMetadata {
-    dialinEnabled?: boolean;
     files: {
         [fileId: string]: {
             authorParticipantJid: string;
@@ -67,7 +66,6 @@ export interface IConferenceMetadata {
         };
     };
     recording?: {
-        isRecordingRequested?: boolean;
         isTranscribingEnabled: boolean;
     };
     visitors?: {

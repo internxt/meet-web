@@ -15,8 +15,6 @@ import Icon from '../../base/icons/components/Icon';
 import { IconCloseLarge } from '../../base/icons/svg';
 import Tooltip from '../../base/tooltip/components/Tooltip';
 import Spinner from '../../base/ui/components/web/Spinner';
-import { showWarningNotification } from '../../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
 import { BACKGROUNDS_LIMIT, IMAGES, type Image, VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { toDataURL } from '../functions';
 import logger from '../logger';
@@ -188,7 +186,6 @@ function VirtualBackgrounds({
     onOptionsChange,
     options,
     selectedVideoInputId,
-    dispatch,
     t
 }: IProps) {
     const { classes, cx } = useStyles();
@@ -221,13 +218,9 @@ function VirtualBackgrounds({
             err && setStoredImages(storedImages.slice(1));
         }
         if (storedImages.length === BACKGROUNDS_LIMIT) {
-            dispatch(showWarningNotification({
-                descriptionKey: 'virtualBackground.oldestBackgroundRemoved',
-                titleKey: 'virtualBackground.backgroundLimitReached'
-            }, NOTIFICATION_TIMEOUT_TYPE.MEDIUM));
             setStoredImages(storedImages.slice(1));
         }
-    }, [ storedImages, dispatch ]);
+    }, [ storedImages ]);
 
     const enableBlur = useCallback(async () => {
         onOptionsChange({

@@ -4,7 +4,7 @@
 import Logger from '@jitsi/logger';
 import $ from 'jquery';
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import ReactDOM from 'react-dom';
 
 import { browser } from '../../../react/features/base/lib-jitsi-meet';
 import { FILMSTRIP_BREAKPOINT } from '../../../react/features/filmstrip/constants';
@@ -225,13 +225,6 @@ export class VideoContainer extends LargeContainer {
          * @type {string|null}
          */
         this._backgroundOrientation = null;
-
-        /**
-         * The React root for the large video background component.
-         * @private
-         * @type {import('react-dom/client').Root|null}
-         */
-        this._backgroundRoot = null;
 
         /**
          * Flag indicates whether or not the background should be rendered.
@@ -718,20 +711,15 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-        if (!this._backgroundRoot) {
-            this._backgroundRoot = createRoot(document.getElementById('largeVideoBackgroundContainer'));
-        }
-        this._backgroundRoot.render(
-            <LargeVideoBackground
-                hidden = { this._hideBackground || this._isHidden }
-                mirror = {
-                    this.stream
-                    && this.stream.isLocal()
-                    && this.localFlipX
-                }
-                orientationFit = { this._backgroundOrientation }
-                videoElement = { this.video }
-                videoTrack = { this.stream } />
+        ReactDOM.render(
+            React.createElement(LargeVideoBackground, {
+                hidden: this._hideBackground || this._isHidden,
+                mirror: this.stream && this.stream.isLocal() && this.localFlipX,
+                orientationFit: this._backgroundOrientation,
+                videoElement: this.video,
+                videoTrack: this.stream
+            }),
+            document.getElementById('largeVideoBackgroundContainer')
         );
     }
 }

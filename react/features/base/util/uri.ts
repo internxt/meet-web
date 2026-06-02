@@ -134,13 +134,12 @@ export function getBackendSafePath(path?: string): string | undefined {
 }
 
 /**
- * Decodes, NFKC-normalizes, and lowercases a room name without percent-encoding the result.
- * Use this when the result will be passed to an API (e.g. URLSearchParams) that encodes automatically.
+ * Converts a room name to a backend-safe format. Properly lowercased and url encoded.
  *
- * @param {string?} room - The room name to normalize.
+ * @param {string?} room - The room name to convert.
  * @returns {string?}
  */
-export function getNormalizedRoomName(room?: string): string | undefined {
+export function getBackendSafeRoomName(room?: string): string | undefined {
     if (!room) {
         return room;
     }
@@ -163,27 +162,16 @@ export function getNormalizedRoomName(room?: string): string | undefined {
 
     // Only decoded and normalized strings can be lowercased properly.
     room = room?.toLowerCase();
+
+    // But we still need to (re)encode it.
+    room = encodeURIComponent(room ?? '');
     /* eslint-enable no-param-reassign */
 
-    return room;
-}
-
-/**
- * Converts a room name to a backend-safe format. Properly lowercased and url encoded.
- *
- * @param {string?} room - The room name to convert.
- * @returns {string?}
- */
-export function getBackendSafeRoomName(room?: string): string | undefined {
-    const normalized = getNormalizedRoomName(room);
-
-    if (!normalized) {
-        return normalized;
-    }
-
-    // Lowercase again after encoding because encodeURIComponent produces uppercase hex digits,
-    // but some backend services expect fully lowercase encoded strings.
-    return encodeURIComponent(normalized).toLowerCase();
+    // Unfortunately we still need to lowercase it, because encoding a string will
+    // add some uppercase characters, but some backend services
+    // expect it to be full lowercase. However lowercasing an encoded string
+    // doesn't change the string value.
+    return room.toLowerCase();
 }
 
 /**

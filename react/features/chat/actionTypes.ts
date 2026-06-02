@@ -6,7 +6,7 @@
  *     displayName: string
  *     hasRead: boolean,
  *     id: string,
- *     messageType: ChatMessageType,
+ *     messageType: string,
  *     message: string,
  *     timestamp: string,
  * }
@@ -26,13 +26,13 @@ export const ADD_MESSAGE = 'ADD_MESSAGE';
 export const ADD_MESSAGE_REACTION = 'ADD_MESSAGE_REACTION';
 
 /**
- * The type of the action which signals to clear Redux.
+ * The type of the action which signals to clear messages in Redux.
  *
  * {
- *     type: CLEAR_CHAT_STATE
+ *     type: CLEAR_MESSAGES
  * }
  */
-export const CLEAR_CHAT_STATE = 'CLEAR_CHAT_STATE';
+export const CLEAR_MESSAGES = 'CLEAR_MESSAGES';
 
 /**
  * The type of the action which signals the cancellation the chat panel.

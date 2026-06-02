@@ -17,6 +17,7 @@
 package org.jitsi.meet.sdk;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.AttributeSet;
@@ -26,7 +27,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.facebook.react.ReactRootView;
-import com.facebook.react.internal.featureflags.ReactNativeFeatureFlags;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
@@ -185,10 +185,6 @@ public class JitsiMeetView extends FrameLayout {
 
         if (reactRootView == null) {
             reactRootView = new ReactRootView(getContext());
-
-            boolean isFabricEnabled = ReactNativeFeatureFlags.enableFabricRenderer();
-            reactRootView.setIsFabric(isFabricEnabled);
-            
             reactRootView.startReactApplication(
                 ReactInstanceManagerHolder.getReactInstanceManager(),
                 appName,

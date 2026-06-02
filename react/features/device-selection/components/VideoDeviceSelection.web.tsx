@@ -194,13 +194,6 @@ class VideoDeviceSelection extends AbstractDialogTab<IProps, IState> {
             !== this.props.selectedVideoInputId) {
             this._createVideoInputTrack(this.props.selectedVideoInputId);
         }
-
-        if (!prevProps.hasVideoPermission && this.props.hasVideoPermission) {
-            this._createVideoInputTrack(this.props.selectedVideoInputId)
-                ?.then(() => {
-                    this.props.dispatch(getAvailableDevices());
-                });
-        }
     }
 
     /**

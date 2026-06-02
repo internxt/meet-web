@@ -1,11 +1,13 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import ReactDOM from 'react-dom';
 
 import AlwaysOnTop from './AlwaysOnTop';
 
 // Render the main/root Component.
-const root = createRoot(document.getElementById('react') as HTMLElement);
+/* eslint-disable-next-line react/no-deprecated */
+ReactDOM.render(<AlwaysOnTop />, document.getElementById('react'));
 
-root.render(<AlwaysOnTop />);
-
-window.addEventListener('beforeunload', () => root.unmount());
+window.addEventListener(
+    'beforeunload',
+    /* eslint-disable-next-line react/no-deprecated */
+    () => ReactDOM.unmountComponentAtNode(document.getElementById('react') ?? document.body));

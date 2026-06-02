@@ -68,8 +68,6 @@ export function toggleVideoFromPiP() {
  */
 export function exitPiP() {
     return (dispatch: IStore['dispatch']) => {
-        logger.debug('exitPiP called');
-
         if (document.pictureInPictureElement) {
             document.exitPictureInPicture()
             .then(() => {
@@ -97,8 +95,6 @@ export function handleWindowBlur(videoElement: HTMLVideoElement) {
         const state = getState();
         const isPiPActive = state['features/pip']?.isPiPActive;
 
-        logger.debug(`Window blur detected, isPiPActive=${isPiPActive}`);
-
         if (!isPiPActive) {
             enterPiP(videoElement);
         }
@@ -115,8 +111,6 @@ export function handleWindowFocus() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const isPiPActive = state['features/pip']?.isPiPActive;
-
-        logger.debug(`Window focus detected, isPiPActive=${isPiPActive}`);
 
         if (isPiPActive) {
             dispatch(exitPiP());
@@ -166,24 +160,17 @@ export function showPiP() {
     return (_dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const isPiPActive = state['features/pip']?.isPiPActive;
-        const _shouldShowPip = shouldShowPiP(state);
 
-        logger.debug(`showPiP called, shouldShow=${_shouldShowPip}, isPiPActive=${isPiPActive}`);
-
-        if (!_shouldShowPip) {
+        if (!shouldShowPiP(state)) {
             return;
         }
 
         if (!isPiPActive) {
             const videoElement = document.getElementById('pipVideo') as HTMLVideoElement;
 
-            if (!videoElement) {
-                logger.warn('showPiP: pipVideo element not found');
-
-                return;
+            if (videoElement) {
+                enterPiP(videoElement);
             }
-
-            enterPiP(videoElement);
         }
     };
 }
@@ -198,8 +185,6 @@ export function hidePiP() {
     return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
         const state = getState();
         const isPiPActive = state['features/pip']?.isPiPActive;
-
-        logger.debug(`hidePiP called, isPiPActive=${isPiPActive}`);
 
         if (isPiPActive) {
             dispatch(exitPiP());

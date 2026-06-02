@@ -11,32 +11,32 @@ export const dialogStyles = createStyleSheet({
     },
 
     customContainer: {
-        marginBottom: BaseTheme.spacing[4],
-        marginHorizontal: BaseTheme.spacing[4],
+        marginBottom: BaseTheme.spacing[3],
+        marginHorizontal: BaseTheme.spacing[3],
         marginTop: BaseTheme.spacing[2]
     },
 
     questionText: {
         ...BaseTheme.typography.bodyShortBold,
         color: BaseTheme.palette.text01,
-        marginLeft: BaseTheme.spacing[2]
+        marginLeft: BaseTheme.spacing[1]
     },
 
     questionOwnerText: {
         ...BaseTheme.typography.bodyShortBold,
         color: BaseTheme.palette.text03,
-        marginBottom: BaseTheme.spacing[4],
-        marginLeft: BaseTheme.spacing[2]
+        marginBottom: BaseTheme.spacing[2],
+        marginLeft: BaseTheme.spacing[1]
     },
 
     optionContainer: {
         flexDirection: 'column',
-        marginTop: BaseTheme.spacing[4],
-        marginHorizontal: BaseTheme.spacing[4]
+        marginTop: BaseTheme.spacing[3],
+        marginHorizontal: BaseTheme.spacing[3]
     },
 
     optionRemoveButton: {
-        width: 136
+        width: 128
     },
 
     optionRemoveButtonText: {
@@ -50,8 +50,8 @@ export const dialogStyles = createStyleSheet({
         color: BaseTheme.palette.text01,
         fontSize: 14,
         paddingBottom: BaseTheme.spacing[2],
-        paddingLeft: BaseTheme.spacing[4],
-        paddingRight: BaseTheme.spacing[4],
+        paddingLeft: BaseTheme.spacing[3],
+        paddingRight: BaseTheme.spacing[3],
         paddingTop: BaseTheme.spacing[2]
     }
 });
@@ -91,8 +91,8 @@ export const resultsStyles = createStyleSheet({
     },
 
     answerContainer: {
-        marginHorizontal: BaseTheme.spacing[2],
-        marginVertical: BaseTheme.spacing[4],
+        marginHorizontal: BaseTheme.spacing[1],
+        marginVertical: BaseTheme.spacing[3],
         maxWidth: '100%'
     },
 
@@ -146,7 +146,7 @@ export const pollsStyles = createStyleSheet({
         boxShadow: BaseTheme.shape.boxShadow,
         borderWidth: 1,
         padding: BaseTheme.spacing[2],
-        margin: BaseTheme.spacing[2]
+        margin: BaseTheme.spacing[3]
     },
 
     pollCreateContainer: {
@@ -154,11 +154,12 @@ export const pollsStyles = createStyleSheet({
     },
 
     pollCreateSubContainer: {
-        flex: 1
+        flex: 1,
+        marginTop: BaseTheme.spacing[3]
     },
 
     pollCreateButtonsContainer: {
-        marginHorizontal: BaseTheme.spacing[2]
+        marginHorizontal: BaseTheme.spacing[3]
     },
 
     pollSendLabel: {
@@ -190,12 +191,12 @@ export const pollsStyles = createStyleSheet({
     },
 
     pollCreateAddButton: {
-        marginHorizontal: BaseTheme.spacing[2],
+        marginHorizontal: BaseTheme.spacing[1],
         marginVertical: BaseTheme.spacing[2]
     },
 
     pollCreateButton: {
-        marginHorizontal: BaseTheme.spacing[2],
+        marginHorizontal: BaseTheme.spacing[1],
         flex: 1
     },
 
@@ -204,7 +205,7 @@ export const pollsStyles = createStyleSheet({
     },
 
     createPollButton: {
-        marginHorizontal: BaseTheme.spacing[4],
+        marginHorizontal: BaseTheme.spacing[5],
     },
 
     pollPane: {
@@ -220,12 +221,12 @@ export const pollsStyles = createStyleSheet({
     bottomLinks: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginHorizontal: BaseTheme.spacing[2]
+        marginHorizontal: BaseTheme.spacing[1]
     },
 
     fieldSeparator: {
         borderBottomWidth: 1,
         borderColor: BaseTheme.palette.ui05,
-        marginTop: BaseTheme.spacing[2]
+        marginTop: BaseTheme.spacing[3]
     }
 });

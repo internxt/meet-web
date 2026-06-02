@@ -113,17 +113,17 @@ export function maybeRedirectToTokenAuthUrl(
     const audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
     const videoMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
 
-    if (!isTokenAuthEnabled(state)) {
+    if (!isTokenAuthEnabled(config)) {
         return false;
     }
 
     // if tokenAuthUrl check jwt if is about to expire go through the url to get new token
     const jwt = state['features/base/jwt'].jwt;
-    const refreshToken = state['features/base/jwt'].refreshToken;
     const expirationDate = getJwtExpirationDate(jwt);
 
-    // if there is jwt token, and it is expired let's obtain a new one
-    if (expirationDate && expirationDate.getTime() <= Date.now()) {
+    // if there is jwt and its expiration time is less than 3 minutes away
+    // let's obtain new token
+    if (expirationDate && expirationDate.getTime() - Date.now() < 3 * 60 * 1000) {
         const room = state['features/base/conference'].room;
         const { tenant } = parseURIString(locationURL.href) || {};
 
@@ -137,8 +137,7 @@ export function maybeRedirectToTokenAuthUrl(
                 videoMuted
             },
             room,
-            tenant,
-            refreshToken
+            tenant
         )
             .then((tokenAuthServiceUrl: string | undefined) => {
                 if (!tokenAuthServiceUrl) {
@@ -149,8 +148,8 @@ export function maybeRedirectToTokenAuthUrl(
 
                 return dispatch(openTokenAuthUrl(tokenAuthServiceUrl));
             })
-            .catch(e => {
-                failureCallback(e);
+            .catch(() => {
+                failureCallback();
             });
 
         return true;
