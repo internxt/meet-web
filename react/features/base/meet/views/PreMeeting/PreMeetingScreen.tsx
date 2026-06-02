@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useMemo, useState } from "react";
+import React, { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { WithTranslation } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "tss-react/mui";
@@ -31,6 +31,8 @@ import AuthModal from "../Home/containers/AuthModal";
 import Header from "./components/Header";
 import PreMeetingModal from "./components/PreMeetingModal";
 import { useUserData } from "./hooks/useUserData";
+
+const REFRESH_PARTICIPANTS_COUNT_INTERVAL = 5000;
 
 interface IProps extends WithTranslation {
     /**
@@ -246,10 +248,13 @@ const PreMeetingScreen = ({
         ),
         [showUnsafeRoomWarning, showDeviceStatus, showRecordingWarning],
     );
+    
+    const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-    const getUsersInMeeting = async () => {
-        if (!isInNewMeeting) {
-            setIsLoadingParticipants(true);
+    const getUsersInMeeting = async (shouldReload: boolean = false) => {
+        if (isInNewMeeting) return;
+        else {
+            if (shouldReload) setIsLoadingParticipants(true);
             setParticipantsLoadError(false);
             try {
                 const meetingUsers = await MeetingService.instance.getCurrentUsersInCall(room);
@@ -257,7 +262,7 @@ const PreMeetingScreen = ({
             } catch {
                 setParticipantsLoadError(true);
             } finally {
-                setIsLoadingParticipants(false);
+                 if (shouldReload) setIsLoadingParticipants(false);
             }
         }
     };
@@ -269,12 +274,19 @@ const PreMeetingScreen = ({
             getUsersInMeeting();
         }
 
+        if (!isInNewMeeting) {
+            getUsersInMeeting(true);
+            pollingRef.current = setInterval(getUsersInMeeting, REFRESH_PARTICIPANTS_COUNT_INTERVAL);
+        }
         const name = storageManager.getDisplayName() || userData?.name;
         if (name) {
             dispatchUpdateSettings({
                 displayName: name,
             });
         }
+        return () => {
+        if (pollingRef.current) clearInterval(pollingRef.current);
+    };
     }, []);
 
     useEffect(() => {
