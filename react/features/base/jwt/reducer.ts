@@ -11,10 +11,8 @@ export interface IJwtState {
     };
     delayedLoadOfAvatarUrl?: string;
     group?: string;
-    idToken?: string;
     jwt?: string;
     knownAvatarUrl?: string;
-    refreshToken?: string;
     server?: string;
     tenant?: string;
     user?: {

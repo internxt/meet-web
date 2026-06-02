@@ -12,7 +12,8 @@ local http = require "net.http";
 local inspect = require 'inspect';
 
 local util = module:require 'util';
-local starts_with = util.starts_with;
+local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
+local is_vpaas = util.is_vpaas;
 
 local ban_check_count = module:measure("muc_auth_ban_check", "rate")
 local ban_check_users_banned_count = module:measure("muc_auth_ban_users_banned", "rate")
@@ -42,13 +43,17 @@ end);
 local function shouldAllow(session)
     local token = session.auth_token;
 
-    if token ~= nil then
+    if token ~= nil and session.jitsi_web_query_room and session.jitsi_web_query_prefix then
         -- cached tokens are banned
         if cache:get(token) then
             return false;
         end
 
-        if not starts_with(session.jitsi_web_query_prefix, 'vpaas-magic-cookie-') then
+        local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+        if not room then
+            return nil;
+        end
+        if not is_vpaas(room) then
             return true;
         end
 

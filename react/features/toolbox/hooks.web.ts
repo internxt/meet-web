@@ -12,7 +12,6 @@ import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { raiseHand } from '../base/participants/actions';
 import { getLocalParticipant, hasRaisedHand } from '../base/participants/functions';
 import { isToggleCameraEnabled } from '../base/tracks/functions.web';
-import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { toggleChat } from '../chat/actions.web';
 import { isChatDisabled } from '../chat/functions';
 import { useChatButton } from '../chat/hooks.web';
@@ -63,6 +62,7 @@ import VideoQualityDialog from '../video-quality/components/VideoQualityDialog.w
 import { useVirtualBackgroundButton } from '../virtual-background/hooks';
 import { useWhiteboardButton } from '../whiteboard/hooks';
 
+import ChatButton from '../chat/components/web/ChatButton';
 import { setFullScreen } from './actions.web';
 import DownloadButton from './components/DownloadButton';
 import HelpButton from './components/HelpButton';
@@ -81,25 +81,36 @@ import { ICustomToolbarButton, IToolboxButton, ToolbarButton } from './types';
 const microphone = {
     key: 'microphone',
     Content: AudioSettingsButton,
-    group: 0
+    group: 0,
+    display: true
 };
 
 const camera = {
     key: 'camera',
     Content: VideoSettingsButton,
-    group: 0
+    group: 0,
+    display: true
 };
 
 const profile = {
     key: 'profile',
     Content: ProfileButton,
-    group: 1
+    group: 1,
+    display: true
+};
+
+const chat = {
+    key: 'chat',
+    Content: ChatButton,
+    group: 2,
+    display: true
 };
 
 const desktop = {
     key: 'desktop',
     Content: ShareDesktopButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 // In Narrow layout and mobile web we are using drawer for popups and that is why it is better to include
@@ -108,67 +119,78 @@ const desktop = {
 const raisehand = {
     key: 'raisehand',
     Content: RaiseHandContainerButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 const invite = {
     key: 'invite',
     Content: InviteButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 const toggleCamera = {
     key: 'toggle-camera',
     Content: ToggleCameraButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 const videoQuality = {
     key: 'videoquality',
     Content: VideoQualityButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 const fullscreen = {
     key: 'fullscreen',
     Content: FullscreenButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 const linkToSalesforce = {
     key: 'linktosalesforce',
     Content: LinkToSalesforceButton,
-    group: 2
+    group: 2,
+    display: true
 };
 
 const shareAudio = {
     key: 'shareaudio',
     Content: ShareAudioButton,
-    group: 3
+    group: 3,
+    display: true
 };
 
 const noiseSuppression = {
     key: 'noisesuppression',
     Content: NoiseSuppressionButton,
-    group: 3
+    group: 3,
+    display: true
 };
 
 const settings = {
     key: 'settings',
     Content: SettingsButton,
-    group: 4
+    group: 4,
+    display: true
 };
 
 const download = {
     key: 'download',
     Content: DownloadButton,
-    group: 4
+    group: 4,
+    display: true
 };
 
 const help = {
     key: 'help',
     Content: HelpButton,
-    group: 4
+    group: 4,
+    display: true
 };
 
 /**
@@ -262,19 +284,6 @@ function useHelpButton() {
 }
 
 /**
- * Hide invite button for breakout-rooms.
- *
- * @returns {Object | undefined}
- */
-function useInviteButton() {
-    const visible = useSelector((state: IReduxState) => !isInBreakoutRoom(state));
-
-    if (visible) {
-        return invite;
-    }
-}
-
-/**
 * Returns all buttons that could be rendered.
 *
 * @param {Object} _customToolbarButtons - An array containing custom buttons objects.
@@ -307,7 +316,6 @@ export function useToolboxButtons(
     const feedback = useFeedbackButton();
     const _download = useDownloadButton();
     const _help = useHelpButton();
-    const _invite = useInviteButton();
     const customPanel = useCustomPanelButton();
 
     const buttons: { [key in ToolbarButton]?: IToolboxButton; } = {
@@ -319,7 +327,7 @@ export function useToolboxButtons(
         raisehand,
         reactions,
         'participants-pane': participants,
-        invite: _invite,
+        invite,
         tileview,
         'toggle-camera': toggleCameraButton,
         videoquality: videoQuality,

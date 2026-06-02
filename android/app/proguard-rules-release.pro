@@ -5,5 +5,6 @@
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
 
-# Giphy SDK using Kotlin Parcelize
+# R8 missing classes - suppress warnings
+-dontwarn com.facebook.memory.config.MemorySpikeConfig
 -dontwarn kotlinx.parcelize.Parcelize

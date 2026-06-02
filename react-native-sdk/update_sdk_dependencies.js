@@ -6,7 +6,7 @@ const packageJSON = require('../package.json');
 const SDKPackageJSON = require('./package.json');
 
 // Skip checking these.
-const skipDeps = [ 'react-native' ];
+const skipDeps = [ 'react', 'react-native' ];
 
 /**
  * Merges the dependency versions from the root package.json with the dependencies of the SDK package.json.

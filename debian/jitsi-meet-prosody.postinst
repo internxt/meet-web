@@ -284,17 +284,13 @@ case "$1" in
             # and drop the wait and the prosody restart
             sleep 1
             invoke-rc.d prosody restart || true
-        fi
-    ;;
-    triggered)
-        for trigger in $2; do
-            if [ "$trigger" = "update-ca-certificates-java" ]; then
-                echo "Java certificates updated, restarting Jitsi components..."
+
+            # In case we had updated the certificates and restarted prosody, let's restart and the bridge and jicofo if possible
+            if [ -d /run/systemd/system ] && [ "$CERT_ADDED_TO_TRUST" = "true" ]; then
                 systemctl restart jitsi-videobridge2.service >/dev/null || true
                 systemctl restart jicofo.service >/dev/null || true
             fi
-        done
-        exit 0
+        fi
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

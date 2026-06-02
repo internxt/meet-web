@@ -297,8 +297,7 @@ export default function Toolbox({
                         {Boolean(overflowMenuButtons.length) && (
                             <OverflowMenuButton
                                 ariaControls = 'overflow-menu'
-                                ariaLabel = { t('toolbar.accessibilityLabel.moreActionsMenu') }
-                                buttons = { overflowMenuButtons.reduce<Array<IToolboxButton[]>>((acc, val) => {
+                                buttons = { overflowMenuButtons.reduce<Array<IToolboxButton[]>>((acc: IToolboxButton[][], val: IToolboxButton) => {
                                     if (val.key === 'reactions' && showReactionsInOverflowMenu) {
                                         return acc;
                                     }
@@ -334,7 +333,6 @@ export default function Toolbox({
                             endConferenceSupported
                                 ? <HangupMenuButton
                                     ariaControls = 'hangup-menu'
-                                    ariaLabel = { t('toolbar.accessibilityLabel.hangup') }
                                     isOpen = { hangupMenuVisible }
                                     key = 'hangup-menu'
                                     notifyMode = { buttonsWithNotifyClick?.get('hangup-menu') }

@@ -58,7 +58,9 @@ export default class Filmstrip extends BasePageObject {
      * @param endpointId
      */
     async getRemoteVideoId(endpointId: string) {
-        await this.participant.driver.$(`span[id="participant_${endpointId}"]`).waitForExist();
+        const remoteDisplayName = this.participant.driver.$(`span[id="participant_${endpointId}"]`);
+
+        await remoteDisplayName.moveTo();
 
         return await this.participant.execute(eId =>
             document.evaluate(`//span[@id="participant_${eId}"]//video`,

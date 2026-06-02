@@ -1,4 +1,3 @@
-import { noop } from 'lodash-es';
 
 declare let config: any;
 
@@ -6,7 +5,12 @@ declare let config: any;
  * Custom language detection, just returns the config property if any.
  */
 export default {
-    cacheUserLanguage: noop,
+    /**
+     * Does not support caching.
+     *
+     * @returns {void}
+     */
+    cacheUserLanguage: Function.prototype,
 
     /**
      * Looks the language up in the config.

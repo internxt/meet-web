@@ -23,7 +23,6 @@ export * from './functions.any';
  * }.
  * @param {string?} roomName - The room name.
  * @param {string?} tenant - The tenant name if any.
- * @param {string?} refreshToken - The refreshToken if any.
  *
  * @returns {Promise<string|undefined>} - The URL pointing to JWT login service or
  * <tt>undefined</tt> if the pattern stored in config is not a string and the URL can not be
@@ -40,9 +39,7 @@ export const getTokenAuthUrl = (
         },
         roomName: string | undefined,
         // eslint-disable-next-line max-params
-        tenant: string | undefined,
-        // eslint-disable-next-line max-params
-        refreshToken?: string | undefined): Promise<string | undefined> => {
+        tenant: string | undefined): Promise<string | undefined> => {
 
     const {
         audioMuted = false,
@@ -67,8 +64,7 @@ export const getTokenAuthUrl = (
                 videoMuted
             },
             roomName,
-            tenant,
-            refreshToken
+            tenant
         );
 
         // Append ios=true or android=true to the token URL.

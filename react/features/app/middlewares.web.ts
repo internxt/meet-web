@@ -1,6 +1,5 @@
 import "../../../react/features/base/meet/middlewares";
 import "../base/app/middleware";
-import '../base/jwt/middleware.web';
 import '../base/config/middleware';
 import "../base/connection/middleware";
 import "../base/devices/middleware";

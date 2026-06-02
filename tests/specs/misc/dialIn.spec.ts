@@ -72,9 +72,7 @@ describe('Dial-in', () => {
 
 
     it('view more numbers page', async () => {
-        if (expectations.dialIn.moreNumbersPage) {
-            await verifyMoreNumbersPage(ctx.p1);
-        }
+        await verifyMoreNumbersPage(ctx.p1);
     });
 
     it('retrieve pin', async () => {

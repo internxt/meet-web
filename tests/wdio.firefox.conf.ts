@@ -1,6 +1,6 @@
 // wdio.firefox.conf.ts
 // extends the main configuration file changing first participant to be Firefox
-import { mergeWith } from 'lodash-es';
+import { merge } from 'lodash-es';
 import process from 'node:process';
 
 // @ts-ignore
@@ -19,7 +19,7 @@ if (process.env.HEADLESS === 'true') {
     ffArgs.push('--headless');
 }
 
-const mergedConfig = mergeWith(defaultConfig, {
+const mergedConfig = merge(defaultConfig, {
     exclude: [
         'specs/iframe/*.spec.ts', // FF does not support uploading files (uploadFile)
 
@@ -50,11 +50,7 @@ const mergedConfig = mergeWith(defaultConfig, {
             }
         }
     }
-}, (objValue: any, srcValue: any) => {
-    if (Array.isArray(objValue)) {
-        return objValue.concat(srcValue);
-    }
-});
+}, { clone: false });
 
 // Remove the chrome options from the first participant
 // @ts-ignore

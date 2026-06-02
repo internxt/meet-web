@@ -1,5 +1,7 @@
 local st = require "util.stanza";
 local ext_services = module:depends("external_services");
+local get_services = ext_services.get_services;
+local services_xml = ext_services.services_xml;
 
 -- Jitsi Connection Optimization
 -- gathers needed information and pushes it with a message to clients
@@ -67,6 +69,9 @@ module:hook("resource-bind", function (event)
             from = module.host;
             to = session.full_jid; });
     stanza:add_child(query):up();
+
+    --- get turnservers and credentials
+    stanza:add_child(services_xml(get_services()));
 
     session.send(stanza);
 end);

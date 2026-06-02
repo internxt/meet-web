@@ -23,7 +23,6 @@ export interface IConnectionState {
         getJid: () => string;
         getLogs: () => Object;
         initJitsiConference: Function;
-        refreshToken: Function;
         removeFeature: Function;
     };
     error?: ConnectionFailedError;

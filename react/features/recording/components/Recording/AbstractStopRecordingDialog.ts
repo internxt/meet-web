@@ -8,8 +8,7 @@ import { IJitsiConference } from '../../../base/conference/reducer';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { setVideoMuted } from '../../../base/media/actions';
 import { setRequestingSubtitles } from '../../../subtitles/actions.any';
-import { isRecorderTranscriptionsRunning } from '../../../transcribing/functions';
-import { setStopRecordingIntent, stopLocalVideoRecording } from '../../actions';
+import { stopLocalVideoRecording } from '../../actions';
 import { RECORDING_METADATA_ID } from '../../constants';
 import { getActiveSession } from '../../functions';
 import { ISessionData } from '../../reducer';
@@ -46,11 +45,6 @@ export interface IProps extends WithTranslation {
      * The selected language for subtitles.
      */
     _subtitlesLanguage: string | null;
-
-    /**
-     * Whether a transcription session is running.
-     */
-    _transcriptionRunning: boolean;
 
     /**
      * The redux dispatch function.
@@ -99,25 +93,9 @@ export default class AbstractStopRecordingDialog<P extends IProps>
             _fileRecordingSession,
             _localRecording,
             _subtitlesLanguage,
-            _transcriptionRunning,
             dispatch,
             localRecordingVideoStop
         } = this.props;
-
-        // Pre-seed stopRecordingIntent from current running state so the
-        // off-sound/notification coordinator (maybeNotifyRecordingStop) knows
-        // what to wait for. Local recording has its own inline sound path and
-        // does not flow through this coordinator.
-        if (!_localRecording) {
-            const recordingRunning = Boolean(_fileRecordingSession);
-
-            if (recordingRunning || _transcriptionRunning) {
-                dispatch(setStopRecordingIntent({
-                    recording: recordingRunning,
-                    transcription: _transcriptionRunning
-                }));
-            }
-        }
 
         if (_localRecording) {
             dispatch(stopLocalVideoRecording());
@@ -134,7 +112,6 @@ export default class AbstractStopRecordingDialog<P extends IProps>
             setRequestingSubtitles(Boolean(_displaySubtitles), _displaySubtitles, _subtitlesLanguage, true));
 
         this.props._conference?.getMetadataHandler().setMetadata(RECORDING_METADATA_ID, {
-            isRecordingRequested: false,
             isTranscribingEnabled: false
         });
 
@@ -171,7 +148,6 @@ export function _mapStateToProps(state: IReduxState) {
         _fileRecordingSession:
             getActiveSession(state, JitsiRecordingConstants.mode.FILE),
         _localRecording: LocalRecordingManager.isRecordingLocally(),
-        _subtitlesLanguage,
-        _transcriptionRunning: isRecorderTranscriptionsRunning(state)
+        _subtitlesLanguage
     };
 }

@@ -51,6 +51,6 @@ globalThis.JitsiMeetJS = {
     }
 };
 
-globalThis.URL.createObjectURL = vi.fn(() => {
-  return `blob:dummy-${Date.now()}`;
+globalThis.URL.createObjectURL = vi.fn((blob) => {
+  return `blob:dummy-${Date.now()}`
 });

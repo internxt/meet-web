@@ -6,7 +6,6 @@ import { IReduxState, IStore } from '../../../app/types';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import E2EELabel from "../../../e2ee/components/E2EELabel";
 import RecordingLabel from '../../../recording/components/web/RecordingLabel';
-import TranscribingLabel from '../../../recording/components/web/TranscribingLabel';
 import { showToolbox } from '../../../toolbox/actions.web';
 import { isToolboxVisible } from "../../../toolbox/functions.web";
 import VisitorsCountLabel from "../../../visitors/components/web/VisitorsCountLabel";
@@ -73,9 +72,8 @@ const COMPONENTS: Array<{
     {
         Component: () => (
             <>
-                <RecordingLabel mode = { JitsiRecordingConstants.mode.FILE } />
-                <RecordingLabel mode = { JitsiRecordingConstants.mode.STREAM } />
-                <TranscribingLabel />
+                <RecordingLabel mode={JitsiRecordingConstants.mode.FILE} />
+                <RecordingLabel mode={JitsiRecordingConstants.mode.STREAM} />
             </>
         ),
         id: "recording",

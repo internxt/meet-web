@@ -35,16 +35,18 @@ MiddlewareRegistry.register(store => next => action => {
                 = getParticipantDisplayName(store.getState, participant.getId());
             const roomId = room ?? "";
 
-        dispatch(
-            hangup(
-                true,
-                roomId,
-                participantDisplayName
-                    ? i18next.t("dialog.kickTitle", { participantDisplayName })
-                    : i18next.t("dialog.kickSystemTitle"),
-                true
-            )
-        );
+        dispatch(hangup(true, roomId, i18next.t("dialog.kickTitle", { participantDisplayName })));
+        // Jitsi latest version
+        // dispatch(
+        //     hangup(
+        //         true,
+        //         roomId,
+        //         participantDisplayName
+        //             ? i18next.t("dialog.kickTitle", { participantDisplayName })
+        //             : i18next.t("dialog.kickSystemTitle"),
+        //         true
+        //     )
+        // );
 
         return result;
     }

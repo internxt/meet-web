@@ -6,7 +6,6 @@ import {
     setConfig,
     storeConfig
 } from '../base/config/actions';
-import { buildConfigURL } from '../base/config/functions.any';
 import {
     createFakeConfig,
     restoreConfig
@@ -16,7 +15,10 @@ import { JITSI_CONNECTION_URL_KEY } from '../base/connection/constants';
 import { loadConfig } from '../base/lib-jitsi-meet/functions.native';
 import { createDesiredLocalTracks } from '../base/tracks/actions.native';
 import isInsecureRoomName from '../base/util/isInsecureRoomName';
+import { parseURLParams } from '../base/util/parseURLParams';
 import {
+    appendURLParam,
+    getBackendSafeRoomName,
     parseURIString,
     toURLString
 } from '../base/util/uri';
@@ -96,7 +98,7 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
 
         dispatch(disconnect());
 
-        dispatch(configWillLoad(locationURL));
+        dispatch(configWillLoad(locationURL, room));
 
         let protocol = location.protocol.toLowerCase();
 
@@ -105,7 +107,14 @@ export function appNavigate(uri?: string, options: IReloadNowOptions = {}) {
         protocol !== 'http:' && protocol !== 'https:' && (protocol = 'https:');
 
         const baseURL = `${protocol}//${host}${contextRoot || '/'}`;
-        const url = buildConfigURL(locationURL, room);
+        let url = `${baseURL}config.js`;
+
+        // XXX In order to support multiple shards, tell the room to the deployment.
+        room && (url = appendURLParam(url, 'room', getBackendSafeRoomName(room) ?? ''));
+
+        const { release } = parseURLParams(location, true, 'search');
+
+        release && (url = appendURLParam(url, 'release', release));
 
         let config;
 

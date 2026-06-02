@@ -8,7 +8,6 @@ import {
 } from '../base/icons/svg';
 import { MEET_FEATURES } from '../base/jwt/constants';
 import { isJwtFeatureEnabled } from '../base/jwt/functions';
-import { isInBreakoutRoom } from '../breakout-rooms/functions';
 import { showErrorNotification } from '../notifications/actions';
 import { NOTIFICATION_TIMEOUT_TYPE, NOTIFICATION_TYPE } from '../notifications/constants';
 import { iAmVisitor } from '../visitors/functions';
@@ -25,7 +24,7 @@ import { MAX_FILE_SIZE } from './constants';
 export function isFileSharingEnabled(state: IReduxState) {
     const { fileSharing } = state['features/base/config'] ?? {};
 
-    return Boolean(fileSharing?.enabled && fileSharing?.apiUrl && !isInBreakoutRoom(state));
+    return Boolean(fileSharing?.enabled && fileSharing?.apiUrl);
 }
 
 /**

@@ -1,5 +1,5 @@
 import testPasswordStrength from "@internxt/lib/dist/src/auth/testPasswordStrength";
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react-hooks";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { usePasswordStrength } from "./usePasswordStrength";
 

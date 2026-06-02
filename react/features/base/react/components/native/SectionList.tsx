@@ -19,7 +19,7 @@ interface IProps {
      * Rendered when the list is empty. Can be a React Component Class, a render
      * function, or a rendered element.
      */
-    ListEmptyComponent: React.ReactElement<any> | null;
+    ListEmptyComponent: React.ReactElement<any>;
 
     /**
     *
@@ -44,7 +44,7 @@ interface IProps {
     *
     * Default renderer for every item in every section.
     */
-    renderItem: (info: SectionListRenderItemInfo<Item, Section>) => React.ReactElement<any> | null;
+    renderItem: (info: SectionListRenderItemInfo<Item, Section>) => React.ReactElement<any>;
 
     /**
     *

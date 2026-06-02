@@ -3,11 +3,15 @@
 
 const UI = {};
 
+import Logger from '@jitsi/logger';
+
 import {
     conferenceWillInit
 } from '../../react/features/base/conference/actions';
 import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { setColorAlpha } from '../../react/features/base/util/helpers';
+import { sanitizeUrl } from '../../react/features/base/util/uri';
+import { setDocumentUrl } from '../../react/features/etherpad/actions';
 import {
     setNotificationsEnabled,
     showNotification
@@ -23,6 +27,8 @@ import {
 import EtherpadManager from './etherpad/Etherpad';
 import UIUtil from './util/UIUtil';
 import VideoLayout from './videolayout/VideoLayout';
+
+const logger = Logger.getLogger('ui:core');
 
 let etherpadManager;
 
@@ -111,16 +117,23 @@ UI.unbindEvents = () => {
 
 /**
  * Setup and show Etherpad.
+ * @param {string} name etherpad id
  */
-UI.initEtherpad = () => {
-    const { getState } = APP.store;
+UI.initEtherpad = name => {
+    const { getState, dispatch } = APP.store;
     const configState = getState()['features/base/config'];
+    const etherpadBaseUrl = sanitizeUrl(configState.etherpad_base);
 
-    if (etherpadManager) {
+    if (etherpadManager || !etherpadBaseUrl || !name) {
         return;
     }
+    logger.log('Etherpad is enabled');
 
     etherpadManager = new EtherpadManager();
+
+    const url = new URL(name, etherpadBaseUrl);
+
+    dispatch(setDocumentUrl(url.toString()));
 
     if (configState.openSharedDocumentOnJoin) {
         etherpadManager.toggleEtherpad();

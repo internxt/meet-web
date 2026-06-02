@@ -4,7 +4,6 @@ import { IConfig } from '../base/config/configType';
 import { browser } from '../base/lib-jitsi-meet';
 
 import { _getTokenAuthState } from './functions.any';
-import logger from './logger';
 
 export * from './functions.any';
 
@@ -42,7 +41,6 @@ function _cryptoRandom() {
  * }.
  * @param {string?} roomName - The room name.
  * @param {string?} tenant - The tenant name if any.
- * @param {string?} refreshToken - The refresh token if available.
  *
  * @returns {Promise<string|undefined>} - The URL pointing to JWT login service or
  * <tt>undefined</tt> if the pattern stored in config is not a string and the URL can not be
@@ -58,10 +56,9 @@ export const getTokenAuthUrl = (
             videoMuted: boolean | undefined;
         },
         roomName: string | undefined,
-        // eslint-disable max-params
-        tenant: string | undefined,
-        refreshToken?: string): Promise<string | undefined> => {
-    // eslint-enable max-params
+        // eslint-disable-next-line max-params
+        tenant: string | undefined): Promise<string | undefined> => {
+
     const {
         audioMuted = false,
         audioOnlyEnabled = false,
@@ -85,8 +82,7 @@ export const getTokenAuthUrl = (
                 videoMuted
             },
             roomName,
-            tenant,
-            refreshToken
+            tenant
         );
 
         if (browser.isElectron()) {
@@ -107,17 +103,7 @@ export const getTokenAuthUrl = (
             codeVerifier += POSSIBLE_CHARS.charAt(Math.floor(_cryptoRandom() * POSSIBLE_CHARS.length));
         }
 
-        try {
-            window.sessionStorage.setItem('code_verifier', codeVerifier);
-        } catch (e) {
-            if (e instanceof DOMException && e.name === 'SecurityError') {
-                logger.warn(
-                    'sessionStorage access denied (cross-origin or restricted context) enable it to improve security',
-                    e);
-            } else {
-                logger.error('Unable to save code verifier in session storage', e);
-            }
-        }
+        window.sessionStorage.setItem('code_verifier', codeVerifier);
 
         return window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(codeVerifier))
             .then(digest => {

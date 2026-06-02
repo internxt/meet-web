@@ -11,11 +11,6 @@ export type ITokenOptions = {
      */
     exp?: string;
     /**
-     * Additional JWT features to include (merged with the defaults).
-     * Keys are feature names (e.g. 'file-upload'), values are boolean or string.
-     */
-    features?: Record<string, boolean | string>;
-    /**
      * The key ID to use for the token.
      * If not provided, the kid configured with environment variables will be used (see env.example).
      */
@@ -77,8 +72,7 @@ export function generatePayload(options: ITokenOptions): any {
                 'transcription': 'true',
                 'recording': 'true',
                 'sip-outbound-call': true,
-                'livestreaming': true,
-                ...options.features
+                'livestreaming': true
             },
         },
         'room': options.room || '*'

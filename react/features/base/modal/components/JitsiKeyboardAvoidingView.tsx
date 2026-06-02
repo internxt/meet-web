@@ -86,7 +86,7 @@ const JitsiKeyboardAvoidingView = (
 
     return (
         <KeyboardAvoidingView
-            behavior = { 'padding' }
+            behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
             contentContainerStyle = { contentContainerStyle as ViewStyle }
             enabled = { true }
             keyboardVerticalOffset = {

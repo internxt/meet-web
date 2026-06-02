@@ -13,7 +13,6 @@ import { getParticipantById, isPrivateChatEnabled } from '../base/participants/f
 import { IParticipant } from '../base/participants/types';
 import { escapeRegexp } from '../base/util/helpers';
 import { arePollsDisabled } from '../conference/functions.any';
-import { getCustomPanelWidth } from '../custom-panel/functions';
 import { isFileSharingEnabled } from '../file-sharing/functions.any';
 import { getParticipantsPaneWidth } from '../participants-pane/functions';
 import { isCCTabEnabled } from '../subtitles/functions.any';
@@ -100,7 +99,7 @@ export function replaceNonUnicodeEmojis(message: string): string {
  * @param {IReduxState} state - The redux state.
  * @returns {number} The number of unread messages.
  */
-export function getUnreadCount(state: IReduxState): number {
+export function getUnreadCount(state: IReduxState) {
     const { lastReadMessage, messages } = state['features/chat'];
     const messagesCount = messages.length;
 
@@ -151,7 +150,7 @@ export function getUnreadFilesCount(state: IReduxState): number {
  * @param {IReduxState} state - The redux state.
  * @returns {boolean} The disabled flag.
  */
-export function areSmileysDisabled(state: IReduxState): boolean {
+export function areSmileysDisabled(state: IReduxState) {
     const disableChatSmileys = state['features/base/config']?.disableChatSmileys === true;
 
     return disableChatSmileys;
@@ -210,7 +209,7 @@ export function getFocusedTab(state: IReduxState): ChatTabs | undefined {
  * @param {IMessage} message - The message from which to get the timestamp.
  * @returns {string}
  */
-export function getFormattedTimestamp(message: IMessage): string {
+export function getFormattedTimestamp(message: IMessage) {
     return getLocalizedDateFormatter(new Date(message.timestamp))
         .format(TIMESTAMP_FORMAT);
 }
@@ -221,7 +220,7 @@ export function getFormattedTimestamp(message: IMessage): string {
  * @param {IMessage} message - The message from which to get the text.
  * @returns {string}
  */
-export function getMessageText(message: IMessage): string {
+export function getMessageText(message: IMessage) {
     return message.messageType === MESSAGE_TYPE_ERROR
         ? i18next.t('chat.error', {
             error: message.message
@@ -237,7 +236,7 @@ export function getMessageText(message: IMessage): string {
  * @param {IMessage} message - The message to be checked.
  * @returns {boolean}
  */
-export function getCanReplyToMessage(state: IReduxState, message: IMessage): boolean {
+export function getCanReplyToMessage(state: IReduxState, message: IMessage) {
     const { knocking } = state['features/lobby'];
     const participant = getParticipantById(state, message.participantId);
 
@@ -267,7 +266,7 @@ export function getCanReplyToMessage(state: IReduxState, message: IMessage): boo
  * @param {IMessage} message - The message to be checked.
  * @returns {string}
  */
-export function getPrivateNoticeMessage(message: IMessage): string {
+export function getPrivateNoticeMessage(message: IMessage) {
     let recipient;
 
     if (message.messageType === MESSAGE_TYPE_LOCAL) {
@@ -291,7 +290,7 @@ export function getPrivateNoticeMessage(message: IMessage): string {
  * @param {IReduxState} state - The redux state.
  * @returns {boolean} - Returns true if the participant is not allowed to send group messages.
  */
-export function isSendGroupChatDisabled(state: IReduxState): boolean {
+export function isSendGroupChatDisabled(state: IReduxState) {
     const { groupChatRequiresPermission } = state['features/dynamic-branding'];
 
     if (!groupChatRequiresPermission) {
@@ -309,13 +308,10 @@ export function isSendGroupChatDisabled(state: IReduxState): boolean {
  * @returns {number} The maximum width in pixels available for the chat panel. Returns 0 if there
  * is no space available.
  */
-export function getChatMaxSize(state: IReduxState): number {
+export function getChatMaxSize(state: IReduxState) {
     const { clientWidth } = state['features/base/responsive-ui'];
 
-    return Math.max(
-        clientWidth - getParticipantsPaneWidth(state) - getCustomPanelWidth(state) - VIDEO_SPACE_MIN_SIZE,
-        0
-    );
+    return Math.max(clientWidth - getParticipantsPaneWidth(state) - VIDEO_SPACE_MIN_SIZE, 0);
 }
 
 /**

@@ -9,7 +9,6 @@ export interface IRoom {
             jid: string;
             role: string;
             userContext?: {
-                [key: string]: any;
                 id?: string;
                 name?: string;
             };
@@ -39,7 +38,6 @@ export interface IRoomInfoParticipant {
     jid: string;
     role: string;
     userContext?: {
-        [key: string]: any;
         id?: string;
         name?: string;
     };

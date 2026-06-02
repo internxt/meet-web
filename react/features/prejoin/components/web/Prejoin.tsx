@@ -509,11 +509,11 @@ function mapStateToProps(state: IReduxState) {
     const name = getDisplayName(state);
     const showErrorOnJoin = isDisplayNameRequired(state) && !name;
     const { id: participantId } = getLocalParticipant(state) ?? {};
-    const { joiningInProgress } = state['features/prejoin'];
-    const { room } = state['features/base/conference'];
-    const { unsafeRoomConsent } = state['features/base/premeeting'];
-    const config = state['features/base/config'];
-    const { showPrejoinWarning: showRecordingWarning } = config.recordings ?? {};
+    const { joiningInProgress } = state["features/prejoin"];
+    const { room } = state["features/base/conference"];
+    const { unsafeRoomConsent } = state["features/base/premeeting"];
+    const { showPrejoinWarning: showRecordingWarning } = state["features/base/config"].recordings ?? {};
+    const audioTrack = getLocalJitsiAudioTrack(state);
 
     return {
         deviceStatusVisible: isDeviceStatusVisible(state),
@@ -531,6 +531,7 @@ function mapStateToProps(state: IReduxState) {
         showUnsafeRoomWarning: isInsecureRoomName(room) && isUnsafeRoomWarningEnabled(state),
         unsafeRoomConsent,
         videoTrack: getLocalJitsiVideoTrack(state),
+        audioTrack,
     };
 }
 

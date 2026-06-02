@@ -47,12 +47,7 @@ MiddlewareRegistry.register((store: IStore) => next => action => {
                 collabDetails: metadata[WHITEBOARD_ID].collabDetails,
                 collabServerUrl: generateCollabServerUrl(store.getState())
             }));
-
-            // Prevents a second navigate() call on mobile
-            // that would reload the WebView and disconnect the active collab session.
-            if (!isWhiteboardOpen(store.getState())) {
-                store.dispatch(setWhiteboardOpen(true));
-            }
+            store.dispatch(setWhiteboardOpen(true));
         }
 
         break;

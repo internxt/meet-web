@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { IconCalendar, IconGear, IconRestore } from '../base/icons/svg';
-import BaseTheme from '../base/ui/components/BaseTheme.native';
+import BaseTheme from '../base/ui/components/BaseTheme';
 
 import TabIcon from './components/TabIcon';
 

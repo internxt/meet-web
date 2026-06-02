@@ -1,9 +1,11 @@
 import { IStore } from '../app/types';
+import { APP_WILL_NAVIGATE } from '../base/app/actionTypes';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT
 } from '../base/conference/actionTypes';
+import { isRoomValid } from '../base/conference/functions';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection/actionTypes';
 import { hideDialog } from '../base/dialog/actions';
 import { isDialogOpen } from '../base/dialog/functions';
@@ -33,6 +35,7 @@ import {
     openTokenAuthUrl,
     openWaitForOwnerDialog,
     redirectToDefaultLocation,
+    setTokenAuthUrlSuccess,
     stopWaitForOwner,
     waitForOwner
 } from './actions';
@@ -123,15 +126,25 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case CONFERENCE_JOINED: {
-        const { dispatch } = store;
+        const { dispatch, getState } = store;
+        const state = getState();
+        const config = state['features/base/config'];
+
+        if (isTokenAuthEnabled(config)
+            && config.tokenAuthUrlAutoRedirect
+            && state['features/base/jwt'].jwt) {
+            // auto redirect is turned on and we have successfully logged in
+            // let's mark that
+            dispatch(setTokenAuthUrlSuccess(true));
+        }
 
         if (_isWaitingForModerator(store)) {
-            dispatch(disableModeratorLogin());
+            store.dispatch(disableModeratorLogin());
         }
         if (_isWaitingForOwner(store)) {
-            dispatch(stopWaitForOwner());
+            store.dispatch(stopWaitForOwner());
         }
-        dispatch(hideLoginDialog());
+        store.dispatch(hideLoginDialog());
         break;
     }
 
@@ -170,6 +183,26 @@ MiddlewareRegistry.register(store => next => action => {
 
     case LOGOUT: {
         _handleLogout(store);
+
+        break;
+    }
+
+    case APP_WILL_NAVIGATE: {
+        const { dispatch, getState } = store;
+        const state = getState();
+        const config = state['features/base/config'];
+        const room = state['features/base/conference'].room;
+
+        if (isRoomValid(room)
+            && config.tokenAuthUrl && config.tokenAuthUrlAutoRedirect
+            && state['features/authentication'].tokenAuthUrlSuccessful
+            && !state['features/base/jwt'].jwt) {
+            // if we have auto redirect enabled, and we have previously logged in successfully
+            // we will redirect to the auth url to get the token and login again
+            // we want to mark token auth success to false as if login is unsuccessful
+            // the participant can join anonymously and not go in login loop
+            dispatch(setTokenAuthUrlSuccess(false));
+        }
 
         break;
     }
@@ -255,7 +288,6 @@ function _handleLogin({ dispatch, getState }: IStore) {
     const { enabled: audioOnlyEnabled } = state['features/base/audio-only'];
     const audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
     const videoMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO);
-    const refreshToken = state['features/base/jwt'].refreshToken;
 
     if (!room) {
         logger.warn('Cannot handle login, room is undefined!');
@@ -263,7 +295,7 @@ function _handleLogin({ dispatch, getState }: IStore) {
         return;
     }
 
-    if (!isTokenAuthEnabled(state)) {
+    if (!isTokenAuthEnabled(config)) {
         dispatch(openLoginDialog());
 
         return;
@@ -279,8 +311,7 @@ function _handleLogin({ dispatch, getState }: IStore) {
             videoMuted
         },
         room,
-        tenant,
-        refreshToken
+        tenant
     )
         .then((tokenAuthServiceUrl: string | undefined) => {
             if (!tokenAuthServiceUrl) {

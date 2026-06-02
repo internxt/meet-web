@@ -146,18 +146,11 @@ export function shouldRenderVideoTrack(
  * @returns {string}
  */
 export const getSoundFileSrc = (file: string, language: string): string => {
-    if (!language) {
-        return file;
-    }
-
-    // Normalize language code: 'fr-CA' -> 'frCA' to match AudioSupportedLanguage enum and file naming
-    const normalizedLanguage = language.replace('-', '');
-
-    if (!AudioSupportedLanguage[normalizedLanguage as keyof typeof AudioSupportedLanguage]
-        || normalizedLanguage === AudioSupportedLanguage.en) {
+    if (!AudioSupportedLanguage[language as keyof typeof AudioSupportedLanguage]
+        || language === AudioSupportedLanguage.en) {
         return file;
     }
     const fileTokens = file.split('.');
 
-    return `${fileTokens[0]}_${normalizedLanguage}.${fileTokens[1]}`;
+    return `${fileTokens[0]}_${language}.${fileTokens[1]}`;
 };

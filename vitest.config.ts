@@ -16,7 +16,6 @@ export default defineConfig({
     test: {
         globals: true,
         environment: "jsdom",
-        isolate: true,
         setupFiles: ["./react/test/setup.ts"],
         include: ["react/features/base/meet/**/*.{test,spec}.{js,ts,jsx,tsx}"],
         coverage: {

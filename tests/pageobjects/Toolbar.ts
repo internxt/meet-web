@@ -18,7 +18,6 @@ const STOP_DESKTOP = 'Stop sharing your screen';
 const ENTER_TILE_VIEW_BUTTON = 'Enter tile view';
 const EXIT_TILE_VIEW_BUTTON = 'Exit tile view';
 const VIDEO_QUALITY = 'Manage video quality';
-const VIRTUAL_BACKGROUND = 'Select Background';
 const VIDEO_MUTE = 'Stop camera';
 const VIDEO_UNMUTE = 'Start camera';
 
@@ -244,13 +243,6 @@ export default class Toolbar extends BasePageObject {
      */
     clickSettingsButton() {
         return this.clickButtonInOverflowMenu(SETTINGS);
-    }
-
-    /**
-     * Clicks on the virtual background toolbar button which opens the virtual background settings.
-     */
-    clickVirtualBackgroundButton() {
-        return this.clickButtonInOverflowMenu(VIRTUAL_BACKGROUND);
     }
 
     /**

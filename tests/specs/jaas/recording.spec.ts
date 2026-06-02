@@ -1,6 +1,3 @@
-import { expect } from '@wdio/globals';
-
-import '../../helpers/matchers';
 import { Participant } from '../../helpers/Participant';
 import { setTestProperties } from '../../helpers/TestProperties';
 import { config as testsConfig } from '../../helpers/TestsConfig';
@@ -88,9 +85,9 @@ describe('Recording and live-streaming', () => {
             timeoutMsg: 'recordingLinkAvailable event not received'
         });
 
-        expect(linkEvent.link).toStartWith('https://', 'recording link');
-        expect(linkEvent.link).toContain(tenant);
-        expect(linkEvent.ttl).toBeGreaterThan(0);
+        expect(linkEvent.link.startsWith('https://')).toBe(true);
+        expect(linkEvent.link.includes(tenant)).toBe(true);
+        expect(linkEvent.ttl > 0).toBe(true);
     }
 
     /**
