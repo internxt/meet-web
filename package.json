@@ -230,7 +230,7 @@
         "ts-loader": "9.4.2",
         "typescript": "5.7.2",
         "unorm": "1.6.0",
-        "vitest": "^4.0.15",
+        "vitest": "^4.1.0",
         "webdriverio": "^9.23.0",
         "webpack": "5.105.1",
         "webpack-bundle-analyzer": "4.4.2",
