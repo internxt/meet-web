@@ -1,6 +1,6 @@
 {
     "name": "internxt-meet",
-    "version": "0.0.1",
+    "version": "1.4.0",
     "description": "A sample app for the Jitsi Videobridge",
     "private": true,
     "repository": {
