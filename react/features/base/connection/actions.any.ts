@@ -413,6 +413,10 @@ export function _connectInternal({
                     errorMessage = "dialog.errorJoiningMeetingRoomClosedMsg";
                     errorTitle = "dialog.errorJoiningMeetingRoomClosedTitle";
                 }
+                if (error?.status === 400) {
+                    errorMessage = "dialog.errorJoiningMeetingRoomFullMsg";
+                    errorTitle = "dialog.errorJoiningMeetingRoomFullTitle";
+                }
 
                 dispatch(setJoinRoomError(true, errorTitle));
                 dispatch(

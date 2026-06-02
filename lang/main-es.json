@@ -323,6 +323,8 @@
         "errorJoiningMeeting": "Error al unirse a la reunión",
         "errorJoiningMeetingRoomClosedTitle": "La sala está cerrada",
         "errorJoiningMeetingRoomClosedMsg": "Esta reunión está actualmente cerrada. Por favor, espera a que el organizador reabra la sala antes de unirte.",
+        "errorJoiningMeetingRoomFullTitle": "La sala está llena",
+        "errorJoiningMeetingRoomFullMsg": "Esta reunión está actualmente llena. Por favor, contacta con el organizador o inténtalo más tarde.",
         "gracefulShutdown": "Nuestro servicio se encuentra en mantenimiento. Por favor, intente más tarde.",
         "grantModeratorDialog": "¿Estás seguro de que quieres convertir a este participante en moderador?",
         "grantModeratorTitle": "Convertir en moderador",
