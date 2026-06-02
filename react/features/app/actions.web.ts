@@ -1,9 +1,11 @@
 // @ts-expect-error
-import { API_ID } from "../../../modules/API";
-import { setRoom } from "../base/conference/actions.any";
-import { configWillLoad, setConfig } from "../base/config/actions";
-import { setLocationURL } from "../base/connection/actions.web";
-import { loadConfig } from "../base/lib-jitsi-meet/functions.web";
+import { API_ID } from '../../../modules/API';
+import { setRoom } from '../base/conference/actions';
+import {
+    configWillLoad,
+    setConfig
+} from '../base/config/actions';
+import { setLocationURL } from '../base/connection/actions.web';
 import { isEmbedded } from '../base/util/embedUtils';
 import { parseURIString } from "../base/util/uri";
 import { isVpaasMeeting } from "../jaas/functions";
@@ -83,12 +85,9 @@ export function appNavigate(uri?: string) {
         // the conference, but we're still on the conference screen.
         dispatch(clearNotifications());
 
-        dispatch(configWillLoad(locationURL, room));
-
-        const config = await loadConfig();
-
+        dispatch(configWillLoad(locationURL));
         dispatch(setLocationURL(locationURL));
-        dispatch(setConfig(config));
+        dispatch(setConfig(window.config));
         dispatch(setRoom(room));
     };
 }
