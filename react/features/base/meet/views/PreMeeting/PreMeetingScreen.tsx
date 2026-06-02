@@ -25,13 +25,11 @@ import { initializeAuth, loginSuccess, logout } from "../../general/store/auth/a
 import { setCreateRoomError } from "../../general/store/errors/actions";
 import { getPlanName as getPlanNameSelector } from "../../general/store/meeting/selectors";
 import { useLocalStorage } from "../../LocalStorageManager";
-import { ConfigService } from "../../services/config.service";
 import MeetingService from "../../services/meeting.service";
 import { MeetingUser } from "../../services/types/meeting.types";
 import AuthModal from "../Home/containers/AuthModal";
 import Header from "./components/Header";
 import PreMeetingModal from "./components/PreMeetingModal";
-import VideoEncodingToggle from "./containers/VideoEncodingToggle";
 import { useUserData } from "./hooks/useUserData";
 
 interface IProps extends WithTranslation {
@@ -398,9 +396,6 @@ const PreMeetingScreen = ({
                     onSignup={(credentials) => dispatch(loginSuccess(credentials))}
                     translate={t}
                 />
-                <div className={classes.videoEncodingToggleContainer}>
-                    {ConfigService.instance.isDevelopment() && <VideoEncodingToggle />}
-                </div>
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}
                 {/* <div className="flex flex-row">
                     <div>
@@ -487,12 +482,6 @@ const useStyles = makeStyles()((theme) => ({
         "@media (max-width: 720px)": {
             flexDirection: "column-reverse",
         },
-    },
-    videoEncodingToggleContainer: {
-        position: "absolute",
-        bottom: "20px",
-        left: "20px",
-        zIndex: 999,
     },
     content: {
         display: "flex",
