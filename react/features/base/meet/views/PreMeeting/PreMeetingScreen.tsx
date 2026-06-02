@@ -374,7 +374,7 @@ const PreMeetingScreen = ({
                     disableJoinButton={disableJoinButton || isCreatingMeeting}
                     flipX={flipX}
                     isCreatingConference={!!createConference}
-                    errorMessage={errorMessage}
+                    errorMessage={t(errorMessage)}
                 />
                 <AuthModal
                     isOpen={isAuthModalOpen}

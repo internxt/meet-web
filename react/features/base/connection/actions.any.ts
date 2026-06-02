@@ -407,17 +407,22 @@ export function _connectInternal({
                     });
                 });
             } catch (error: Error | any) {
-                const errorMessage = error?.message || "Failed to join the meeting";
+                let errorMessage = error?.message || "Failed to join the meeting";
+                let errorTitle = errorMessage;
+                if (error?.status === 403) {
+                    errorMessage = "dialog.errorJoiningMeetingRoomClosedMsg";
+                    errorTitle = "dialog.errorJoiningMeetingRoomClosedTitle";
+                }
 
-                dispatch(setJoinRoomError(true, errorMessage));
+                dispatch(setJoinRoomError(true, errorTitle));
                 dispatch(
                     showErrorNotification(
                         {
-                            titleKey: "dialog.errorJoiningMeeting",
+                            titleKey: errorTitle,
                             descriptionKey: errorMessage,
                             hideErrorSupportLink: true,
                         },
-                        NOTIFICATION_TIMEOUT_TYPE.LONG
+                        NOTIFICATION_TIMEOUT_TYPE.STICKY
                     )
                 );
 
