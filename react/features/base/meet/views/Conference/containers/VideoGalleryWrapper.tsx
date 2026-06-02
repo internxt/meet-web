@@ -3,7 +3,7 @@ import React, { useRef, useState } from "react";
 import { WithTranslation } from "react-i18next";
 import { connect, useSelector } from "react-redux";
 import { IReduxState } from "../../../../../app/types";
-import AudioTracksContainer from "../../../../../filmstrip/components/web/AudioTracksContainer";
+import AudioTracksContainer from '../../../../media/components/web/AudioTracksContainer';
 import { startScreenShareFlow } from "../../../../../screen-share/actions.web";
 import { isScreenVideoShared } from "../../../../../screen-share/functions";
 import { getCurrentConference } from "../../../../conference/functions";

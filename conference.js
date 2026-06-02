@@ -404,6 +404,7 @@ export default {
      * Returns an object containing a promise which resolves with the created tracks &
      * the errors resulting from that process.
      * @param {object} options
+     * @param {boolean} option.isBreakoutRoom - true if we are creating the initial local tracks in breakout room.
      * @param {boolean} options.startAudioOnly=false - if <tt>true</tt> then
      * only audio track will be created and the audio only mode will be turned
      * on.
@@ -418,17 +419,19 @@ export default {
      */
     createInitialLocalTracks(options = {}, recordTimeMetrics = false) {
         const errors = {};
+        const { isBreakoutRoom = false } = options;
 
         // Always get a handle on the audio input device so that we have statistics (such as "No audio input" or
         // "Are you trying to speak?" ) even if the user joins the conference muted.
-        const initialDevices = config.startSilent || config.disableInitialGUM ? [] : [MEDIA_TYPE.AUDIO];
-        const requestedAudio = !config.disableInitialGUM;
+        const initialDevices
+            = config.startSilent || (config.disableInitialGUM && !isBreakoutRoom) ? [] : [ MEDIA_TYPE.AUDIO ];
+        const requestedAudio = !config.disableInitialGUM || isBreakoutRoom;
         let requestedVideo = false;
 
-        if (!config.disableInitialGUM
-            && !options.startWithVideoMuted
-            && !options.startAudioOnly
-            && !options.startScreenSharing) {
+        if ((!config.disableInitialGUM || isBreakoutRoom)
+                && !options.startWithVideoMuted
+                && !options.startAudioOnly
+                && !options.startScreenSharing) {
             initialDevices.push(MEDIA_TYPE.VIDEO);
             requestedVideo = true;
         }
@@ -1657,12 +1660,6 @@ export default {
             JitsiE2ePingEvents.E2E_RTT_CHANGED,
             (...args) => APP.store.dispatch(e2eRttChanged(...args)));
 
-        room.addCommandListener(this.commands.defaults.ETHERPAD,
-            ({ value }) => {
-                APP.UI.initEtherpad(value);
-            }
-        );
-
         room.addCommandListener(this.commands.defaults.EMAIL, (data, from) => {
             APP.store.dispatch(participantUpdated({
                 conference: room,
@@ -1736,15 +1733,7 @@ export default {
             }
         );
 
-        room.on(JitsiConferenceEvents.PERMISSIONS_RECEIVED, p => {
-            const localParticipant = getLocalParticipant(APP.store.getState());
 
-            APP.store.dispatch(participantUpdated({
-                id: localParticipant.id,
-                local: true,
-                features: p
-            }));
-        });
     },
 
     /**

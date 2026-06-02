@@ -166,9 +166,9 @@ const useStyles = makeStyles<{
                 animation: "chatSlideInMobile 0.3s cubic-bezier(0.4, 0.0, 0.2, 1) forwards",
             },
 
-            "*": {
-                userSelect: "text",
-                "-webkit-user-select": "text",
+            '*': {
+                userSelect: 'text',
+                WebkitUserSelect: 'text',
             },
 
             "@keyframes chatSlideIn": {
@@ -610,9 +610,10 @@ function renderChat() {
                     role="tabpanel"
                     tabIndex={0}
                 >
-                    <div className={classes.messageContainerWrapper}>
-                        <MessageContainer messages={_messages} translate={t} />
-                    </div>
+                    <MessageContainer
+                        isVisible = { _focusedTab === ChatTabs.CHAT }
+                        messages = { _messages }  translate={t} />
+                    <MessageRecipient />
 
                     <MessageRecipient />
 

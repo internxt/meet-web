@@ -4,7 +4,6 @@ export interface IToolboxButton {
     Content: ComponentType<any>;
     group: number;
     key: string;
-    display: boolean;
 }
 
 export interface IToolboxNativeButton {
