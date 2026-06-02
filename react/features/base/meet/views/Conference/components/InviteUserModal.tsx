@@ -1,5 +1,5 @@
 import { Button, TransparentModal } from "@internxt/ui";
-import { Check, Link, X } from "@phosphor-icons/react";
+import { CheckIcon, LinkIcon, XIcon } from "@phosphor-icons/react";
 import React, { useState } from "react";
 import { getDecodedURI } from "../../../../util/uri";
 import { MAX_SIZE_PARTICIPANTS } from "../../../constants";
@@ -37,7 +37,7 @@ const InviteUserModal = ({ isOpen, onClose, translate, participantsCount, invite
                     className="absolute right-5 top-4 hover:bg-gray-700 rounded-lg transition-colors text-gray-400 hover:text-white"
                     aria-label="Close dialog"
                 >
-                    <X className="w-5 h-5" />
+                    <XIcon className="w-5 h-5" />
                 </button>
                 <div className="flex flex-col items-center justify-center">
                     <span className="text-xl font-semibold text-white "> {translate("meet.invite.invitePeople")}</span>
@@ -54,7 +54,7 @@ const InviteUserModal = ({ isOpen, onClose, translate, participantsCount, invite
 
                 <div className="space-y-4 pt-3">
                     <div className="relative w-full">
-                        <Link className="absolute left-3 top-1/2 transform -translate-y-1/2" size={20} color="gray" />
+                        <LinkIcon className="absolute left-3 top-1/2 transform -translate-y-1/2" size={20} color="gray" />
                         <input
                             type="text"
                             value={inviteLink}
@@ -71,7 +71,7 @@ const InviteUserModal = ({ isOpen, onClose, translate, participantsCount, invite
                     >
                         {copied ? (
                             <div className="flex items-center justify-center">
-                                <Check size={18} className="mr-1" />
+                                <CheckIcon size={18} className="mr-1" />
                                 {translate("meet.invite.copied")}
                             </div>
                         ) : (

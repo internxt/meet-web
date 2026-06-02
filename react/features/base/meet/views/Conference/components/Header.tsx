@@ -1,5 +1,5 @@
 import { Header as IntxHeader } from "@internxt/ui";
-import { SquaresFour, UserFocus } from "@phosphor-icons/react";
+import { SquaresFourIcon, UserFocusIcon } from "@phosphor-icons/react";
 import React from "react";
 import ConferenceTimer from "./ConferenceTimer";
 
@@ -47,10 +47,10 @@ const RightContent = React.memo(({ mode, translate, onSetModeClicked }: RightCon
             className="flex flex-row justify-center items-center space-x-2 p-[10px] bg-black/50 border border-white/10 rounded-2xl"
         >
            {mode === "gallery" ? <>
-            <SquaresFour size={20} /> <span>{translate("meet.meeting.button.gallery")}</span>
+            <SquaresFourIcon size={20} /> <span>{translate("meet.meeting.button.gallery")}</span>
            </>
            : <>
-           <UserFocus size={20} /> <span>{translate("meet.meeting.button.speaker")}</span>
+           <UserFocusIcon size={20} /> <span>{translate("meet.meeting.button.speaker")}</span>
            </>}
         </button>
     );

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { makeStyles } from "tss-react/mui";
 
-import { VideoCamera } from "@phosphor-icons/react";
+import { VideoCameraIcon } from "@phosphor-icons/react";
 import { IReduxState, IStore } from "../../../../app/types";
 import { IconImage } from "../../../../base/icons/svg";
 import { Video } from "../../../../base/media/components/index.web";
@@ -362,7 +362,7 @@ const VideoSettingsContent = ({
                 {selectedTrack && _renderPreviewEntry(selectedTrack)}
                 <div style={{ pointerEvents: "none" }}>
                     <ContextMenuItem
-                        icon={() => <VideoCamera size={20} color="black" weight="fill"  />}
+                        icon={() => <VideoCameraIcon size={20} color="black" weight="fill"  />}
                         text={t("meet.settings.video.videoInput")}
                         accessibilityLabel={t("meet.settings.video.videoInput")}
                     />

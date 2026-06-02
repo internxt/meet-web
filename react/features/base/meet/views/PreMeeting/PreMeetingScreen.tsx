@@ -269,9 +269,10 @@ const PreMeetingScreen = ({
             getUsersInMeeting();
         }
 
-        if (userData?.name) {
+        const name = storageManager.getDisplayName() || userData?.name;
+        if (name) {
             dispatchUpdateSettings({
-                displayName: userData.name,
+                displayName: name,
             });
         }
     }, []);
@@ -295,28 +296,12 @@ const PreMeetingScreen = ({
         }
     };
 
-    const updateNameInStorage = (name: string) => {
-        try {
-            const user = storageManager.getUser();
-
-            if (user) {
-                const updatedUser = {
-                    ...user,
-                    name: name,
-                };
-
-                storageManager.setUser(updatedUser);
-            }
-        } catch (error) {
-            console.error("Error updating user name in localStorage:", error);
-        }
-    };
     const setName = (displayName: string) => {
         dispatchUpdateSettings({
             displayName,
         });
 
-        updateNameInStorage(displayName);
+        storageManager.setDisplayName(displayName);
     };
 
     const onLogout = () => {
@@ -387,7 +372,7 @@ const PreMeetingScreen = ({
                     disableJoinButton={disableJoinButton || isCreatingMeeting}
                     flipX={flipX}
                     isCreatingConference={!!createConference}
-                    errorMessage={errorMessage}
+                    errorMessage={t(errorMessage)}
                 />
                 <AuthModal
                     isOpen={isAuthModalOpen}

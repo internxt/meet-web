@@ -247,14 +247,16 @@ export function _connectInternal({
                 let userUUID: string | undefined;
 
                 if (isAnonymous) {
-                    userUUID = SessionStorageManager.instance.getOrCreateAnonymousUUID();
+                    userUUID = SessionStorageManager.instance.getOrCreateUserID();
                 }
-                const { token: jwt, appId } = await MeetingService.instance.joinCall(room, {
+                const { token: jwt, appId, userId } = await MeetingService.instance.joinCall(room, {
                     name: displayName ?? name ?? "",
                     lastname: lastname ?? "",
                     anonymous: !!isAnonymous,
                     anonymousId: userUUID,
                 });
+
+                SessionStorageManager.instance.setUserID(userId);
 
                 const newOptions = get8x8Options(options, appId, room);
 
@@ -405,17 +407,22 @@ export function _connectInternal({
                     });
                 });
             } catch (error: Error | any) {
-                const errorMessage = error?.message || "Failed to join the meeting";
+                let errorMessage = error?.message || "Failed to join the meeting";
+                let errorTitle = errorMessage;
+                if (error?.status === 403) {
+                    errorMessage = "dialog.errorJoiningMeetingRoomClosedMsg";
+                    errorTitle = "dialog.errorJoiningMeetingRoomClosedTitle";
+                }
 
-                dispatch(setJoinRoomError(true, errorMessage));
+                dispatch(setJoinRoomError(true, errorTitle));
                 dispatch(
                     showErrorNotification(
                         {
-                            titleKey: "dialog.errorJoiningMeeting",
+                            titleKey: errorTitle,
                             descriptionKey: errorMessage,
                             hideErrorSupportLink: true,
                         },
-                        NOTIFICATION_TIMEOUT_TYPE.LONG
+                        NOTIFICATION_TIMEOUT_TYPE.STICKY
                     )
                 );
 

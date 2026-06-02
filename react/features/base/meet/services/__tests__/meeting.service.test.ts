@@ -185,6 +185,7 @@ describe("MeetingService", () => {
     describe("leaveCall", () => {
         it("When leaving a call with valid ID, then the operation completes successfully", async () => {
             const mockCallId = "call-123";
+            const mockPayload: LeaveCallPayload = { userId: "anon-uuid-789" };
             const mockLeaveCallResponse = { success: true };
 
             const mockMeetClient = {
@@ -193,14 +194,14 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            const result = await MeetingService.instance.leaveCall(mockCallId);
+            const result = await MeetingService.instance.leaveCall(mockCallId, mockPayload);
 
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
             expect(mockMeetClient.leaveCall).toHaveBeenCalledTimes(1);
-            expect(mockMeetClient.leaveCall).toHaveBeenCalledWith(mockCallId, undefined);
+            expect(mockMeetClient.leaveCall).toHaveBeenCalledWith(mockCallId, mockPayload);
             expect(mockMeetClient.leaveCall.mock.calls[0][0]).toBe(mockCallId);
-            expect(mockMeetClient.leaveCall.mock.calls[0][1]).toBeUndefined();
+            expect(mockMeetClient.leaveCall.mock.calls[0][1]).toEqual(mockPayload);
             expect(result).toEqual(mockLeaveCallResponse);
         });
 
@@ -225,6 +226,7 @@ describe("MeetingService", () => {
 
         it("When leaving a call fails, then an error is thrown", async () => {
             const mockCallId = "call-123";
+            const mockPayload: LeaveCallPayload = { userId: "anon-uuid-789" };
             const mockError = new Error("Failed to leave call");
 
             const mockMeetClient = {
@@ -233,11 +235,11 @@ describe("MeetingService", () => {
 
             mockedGetMeet.mockReturnValue(mockMeetClient);
 
-            await expect(MeetingService.instance.leaveCall(mockCallId)).rejects.toThrow(mockError);
+            await expect(MeetingService.instance.leaveCall(mockCallId, mockPayload)).rejects.toThrow(mockError);
             expect(mockedGetMeet).toHaveBeenCalledTimes(1);
             expect(mockedGetMeet).toHaveBeenCalledWith();
             expect(mockMeetClient.leaveCall).toHaveBeenCalledTimes(1);
-            expect(mockMeetClient.leaveCall).toHaveBeenCalledWith(mockCallId, undefined);
+            expect(mockMeetClient.leaveCall).toHaveBeenCalledWith(mockCallId, mockPayload);
             expect(mockMeetClient.leaveCall.mock.calls[0][0]).toBe(mockCallId);
         });
     });
