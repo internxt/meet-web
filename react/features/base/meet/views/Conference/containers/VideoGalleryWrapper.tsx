@@ -1,4 +1,4 @@
-import { CaretDown, CaretUp, CheckCircle, MonitorArrowUp } from "@phosphor-icons/react";
+import { CaretDownIcon, CaretUpIcon, CheckCircleIcon, MonitorArrowUpIcon } from "@phosphor-icons/react";
 import React, { useRef, useState } from "react";
 import { WithTranslation } from "react-i18next";
 import { connect, useSelector } from "react-redux";
@@ -93,9 +93,9 @@ const GalleryVideoWrapper = ({ videoMode, t, dispatch }: GalleryVideoWrapperProp
                 <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[200]">
                     <div className="flex items-center gap-2 px-4 py-2 bg-[#EAF9EE] border border-[#F9F9FC] text-white rounded-lg shadow-lg">
                         {isLocalSharing ? (
-                            <MonitorArrowUp size={20} weight="fill" color="#32C356" />
+                            <MonitorArrowUpIcon size={20} weight="fill" color="#32C356" />
                         ) : (
-                            <CheckCircle size={20} weight="fill" color="#32C356" />
+                            <CheckCircleIcon size={20} weight="fill" color="#32C356" />
                         )}
                         <span className="text-base text-[#1C1C1C] font-normal">
                             {isLocalSharing
@@ -139,7 +139,7 @@ const GalleryVideoWrapper = ({ videoMode, t, dispatch }: GalleryVideoWrapperProp
                                         : "opacity-30 cursor-not-allowed"
                                 }`}
                             >
-                                <CaretUp size={24} color="white" weight="bold" />
+                                <CaretUpIcon size={24} color="white" weight="bold" />
                             </button>
                         )}
 
@@ -171,7 +171,7 @@ const GalleryVideoWrapper = ({ videoMode, t, dispatch }: GalleryVideoWrapperProp
                                         : "opacity-30 cursor-not-allowed"
                                 }`}
                             >
-                                <CaretDown size={24} color="white" weight="bold" />
+                                <CaretDownIcon size={24} color="white" weight="bold" />
                             </button>
                         )}
                     </div>

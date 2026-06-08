@@ -51,6 +51,10 @@ deploy-init:
 deploy-appbundle:
 	cp $(BUILD_DIR)/*.min.js $(DEPLOY_DIR)
 	-cp $(BUILD_DIR)/*.min.js.map $(DEPLOY_DIR)
+	@if [ -d "$(BUILD_DIR)/chunks" ]; then \
+		mkdir -p $(DEPLOY_DIR)/chunks; \
+		cp $(BUILD_DIR)/chunks/* $(DEPLOY_DIR)/chunks/; \
+	fi
 
 deploy-lib-meet:
 	cp \

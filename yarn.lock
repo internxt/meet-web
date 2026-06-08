@@ -2655,10 +2655,10 @@
   dependencies:
     uuid "^11.1.0"
 
-"@internxt/sdk@1.16.3":
-  version "1.16.3"
-  resolved "https://registry.yarnpkg.com/@internxt/sdk/-/sdk-1.16.3.tgz#b9e5fdd98352704fd78067a22da1762951deaec4"
-  integrity sha512-GmX9eYBOBB09wr5e9yW3gUIR3Pn2AgZBXzZd1HvzwS96AonclcEWY1/+uoZ9qLO4SdvYquiOjXfLYNJGg99ugQ==
+"@internxt/sdk@1.17.0":
+  version "1.17.0"
+  resolved "https://registry.yarnpkg.com/@internxt/sdk/-/sdk-1.17.0.tgz#db04e6e9823c9932a3a24ba8fba9d38c95562441"
+  integrity sha512-05fVGaPJM1u5EUJHeIlta8iTQxDLkWtGoiQpwbRyk16cis5Njabq3YTDB7qA0+YNAOJsP9BaO3MAi3dx06EDyg==
   dependencies:
     axios "^1.16.0"
 
@@ -12484,9 +12484,9 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-"lib-meet@https://github.com/internxt/lib-meet/releases/download/v.1.0.0/lib-meet-1.0.0.tgz":
-  version "1.0.0"
-  resolved "https://github.com/internxt/lib-meet/releases/download/v.1.0.0/lib-meet-1.0.0.tgz#c93f97512cc5e3dcf19af4b8c7b3f815869e82dd"
+"lib-meet@https://github.com/internxt/lib-meet/releases/download/v.1.0.1/lib-meet-1.0.1.tgz":
+  version "1.0.1"
+  resolved "https://github.com/internxt/lib-meet/releases/download/v.1.0.1/lib-meet-1.0.1.tgz#d87723d2cf831b359719d30c9f0f05b769074f75"
   dependencies:
     "@hexagon/base64" "^2.0.4"
     "@jitsi/js-utils" "^2.6.7"

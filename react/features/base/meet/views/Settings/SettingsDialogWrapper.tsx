@@ -1,4 +1,4 @@
-import { ArrowSquareOut } from "@phosphor-icons/react";
+import { ArrowSquareOutIcon } from "@phosphor-icons/react";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { connect } from "react-redux";
@@ -38,7 +38,7 @@ const SettingsDialogWrapper: React.FC<IProps> = ({ generalTabs, defaultTab, disp
             id: "manage-account",
             label: t("settings.account.manage"),
             onClick: () => window.open(EXTERNAL_ACCOUNT_URL, "_blank", "noopener,noreferrer"),
-            Icon: ArrowSquareOut,
+            Icon: ArrowSquareOutIcon,
         },
     ];
 

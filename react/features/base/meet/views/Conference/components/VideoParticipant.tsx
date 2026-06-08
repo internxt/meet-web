@@ -4,7 +4,6 @@ import clsx from "clsx";
 import React from "react";
 import ConnectionIndicator from "../../../../../connection-indicator/components/web/ConnectionIndicator";
 import Video from "../../../../media/components/web/Video";
-import { useVideoEncoding } from "../../PreMeeting/containers/VideoEncodingToggle";
 import { VideoParticipantType } from "../types";
 
 export type VideoParticipantProps = {

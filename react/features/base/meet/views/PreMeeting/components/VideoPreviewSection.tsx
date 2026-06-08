@@ -20,15 +20,9 @@ const VideoPreview: React.FC<{ videoTrack: any; isAudioMuted?: boolean; flipX?: 
     isAudioMuted,
     flipX,
 }) => (
-    <div className="relative w-[264px] h-[147px] rounded-[20px]">
-        {/*  // to remove when finish this view
-        // <Preview
-        //     videoMuted={videoMuted}
-        //     videoTrack={videoTrack}
-        //     className="w-[264px] h-[147px] rounded-[20px]"
-        // /> */}
+    <div className="relative w-full aspect-video rounded-[20px] bg-black overflow-hidden">
         <Video
-            className={clsx("w-[264px] h-[147px] rounded-[20px]", flipX && "scale-x-[-1]")}
+            className={clsx("w-full h-full object-contain rounded-[20px]", flipX && "scale-x-[-1]")}
             id="prejoinVideo"
             videoTrack={{ jitsiTrack: videoTrack }}
         />
@@ -37,7 +31,7 @@ const VideoPreview: React.FC<{ videoTrack: any; isAudioMuted?: boolean; flipX?: 
 );
 
 const NoVideoPreview = () => (
-    <div className="w-[264px] h-[147px] rounded-[20px] bg-white/10 flex items-center justify-center">
+    <div className="w-full aspect-video rounded-[20px] bg-white/10 flex items-center justify-center">
         <img src="/images/VideoCameraSlash.png" alt="No Video" width={60} />
     </div>
 );

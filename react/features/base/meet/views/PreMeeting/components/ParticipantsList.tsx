@@ -19,7 +19,7 @@ const ParticipantsList = ({ participants, translate }: ParticipantsListProps) =>
                     : translate("meet.preMeeting.participants")}
             </span>
             <div className="flex items-center">
-                <div className="flex -space-x-3">
+                <div className="flex -space-x-4">
                     {participants.map((participant) => (
                         <div
                             key={participant.userId}

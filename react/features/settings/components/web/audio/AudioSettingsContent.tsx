@@ -16,7 +16,7 @@ import { isNoiseSuppressionEnabled } from "../../../../noise-suppression/functio
 import { isPrejoinPageVisible } from "../../../../prejoin/functions";
 import { createLocalAudioTracks } from "../../../functions.web";
 
-import { Microphone, SpeakerSimpleHigh } from "@phosphor-icons/react";
+import { MicrophoneIcon, SpeakerSimpleHighIcon } from "@phosphor-icons/react";
 import MicrophoneEntry from "./MicrophoneEntry";
 import SpeakerEntry from "./SpeakerEntry";
 
@@ -305,7 +305,7 @@ const AudioSettingsContent = ({
                     <ContextMenuItem
                         accessibilityLabel={t("settings.speakers")}
                         className={classes.header}
-                        icon={() => <SpeakerSimpleHigh size={20} color="black" weight="fill" />}
+                        icon={() => <SpeakerSimpleHighIcon size={20} color="black" weight="fill" />}
                         id={speakerHeaderId}
                         text={t("settings.speakers")}
                     />
@@ -321,7 +321,7 @@ const AudioSettingsContent = ({
                 <ContextMenuItem
                     accessibilityLabel={t("settings.microphones")}
                     className={classes.header}
-                    icon={() => <Microphone size={20} color="black" weight="fill" />}
+                    icon={() => <MicrophoneIcon size={20} color="black" weight="fill" />}
                     id={microphoneHeaderId}
                     text={t("settings.microphones")}
                 />

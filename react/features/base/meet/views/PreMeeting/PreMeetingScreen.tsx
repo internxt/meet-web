@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useMemo, useState } from "react";
+import React, { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { WithTranslation } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { makeStyles } from "tss-react/mui";
@@ -25,14 +25,14 @@ import { initializeAuth, loginSuccess, logout } from "../../general/store/auth/a
 import { setCreateRoomError } from "../../general/store/errors/actions";
 import { getPlanName as getPlanNameSelector } from "../../general/store/meeting/selectors";
 import { useLocalStorage } from "../../LocalStorageManager";
-import { ConfigService } from "../../services/config.service";
 import MeetingService from "../../services/meeting.service";
 import { MeetingUser } from "../../services/types/meeting.types";
 import AuthModal from "../Home/containers/AuthModal";
 import Header from "./components/Header";
 import PreMeetingModal from "./components/PreMeetingModal";
-import VideoEncodingToggle from "./containers/VideoEncodingToggle";
 import { useUserData } from "./hooks/useUserData";
+
+const REFRESH_PARTICIPANTS_COUNT_INTERVAL = 5000;
 
 interface IProps extends WithTranslation {
     /**
@@ -248,10 +248,13 @@ const PreMeetingScreen = ({
         ),
         [showUnsafeRoomWarning, showDeviceStatus, showRecordingWarning],
     );
+    
+    const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-    const getUsersInMeeting = async () => {
-        if (!isInNewMeeting) {
-            setIsLoadingParticipants(true);
+    const getUsersInMeeting = async (shouldReload: boolean = false) => {
+        if (isInNewMeeting) return;
+        else {
+            if (shouldReload) setIsLoadingParticipants(true);
             setParticipantsLoadError(false);
             try {
                 const meetingUsers = await MeetingService.instance.getCurrentUsersInCall(room);
@@ -259,7 +262,7 @@ const PreMeetingScreen = ({
             } catch {
                 setParticipantsLoadError(true);
             } finally {
-                setIsLoadingParticipants(false);
+                 if (shouldReload) setIsLoadingParticipants(false);
             }
         }
     };
@@ -271,11 +274,19 @@ const PreMeetingScreen = ({
             getUsersInMeeting();
         }
 
-        if (userData?.name) {
+        if (!isInNewMeeting) {
+            getUsersInMeeting(true);
+            pollingRef.current = setInterval(getUsersInMeeting, REFRESH_PARTICIPANTS_COUNT_INTERVAL);
+        }
+        const name = storageManager.getDisplayName() || userData?.name;
+        if (name) {
             dispatchUpdateSettings({
-                displayName: userData.name,
+                displayName: name,
             });
         }
+        return () => {
+        if (pollingRef.current) clearInterval(pollingRef.current);
+    };
     }, []);
 
     useEffect(() => {
@@ -297,28 +308,12 @@ const PreMeetingScreen = ({
         }
     };
 
-    const updateNameInStorage = (name: string) => {
-        try {
-            const user = storageManager.getUser();
-
-            if (user) {
-                const updatedUser = {
-                    ...user,
-                    name: name,
-                };
-
-                storageManager.setUser(updatedUser);
-            }
-        } catch (error) {
-            console.error("Error updating user name in localStorage:", error);
-        }
-    };
     const setName = (displayName: string) => {
         dispatchUpdateSettings({
             displayName,
         });
 
-        updateNameInStorage(displayName);
+        storageManager.setDisplayName(displayName);
     };
 
     const onLogout = () => {
@@ -389,7 +384,7 @@ const PreMeetingScreen = ({
                     disableJoinButton={disableJoinButton || isCreatingMeeting}
                     flipX={flipX}
                     isCreatingConference={!!createConference}
-                    errorMessage={errorMessage}
+                    errorMessage={t(errorMessage)}
                 />
                 <AuthModal
                     isOpen={isAuthModalOpen}
@@ -398,9 +393,6 @@ const PreMeetingScreen = ({
                     onSignup={(credentials) => dispatch(loginSuccess(credentials))}
                     translate={t}
                 />
-                <div className={classes.videoEncodingToggleContainer}>
-                    {ConfigService.instance.isDevelopment() && <VideoEncodingToggle />}
-                </div>
                 {/* UNCOMMENT IN DEV MODE TO SEE OLD IMPLEMENTATION  */}
                 {/* <div className="flex flex-row">
                     <div>
@@ -487,12 +479,6 @@ const useStyles = makeStyles()((theme) => ({
         "@media (max-width: 720px)": {
             flexDirection: "column-reverse",
         },
-    },
-    videoEncodingToggleContainer: {
-        position: "absolute",
-        bottom: "20px",
-        left: "20px",
-        zIndex: 999,
     },
     content: {
         display: "flex",
