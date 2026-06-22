@@ -130,7 +130,9 @@ deploy-cloudflare:
 	cp -r lang $(DIST_DIR)/
 	cp -r resources $(DIST_DIR)/
 	cp -r static $(DIST_DIR)/
-	gzip -k $(DIST_DIR)/libs/dist/ort-wasm-simd-threaded.jsep.wasm
-	rm $(DIST_DIR)/libs/dist/ort-wasm-simd-threaded.jsep.wasm
+	gzip -c $(DIST_DIR)/libs/dist/ort-wasm-simd-threaded.jsep.wasm \
+      > $(DIST_DIR)/libs/dist/ort-wasm-simd-threaded.jsep.wasm.tmp && \
+  	mv $(DIST_DIR)/libs/dist/ort-wasm-simd-threaded.jsep.wasm.tmp \
+     	$(DIST_DIR)/libs/dist/ort-wasm-simd-threaded.jsep.wasm
 	printf '/libs/dist/ort-wasm-simd-threaded.jsep.wasm\n  Content-Encoding: gzip\n  Content-Type: application/wasm\n' \
 	   >> $(DIST_DIR)/_headers
