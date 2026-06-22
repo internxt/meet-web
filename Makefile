@@ -118,7 +118,6 @@ source-package:
 	rm -rf source_package
 
 deploy-cloudflare:
-	deploy-css
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)/css
 	cp index.html base.html body.html fonts.html head.html title.html plugin.head.html $(DIST_DIR)/
