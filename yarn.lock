@@ -2886,7 +2886,16 @@
     js-md5 "0.7.3"
     ua-parser-js "1.0.35"
 
-"@jitsi/js-utils@^2.2.0", "@jitsi/js-utils@^2.6.7":
+"@jitsi/js-utils@6.3.2":
+  version "6.3.2"
+  resolved "https://registry.yarnpkg.com/@jitsi/js-utils/-/js-utils-6.3.2.tgz#8243e97338db45fa164826f4b2b6f6bd52e614d0"
+  integrity sha512-nGF24WVADFQF2OfdlJWbel2MvwTRbxxZdNDzIqUBKGtRYd10CukgrcydB2WRPRLtn4Q97KrpdqrcAuH0Idi3yg==
+  dependencies:
+    "@hapi/bourne" "3.0.0"
+    js-md5 "0.7.3"
+    ua-parser-js "1.0.35"
+
+"@jitsi/js-utils@^2.2.0":
   version "2.8.2"
   resolved "https://registry.yarnpkg.com/@jitsi/js-utils/-/js-utils-2.8.2.tgz#9253cb5ba8525b6b5ad6e787abd719634be63942"
   integrity sha512-tMFuci2lPmbQIFF/f3b5QdkL1vzY6sii9nj0e+K0EEJcFUJiX/QVkv5GbI6pMZ74BYAQXGFZqeASo8hKItniUA==
@@ -12484,12 +12493,12 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-"lib-meet@https://github.com/internxt/lib-meet/releases/download/v.1.0.1/lib-meet-1.0.1.tgz":
-  version "1.0.1"
-  resolved "https://github.com/internxt/lib-meet/releases/download/v.1.0.1/lib-meet-1.0.1.tgz#d87723d2cf831b359719d30c9f0f05b769074f75"
+"lib-meet@https://github.com/internxt/lib-meet/releases/download/v.1.0.2-draft/lib-meet-1.0.2.tgz":
+  version "1.0.2"
+  resolved "https://github.com/internxt/lib-meet/releases/download/v.1.0.2-draft/lib-meet-1.0.2.tgz#ab44ecad5f895f7f2ae1351ecc26fa3c1024d9d1"
   dependencies:
     "@hexagon/base64" "^2.0.4"
-    "@jitsi/js-utils" "^2.6.7"
+    "@jitsi/js-utils" "6.3.2"
     "@jitsi/logger" "2.1.1"
     "@jitsi/precall-test" "1.0.6"
     "@jitsi/rtcstats" "9.7.1"
@@ -12503,7 +12512,7 @@ levn@^0.4.1:
     emoji-regex "10.4.0"
     jwt-decode "4.0.0"
     lodash-es "4.18.1"
-    onnxruntime-web "=1.23.0"
+    onnxruntime-web "1.27.0"
     sdp-transform "2.3.0"
     strophe.js "https://github.com/jitsi/strophejs/releases/download/v1.5-jitsi-3/strophe.js-1.5.0.tgz"
     uuid "14.0.0"
@@ -14173,20 +14182,20 @@ onetime@^5.1.0, onetime@^5.1.2:
   dependencies:
     mimic-fn "^2.1.0"
 
-onnxruntime-common@1.23.0:
-  version "1.23.0"
-  resolved "https://registry.yarnpkg.com/onnxruntime-common/-/onnxruntime-common-1.23.0.tgz#ab254b0725fc837597000e705f885db523d6c37e"
-  integrity sha512-Auz8S9D7vpF8ok7fzTobvD1XdQDftRf/S7pHmjeCr3Xdymi4z1C7zx4vnT6nnUjbpelZdGwda0BmWHCCTMKUTg==
+onnxruntime-common@1.27.0:
+  version "1.27.0"
+  resolved "https://registry.yarnpkg.com/onnxruntime-common/-/onnxruntime-common-1.27.0.tgz#fdff2f9ab3d509148a0a8c8721a3b9f288b41ee9"
+  integrity sha512-3KxL5wIVqa8Ex08jxSzncm9CMgw8CjOFyOQ7SxvG9o0cVLlhTNKXyIQuTbtX4tGPJEf73OER2xrjt4HJSBL4ow==
 
-onnxruntime-web@=1.23.0:
-  version "1.23.0"
-  resolved "https://registry.yarnpkg.com/onnxruntime-web/-/onnxruntime-web-1.23.0.tgz#7e3dd04df7e6d659f7acf1cab6caa706898344e0"
-  integrity sha512-w0bvC2RwDxphOUFF8jFGZ/dYw+duaX20jM6V4BIZJPCfK4QuCpB/pVREV+hjYbT3x4hyfa2ZbTaWx4e1Vot0fQ==
+onnxruntime-web@1.27.0:
+  version "1.27.0"
+  resolved "https://registry.yarnpkg.com/onnxruntime-web/-/onnxruntime-web-1.27.0.tgz#3cfdf3e5f5d554098b5a729b7603d7686d2f69b4"
+  integrity sha512-ogDLsqIozHZwifPuN37OproAo0byX6t43/bP8GzeZWBWD6MOGExswFAx3up4NS/vvWBOg2u2PXomDt3rMmdQSg==
   dependencies:
     flatbuffers "^25.1.24"
     guid-typescript "^1.0.9"
     long "^5.2.3"
-    onnxruntime-common "1.23.0"
+    onnxruntime-common "1.27.0"
     platform "^1.3.6"
     protobufjs "^7.2.4"
 
