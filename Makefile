@@ -2,7 +2,7 @@ BUILD_DIR = build
 CLEANCSS = ./node_modules/.bin/cleancss
 DEPLOY_DIR = libs
 DIST_DIR = dist
-ONNX_DIR= node_modules/onnxruntime-web
+ONNX_DIR= node_modules/onnxruntime-web/dist/
 LIBJITSIMEET_DIR = node_modules/lib-meet
 TF_WASM_DIR = node_modules/@tensorflow/tfjs-backend-wasm/dist/
 RNNOISE_WASM_DIR = node_modules/@jitsi/rnnoise-wasm/dist
@@ -130,4 +130,3 @@ deploy-cloudflare:
 	cp -r lang $(DIST_DIR)/
 	cp -r resources $(DIST_DIR)/
 	cp -r static $(DIST_DIR)/
-	rm  $(DIST_DIR)/libs/dist/ort-wasm-simd-threaded.jsep.wasm 
