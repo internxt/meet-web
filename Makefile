@@ -42,11 +42,12 @@ deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-excalidraw dep
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
 	mkdir -p $(DEPLOY_DIR)/models
+	mkdir -p $(DEPLOY_DIR)/ort
 	cp  $(LIBJITSIMEET_DIR)/models/RTC/Encoder.onnx \
 		$(LIBJITSIMEET_DIR)/models/RTC/Decoder.onnx \
 		$(DEPLOY_DIR)/models
 	cp -r $(ONNX_DIR)/dist \
-		$(DEPLOY_DIR)
+		$(DEPLOY_DIR)/ort
 
 deploy-appbundle:
 	cp $(BUILD_DIR)/*.min.js $(DEPLOY_DIR)
@@ -130,4 +131,3 @@ deploy-cloudflare:
 	cp -r lang $(DIST_DIR)/
 	cp -r resources $(DIST_DIR)/
 	cp -r static $(DIST_DIR)/
-	rm $(DIST_DIR)/libs/dist/ort-wasm-simd-threaded.jsep.wasm
