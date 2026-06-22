@@ -123,8 +123,6 @@ deploy-cloudflare:
 	cp index.html base.html body.html fonts.html head.html title.html plugin.head.html $(DIST_DIR)/
 	cp favicon.ico config.js interface_config.js manifest.json pwa-worker.js $(DIST_DIR)/
 	cp css/all.css $(DIST_DIR)/css/
-	gzip -k $(DIST_DIR)/libs/dist/ort-wasm-simd-threaded.jsep.wasm
-	mv $(DIST_DIR)/libs/dist/ort-wasm-simd-threaded.jsep.wasm.gz $(DIST_DIR)/libs/dist/ort-wasm-simd-threaded.jsep.wasm
 	cp -r libs $(DIST_DIR)/
 	cp -r images $(DIST_DIR)/
 	cp -r fonts $(DIST_DIR)/
@@ -132,5 +130,7 @@ deploy-cloudflare:
 	cp -r lang $(DIST_DIR)/
 	cp -r resources $(DIST_DIR)/
 	cp -r static $(DIST_DIR)/
+	gzip -k $(DIST_DIR)/libs/dist/ort-wasm-simd-threaded.jsep.wasm
+	mv $(DIST_DIR)/libs/dist/ort-wasm-simd-threaded.jsep.wasm.gz $(DIST_DIR)/libs/dist/ort-wasm-simd-threaded.jsep.wasm
 	printf '/libs/dist/ort-wasm-simd-threaded.jsep.wasm\n  Content-Encoding: gzip\n  Content-Type: application/wasm\n' \
 	   >> $(DIST_DIR)/_headers

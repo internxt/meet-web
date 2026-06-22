@@ -42,7 +42,7 @@ jobs:
           echo JITSI_APP_ID="${{ secrets.JITSI_APP_ID }}" >> .env
 
       - name: Build application
-        run: make compile deploy
+        run: make compile deploy-cloudflare
 
       - name: Publish to Cloudflare Pages
         id: cloudflare
@@ -51,7 +51,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
-          directory: .
+          directory: dist
 
       - name: Comment Preview Link on PR
         if: github.event_name == 'pull_request'
