@@ -2886,7 +2886,16 @@
     js-md5 "0.7.3"
     ua-parser-js "1.0.35"
 
-"@jitsi/js-utils@^2.2.0", "@jitsi/js-utils@^2.6.7":
+"@jitsi/js-utils@6.3.2":
+  version "6.3.2"
+  resolved "https://registry.yarnpkg.com/@jitsi/js-utils/-/js-utils-6.3.2.tgz#8243e97338db45fa164826f4b2b6f6bd52e614d0"
+  integrity sha512-nGF24WVADFQF2OfdlJWbel2MvwTRbxxZdNDzIqUBKGtRYd10CukgrcydB2WRPRLtn4Q97KrpdqrcAuH0Idi3yg==
+  dependencies:
+    "@hapi/bourne" "3.0.0"
+    js-md5 "0.7.3"
+    ua-parser-js "1.0.35"
+
+"@jitsi/js-utils@^2.2.0":
   version "2.8.2"
   resolved "https://registry.yarnpkg.com/@jitsi/js-utils/-/js-utils-2.8.2.tgz#9253cb5ba8525b6b5ad6e787abd719634be63942"
   integrity sha512-tMFuci2lPmbQIFF/f3b5QdkL1vzY6sii9nj0e+K0EEJcFUJiX/QVkv5GbI6pMZ74BYAQXGFZqeASo8hKItniUA==
@@ -12484,11 +12493,12 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-"lib-meet@file:../lib-meet":
-  version "1.0.1"
+"lib-meet@https://github.com/internxt/lib-meet/releases/download/v.1.0.2-draft/lib-meet-1.0.2-draft.tgz":
+  version "1.0.2-draft"
+  resolved "https://github.com/internxt/lib-meet/releases/download/v.1.0.2-draft/lib-meet-1.0.2-draft.tgz#8fcf28e9d709c3ff91bff882eca98ad64178bb9b"
   dependencies:
     "@hexagon/base64" "^2.0.4"
-    "@jitsi/js-utils" "^2.6.7"
+    "@jitsi/js-utils" "6.3.2"
     "@jitsi/logger" "2.1.1"
     "@jitsi/precall-test" "1.0.6"
     "@jitsi/rtcstats" "9.7.1"
