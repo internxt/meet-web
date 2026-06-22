@@ -12489,7 +12489,7 @@ levn@^0.4.1:
 
 "lib-meet@https://github.com/internxt/lib-meet/releases/download/v.1.0.2-draft/lib-meet-1.0.2-draft.tgz":
   version "1.0.2-draft"
-  resolved "https://github.com/internxt/lib-meet/releases/download/v.1.0.2-draft/lib-meet-1.0.2-draft.tgz#0747a0a4732ee650f17091b4b7f9b716ea9b41c9"
+  resolved "https://github.com/internxt/lib-meet/releases/download/v.1.0.2-draft/lib-meet-1.0.2-draft.tgz#80b0cf057e2ac5fb458bea0b1daf78c94f247bed"
   dependencies:
     "@hexagon/base64" "^2.0.4"
     "@jitsi/js-utils" "6.3.2"
