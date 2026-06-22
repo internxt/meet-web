@@ -46,8 +46,7 @@ deploy-init:
 	cp  $(LIBJITSIMEET_DIR)/models/RTC/Encoder.onnx \
 		$(LIBJITSIMEET_DIR)/models/RTC/Decoder.onnx \
 		$(DEPLOY_DIR)/models
-	cp -r $(ONNX_DIR)/dist \
-		$(DEPLOY_DIR)/ort
+	ln -s $(ONNX_DIR)/dist $(DEPLOY_DIR)/ort
 
 deploy-appbundle:
 	cp $(BUILD_DIR)/*.min.js $(DEPLOY_DIR)
