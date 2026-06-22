@@ -12484,9 +12484,8 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-"lib-meet@https://github.com/internxt/lib-meet/releases/download/v.1.0.1/lib-meet-1.0.1.tgz":
+"lib-meet@file:../lib-meet":
   version "1.0.1"
-  resolved "https://github.com/internxt/lib-meet/releases/download/v.1.0.1/lib-meet-1.0.1.tgz#d87723d2cf831b359719d30c9f0f05b769074f75"
   dependencies:
     "@hexagon/base64" "^2.0.4"
     "@jitsi/js-utils" "^2.6.7"
@@ -12503,7 +12502,7 @@ levn@^0.4.1:
     emoji-regex "10.4.0"
     jwt-decode "4.0.0"
     lodash-es "4.18.1"
-    onnxruntime-web "=1.23.0"
+    onnxruntime-web "=1.27.0"
     sdp-transform "2.3.0"
     strophe.js "https://github.com/jitsi/strophejs/releases/download/v1.5-jitsi-3/strophe.js-1.5.0.tgz"
     uuid "14.0.0"
@@ -14173,20 +14172,20 @@ onetime@^5.1.0, onetime@^5.1.2:
   dependencies:
     mimic-fn "^2.1.0"
 
-onnxruntime-common@1.23.0:
-  version "1.23.0"
-  resolved "https://registry.yarnpkg.com/onnxruntime-common/-/onnxruntime-common-1.23.0.tgz#ab254b0725fc837597000e705f885db523d6c37e"
-  integrity sha512-Auz8S9D7vpF8ok7fzTobvD1XdQDftRf/S7pHmjeCr3Xdymi4z1C7zx4vnT6nnUjbpelZdGwda0BmWHCCTMKUTg==
+onnxruntime-common@1.27.0:
+  version "1.27.0"
+  resolved "https://registry.yarnpkg.com/onnxruntime-common/-/onnxruntime-common-1.27.0.tgz#fdff2f9ab3d509148a0a8c8721a3b9f288b41ee9"
+  integrity sha512-3KxL5wIVqa8Ex08jxSzncm9CMgw8CjOFyOQ7SxvG9o0cVLlhTNKXyIQuTbtX4tGPJEf73OER2xrjt4HJSBL4ow==
 
-onnxruntime-web@=1.23.0:
-  version "1.23.0"
-  resolved "https://registry.yarnpkg.com/onnxruntime-web/-/onnxruntime-web-1.23.0.tgz#7e3dd04df7e6d659f7acf1cab6caa706898344e0"
-  integrity sha512-w0bvC2RwDxphOUFF8jFGZ/dYw+duaX20jM6V4BIZJPCfK4QuCpB/pVREV+hjYbT3x4hyfa2ZbTaWx4e1Vot0fQ==
+onnxruntime-web@=1.27.0:
+  version "1.27.0"
+  resolved "https://registry.yarnpkg.com/onnxruntime-web/-/onnxruntime-web-1.27.0.tgz#3cfdf3e5f5d554098b5a729b7603d7686d2f69b4"
+  integrity sha512-ogDLsqIozHZwifPuN37OproAo0byX6t43/bP8GzeZWBWD6MOGExswFAx3up4NS/vvWBOg2u2PXomDt3rMmdQSg==
   dependencies:
     flatbuffers "^25.1.24"
     guid-typescript "^1.0.9"
     long "^5.2.3"
-    onnxruntime-common "1.23.0"
+    onnxruntime-common "1.27.0"
     platform "^1.3.6"
     protobufjs "^7.2.4"
 
