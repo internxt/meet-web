@@ -1,6 +1,6 @@
 import { v4 } from "uuid";
 
-export const ANON_UUID_KEY = "xAnonymousUserUUID";
+export const ANON_UUID_KEY = "xMeetUserUUID";
 
 export class SessionStorageManager {
   private static _instance: SessionStorageManager;
@@ -14,20 +14,25 @@ export class SessionStorageManager {
     return SessionStorageManager._instance;
   }
 
-  public getOrCreateAnonymousUUID(): string {
-    let uuid = this.getAnonymousUUID();
+  public getOrCreateUserID(): string {
+    let uuid = this.getUserID();
     if (!uuid) {
         uuid = v4();
-        sessionStorage.setItem(ANON_UUID_KEY, uuid);
+        this.setUserID(uuid);
     }
    
     return uuid;
   }
 
-  public getAnonymousUUID(): string | null {
+  public getUserID(): string | null {
     return sessionStorage.getItem(ANON_UUID_KEY);
   }
 
+  public setUserID(userId: string): void {
+    sessionStorage.setItem(ANON_UUID_KEY, userId);
+  }
+
+  
 }
 
 export default SessionStorageManager.instance;

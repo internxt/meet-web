@@ -182,7 +182,7 @@ const PreMeetingModal = ({
             onClose={() => {}}
             disableBackdrop
         >
-            <div className="flex flex-col h-full text-white space-y-4">
+            <div className="flex flex-col h-full w-[264px] text-white space-y-4">
                 <VideoPreviewSection
                     videoMuted={videoMuted}
                     videoTrack={videoTrack}

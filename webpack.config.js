@@ -111,10 +111,8 @@ function devServerProxyBypass({ path, headers }) {
 function getConfig(options = {}) {
     const { detectCircularDeps, isProduction } = options;
 
-    const parallelism = parseInt(process.env.WEBPACK_PARALLELISM, 10);
-
     return {
-        ...(parallelism > 0 ? { parallelism } : {}),
+        parallelism: 4,
         devtool: isProduction ? false : "eval-source-map",
         mode: isProduction ? "production" : "development",
         module: {
@@ -127,6 +125,7 @@ function getConfig(options = {}) {
                     options: {
                         // Avoid loading babel.config.js, since we only use it for React Native.
                         configFile: false,
+                        cacheDirectory: true,
 
                         // XXX The require.resolve below solves failures to locate the
                         // presets when lib-jitsi-meet, for example, is npm linked in
@@ -159,65 +158,66 @@ function getConfig(options = {}) {
                                     useBuiltIns: "usage",
 
                                     // core-js version to use, must be in sync with the version in package.json.
-                                    corejs: "3.40",
-                                },
-                            ],
-                            require.resolve("@babel/preset-react"),
+                                    corejs: '3.40'
+                            }
                         ],
+                        require.resolve('@babel/preset-react')
+                    ]
+                },
+                test: /\.(j|t)sx?$/,
+                exclude: /node_modules/
+            }, {
+                // Emit woff2 fonts to excalidraw/fonts/ preserving the subdirectory
+                // structure so they land at the same path that deploy-excalidraw copies
+                // them to (libs/excalidraw/fonts/...) and CSS @font-face URLs resolve.
+                test: /\.woff2$/,
+                type: 'asset/resource',
+                generator: {
+                    filename: pathData => {
+                        const match = pathData.filename?.match(/\/fonts\/(.*)/);
+
+                        return match ? `excalidraw/fonts/${match[1]}` : 'excalidraw/fonts/[name][ext]';
+                    }
+                }
+            }, {
+                // Allow CSS to be imported into JavaScript.
+
+                test: /\.css$/,
+                use: [
+                    'style-loader',
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            importLoaders: 1,
+                        },
                     },
-                    test: /\.jsx?$/,
-                    exclude: /node_modules/,
-                },
-                {
-                    // Allow CSS to be imported into JavaScript.
-                    test: /\.css$/,
-                    use: [
-                        "style-loader",
-                        {
-                            loader: "css-loader",
-                            options: {
-                                importLoaders: 1,
-                            },
-                        },
-                        "postcss-loader", // For tailwindcss
-                    ],
-                },
-                // SVG with ?raw query will be loaded as raw string
-                {
-                    test: /\.svg$/,
-                    resourceQuery: /raw/,
-                    type: "asset/source",
-                },
-                {
-                    test: /\.svg$/,
-                    resourceQuery: { not: [/raw/] },
-                    use: [
-                        {
-                            loader: "@svgr/webpack",
-                            options: {
-                                dimensions: false,
-                                expandProps: "start",
-                            },
-                        },
-                    ],
-                },
-                {
-                    test: /\.tsx?$/,
-                    exclude: /node_modules/,
-                    loader: "ts-loader",
+                    'postcss-loader', // For tailwindcss
+                ]
+            }, {
+                // Import SVG as raw text when using ?raw query parameter.
+                test: /\.svg$/,
+                resourceQuery: /raw/,
+                type: 'asset/source'
+            }, {
+                // Import SVG as React component (default).
+                test: /\.svg$/,
+                resourceQuery: { not: [ /raw/ ] },
+                use: [ {
+                    loader: '@svgr/webpack',
                     options: {
-                        configFile: "tsconfig.web.json",
-                        transpileOnly: true,
-                    },
-                },
-                {
-                    test: /\.(woff|woff2|eot|ttf|otf)$/i,
-                    type: "asset/resource",
-                    generator: {
-                        publicPath: "/build/",
-                    },
-                },
-            ],
+                        dimensions: false,
+                        expandProps: 'start'
+                    }
+                } ]
+            }, {
+                test: /\.tsx?$/,
+                exclude: /node_modules/,
+                loader: 'ts-loader',
+                options: {
+                    configFile: 'tsconfig.web.json',
+                    transpileOnly: true,
+                }
+            } ]
         },
         node: {
             // Allow the use of the real filename of the module being executed. By
@@ -230,10 +230,11 @@ function getConfig(options = {}) {
             minimize: isProduction,
         },
         output: {
-            filename: `[name]${isProduction ? ".min" : ""}.js`,
+            filename: `[name]${isProduction ? '.min' : ''}.js`,
+            chunkFilename: `chunks/[id]${isProduction ? '.min' : ''}.js`,
             path: `${__dirname}/build`,
-            publicPath: "/libs/",
-            sourceMapFilename: "[file].map",
+            publicPath: '/libs/',
+            sourceMapFilename: '[file].map'
         },
         plugins: [
             detectCircularDeps &&
@@ -245,8 +246,13 @@ function getConfig(options = {}) {
         ].filter(Boolean),
         resolve: {
             alias: {
-                "focus-visible": "focus-visible/dist/focus-visible.min.js",
-                "@giphy/js-analytics": resolve(__dirname, "giphy-analytics-stub.js"),
+                'focus-visible': 'focus-visible/dist/focus-visible.min.js',
+                '@giphy/js-analytics': resolve(__dirname, 'giphy-analytics-stub.js'),
+                'react': resolve(__dirname, 'node_modules/react'),
+                'react-dom': resolve(__dirname, 'node_modules/react-dom'),
+                'roughjs/bin/rough': 'roughjs/bin/rough.js',
+                'roughjs/bin/generator': 'roughjs/bin/generator.js',
+                'roughjs/bin/math': 'roughjs/bin/math.js'
             },
             aliasFields: ["browser"],
             extensions: [
@@ -291,7 +297,8 @@ function getDevServerConfig() {
                 warnings: false,
             },
         },
-        host: "localhost",
+        allowedHosts: 'all',
+        host: 'localhost',
         hot: true,
         proxy: [
             {
@@ -304,7 +311,10 @@ function getDevServerConfig() {
                 },
             },
         ],
-        server: process.env.CODESPACES ? "http" : "https",
+        server: process.env.CODESPACES ? 'http' : 'https',
+        setupMiddlewares: (middlewares, _devServer) => middlewares.filter(
+            m => m.name !== 'cross-origin-header-check'
+        ),
         static: {
             directory: process.cwd(),
             watch: {
@@ -315,6 +325,8 @@ function getDevServerConfig() {
 }
 
 module.exports = (_env, argv) => {
+    const bundleFilter = _env?.bundle;
+
     const analyzeBundle = Boolean(process.env.ANALYZE_BUNDLE);
     const mode = typeof argv.mode === "undefined" ? "production" : argv.mode;
     const isProduction = mode === "production";
@@ -328,7 +340,7 @@ module.exports = (_env, argv) => {
         isProduction,
     };
 
-    return [
+    const allConfigs = [
         {
             ...config,
             entry: {
@@ -338,9 +350,6 @@ module.exports = (_env, argv) => {
             plugins: [
                 ...config.plugins,
                 ...getBundleAnalyzerPlugin(analyzeBundle, "app"),
-                new webpack.DefinePlugin({
-                    __DEV__: !isProduction,
-                }),
                 new webpack.IgnorePlugin({
                     resourceRegExp: /^canvas$/,
                     contextRegExp: /resemblejs$/,
@@ -349,24 +358,28 @@ module.exports = (_env, argv) => {
                     resourceRegExp: /^\.\/locale$/,
                     contextRegExp: /moment$/,
                 }),
+                new webpack.IgnorePlugin({
+                    resourceRegExp: /\.(native|ios|android)\.(js|ts|tsx)$/,
+                }),
+                new webpack.IgnorePlugin({
+                    resourceRegExp: /react-native/,
+                    contextRegExp: /node_modules/,
+                }),
+                new webpack.IgnorePlugin({
+                    resourceRegExp: /^react-native$/,
+                }),
                 new webpack.ProvidePlugin({
                     process: "process/browser",
                 }),
                 new webpack.DefinePlugin({
-                    "process.env": (() => {
-                        const keys = [
-                            "DRIVE_NEW_API_URL",
-                            "PAYMENTS_API_URL",
-                            "MEET_API_URL",
-                        ];
-                        const env = {};
-                        keys.forEach((key) => {
-                            if (process.env[key]) {
-                                env[key] = process.env[key];
-                            }
-                        });
-                        return JSON.stringify(env);
-                    })(),
+                    __DEV__: !isProduction,
+                    "process.env": JSON.stringify(
+                        Object.fromEntries(
+                            ["DRIVE_NEW_API_URL", "PAYMENTS_API_URL", "MEET_API_URL"]
+                                .filter((k) => process.env[k])
+                                .map((k) => [k, process.env[k]]),
+                        ),
+                    ),
                 }),
                 new webpack.ProvidePlugin({
                     Buffer: ["buffer", "Buffer"],
@@ -453,4 +466,18 @@ module.exports = (_env, argv) => {
             performance: getPerformanceHints(perfHintOptions, 30 * 1024),
         },
     ];
+
+    if (bundleFilter) {
+        const filterMap = {
+            app: ['app.bundle', 'alwaysontop', 'close3'],
+            api: ['external_api'],
+            workers: ['face-landmarks-worker', 'noise-suppressor-worklet', 
+                      'screenshot-capture-worker'],
+        };
+        const allowed = new Set(filterMap[bundleFilter] ?? []);
+        return allConfigs.filter(c => 
+            Object.keys(c.entry).some(k => allowed.has(k))
+        );
+    }
+    return allConfigs;
 };

@@ -34,7 +34,7 @@ class MeetingService {
         return await meetClient.joinCall(callId, payload);
     };
 
-    public leaveCall = async (callId: string, payload?: LeaveCallPayload): Promise<void> => {
+    public leaveCall = async (callId: string, payload: LeaveCallPayload): Promise<void> => {
         const meetClient = SdkManager.instance.getMeet();
         return await meetClient.leaveCall(callId, payload);
     };

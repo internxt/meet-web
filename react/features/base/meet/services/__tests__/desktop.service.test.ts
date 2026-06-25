@@ -2,6 +2,9 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import operatingSystemService, { OperatingSystem } from '../operating-system.service';
 import desktopService from '../desktop.service';
 
+vi.mock('../../../../notifications/actions', () => ({
+    showErrorNotification: vi.fn(),
+}));
 
 describe('desktopService', () => {
   const mockFetch = vi.fn();

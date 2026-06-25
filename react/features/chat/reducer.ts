@@ -8,7 +8,7 @@ import {
     ADD_MESSAGE,
     ADD_MESSAGE_REACTION,
     CHAT_KEYS_ARRIVED,
-    CLEAR_MESSAGES,
+    CLEAR_CHAT_STATE,
     CLOSE_CHAT,
     EDIT_MESSAGE,
     NOTIFY_PRIVATE_RECIPIENTS_CHANGED,
@@ -86,6 +86,7 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
             privateMessage: action.privateMessage,
             lobbyChat: action.lobbyChat,
             recipient: action.recipient,
+            replyToMessageId: action.replyToMessageId,
             sentToVisitor: Boolean(action.sentToVisitor),
             timestamp: action.timestamp
         };
@@ -143,11 +144,10 @@ ReducerRegistry.register<IChatState>('features/chat', (state = DEFAULT_STATE, ac
         };
     }
 
-    case CLEAR_MESSAGES:
+    case CLEAR_CHAT_STATE:
         return {
-            ...state,
-            lastReadMessage: undefined,
-            messages: []
+            ...DEFAULT_STATE,
+            width: state.width
         };
 
     case EDIT_MESSAGE: {
