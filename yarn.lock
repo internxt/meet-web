@@ -12487,9 +12487,9 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-"lib-meet@https://github.com/internxt/lib-meet/releases/download/v.1.0.2-draft/lib-meet-1.0.2.tgz":
+"lib-meet@https://github.com/internxt/lib-meet/releases/download/v.1.0.2/lib-meet-1.0.2.tgz":
   version "1.0.2"
-  resolved "https://github.com/internxt/lib-meet/releases/download/v.1.0.2-draft/lib-meet-1.0.2.tgz#23773dc35dae791e137b9d922fb9364f29579854"
+  resolved "https://github.com/internxt/lib-meet/releases/download/v.1.0.2/lib-meet-1.0.2.tgz#5195bc96930c0a3fedc9eee52151f2ad5f6d3a4a"
   dependencies:
     "@hexagon/base64" "^2.0.4"
     "@jitsi/js-utils" "6.3.2"
