@@ -169,10 +169,12 @@ const useStyles = makeStyles<{
             '*': {
                 userSelect: 'text',
                 WebkitUserSelect: 'text',
-                '&::selection': {
-                    backgroundColor: '#FFFFFF',
-                    color: '#000000'
-                },
+            },
+            
+            '&::selection': {
+                backgroundColor: '#FFFFFF',
+                color: '#000000'
+            },
 
             "@keyframes chatSlideIn": {
                 "0%": {
