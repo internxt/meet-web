@@ -1,5 +1,4 @@
 import React from "react";
-import { useAspectRatio } from "../../../general/hooks/useAspectRatio";
 import { VideoParticipantType } from "../types";
 import VideoParticipant from "./VideoParticipant";
 
@@ -11,7 +10,6 @@ export interface VideoGalleryProps {
 
 const VideoGallery = ({ participants, flipX, translate }: VideoGalleryProps) => {
     const participantsNumber = participants.length;
-    const { containerStyle } = useAspectRatio();
     const hasOneParticipant = participantsNumber === 1;
 
     const sortedParticipants = [...participants].sort((a, b) => {
@@ -53,8 +51,8 @@ const VideoGallery = ({ participants, flipX, translate }: VideoGalleryProps) => 
     return (
         <div className="h-full w-full flex items-center justify-center overflow-hidden bg-gray-950">
             <div
-                className={`max-h-[85vh] sm:h-[90%] w-[95%] sm:w-[90%] flex justify-center items-center`}
-                style={containerStyle}
+                className={`max-h-[85vh] sm:h-[88%] w-[95%] sm:w-auto sm:aspect-video sm:max-w-[90%] 
+                    flex justify-center items-center`}
             >
                 <div
                     className={`${
