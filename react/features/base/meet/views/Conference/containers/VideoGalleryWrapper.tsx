@@ -8,7 +8,6 @@ import { startScreenShareFlow } from "../../../../../screen-share/actions.web";
 import { isScreenVideoShared } from "../../../../../screen-share/functions";
 import { getCurrentConference } from "../../../../conference/functions";
 import { translate } from "../../../../i18n/functions";
-import { useAspectRatio } from "../../../general/hooks/useAspectRatio";
 import { useParticipantAvatar } from "../../PreMeeting/hooks/useParticipantAvatar";
 import VideoGallery from "../components/VideoGallery";
 import VideoParticipant from "../components/VideoParticipant";
@@ -29,7 +28,6 @@ interface GalleryVideoWrapperProps extends WithTranslation, OwnProps, MappedStat
 }
 
 const GalleryVideoWrapper = ({ videoMode, t, dispatch }: GalleryVideoWrapperProps) => {
-    const { containerStyle } = useAspectRatio();
     const participantsScrollRef = useRef<HTMLDivElement>(null);
     const [canScrollUp, setCanScrollUp] = useState(false);
     const [canScrollDown, setCanScrollDown] = useState(false);
@@ -41,7 +39,6 @@ const GalleryVideoWrapper = ({ videoMode, t, dispatch }: GalleryVideoWrapperProp
     const flipX = useSelector((state: IReduxState) => state["features/base/settings"].localFlipX);
     const isLocalSharing = useSelector((state: IReduxState) => isScreenVideoShared(state));
 
-    const contStyle = videoMode === "gallery" ? containerStyle : {};
     const hasScreenShare = screenShareParticipants.length > 0;
     const sharingParticipant = screenShareParticipants[0];
 
@@ -85,7 +82,7 @@ const GalleryVideoWrapper = ({ videoMode, t, dispatch }: GalleryVideoWrapperProp
     }, [participants]);
 
     return (
-        <div className="h-full w-full bg-gray-950" style={contStyle}>
+        <div className="h-full w-full bg-gray-950">
             <AudioTracksContainer />
 
             {/* Screen Sharing Notification */}
