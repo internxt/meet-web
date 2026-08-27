@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
+import { setMeasuredTileViewThumbnailSize } from "../../../../../filmstrip/actions.web";
 import { VideoParticipantType } from "../types";
 import VideoParticipant from "./VideoParticipant";
 
@@ -9,6 +11,8 @@ export interface VideoGalleryProps {
 }
 
 const VideoGallery = ({ participants, flipX, translate }: VideoGalleryProps) => {
+    const dispatch = useDispatch();
+    const gridRef = useRef<HTMLDivElement>(null);
     const participantsNumber = participants.length;
     const hasOneParticipant = participantsNumber === 1;
 
@@ -44,6 +48,35 @@ const VideoGallery = ({ participants, flipX, translate }: VideoGalleryProps) => 
     const mobileHeightClass = participantsNumber > 4 ? "max-h-[120px] sm:max-h-none" : "";
     const participantClasses = `relative ${width} ${mobileHeightClass} aspect-square sm:aspect-video`;
 
+    useEffect(() => {
+        const grid = gridRef.current;
+
+        if (!grid) {
+            return;
+        }
+
+        const measure = () => {
+            const tile = grid.firstElementChild;
+
+            if (!tile) {
+                return;
+            }
+
+            const { height, width: tileWidth } = tile.getBoundingClientRect();
+
+            if (height > 0 && tileWidth > 0) {
+                dispatch(setMeasuredTileViewThumbnailSize(Math.round(height), Math.round(tileWidth)));
+            }
+        };
+
+        const observer = new ResizeObserver(measure);
+
+        observer.observe(grid);
+        measure();
+
+        return () => observer.disconnect();
+    }, [ dispatch, participantsNumber ]);
+
     return (
         <div className="h-full w-full flex items-center justify-center overflow-hidden bg-gray-950">
             <div
@@ -51,6 +84,7 @@ const VideoGallery = ({ participants, flipX, translate }: VideoGalleryProps) => 
                 flex justify-center items-center`}
             >
                 <div
+                    ref={gridRef}
                     className={`${
                         hasOneParticipant ? "h-full" : ""
                     } w-full flex flex-wrap justify-center items-start content-start gap-2.5`}

@@ -139,6 +139,31 @@ export function setTileViewDimensions() {
 }
 
 /**
+ * Overrides the tile thumbnail size with one measured from the rendered grid.
+ * setTileViewDimensions() derives it from the legacy filmstrip geometry, which
+ * this UI does not render, so it under-reports and the receiver constraints end
+ * up lower than the tiles actually are.
+ */
+export function setMeasuredTileViewThumbnailSize(height: number, width: number) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const { tileViewDimensions } = getState()['features/filmstrip'];
+
+        if (tileViewDimensions?.thumbnailSize?.height === height
+                && tileViewDimensions?.thumbnailSize?.width === width) {
+            return;
+        }
+
+        dispatch({
+            type: SET_TILE_VIEW_DIMENSIONS,
+            dimensions: {
+                ...tileViewDimensions,
+                thumbnailSize: { height, width }
+            }
+        });
+    };
+}
+
+/**
  * Sets the dimensions of the thumbnails in vertical view.
  *
  * @returns {Function}

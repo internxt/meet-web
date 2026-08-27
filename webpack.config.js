@@ -77,6 +77,10 @@ function devServerProxyBypass({ path, headers }) {
         return "/index.html";
     }
 
+    if (tpath === "/config.js" || tpath === "/interface_config.js") {
+        return tpath;
+    }
+
     if (
         tpath.startsWith("/css/") ||
         tpath.startsWith("/doc/") ||
