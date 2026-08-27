@@ -183,9 +183,7 @@ StateListenerRegistry.register(
             const handlers = new Map<string, Function>();
 
             const sasAvailableHandler = (sas: object) => {
-                if (ConfigService.instance.isDevelopment()) {
-                    dispatch(openDialog('ParticipantVerificationDialog', ParticipantVerificationSASDialog, { sas }));
-                }
+                dispatch(openDialog('ParticipantVerificationDialog', ParticipantVerificationSASDialog, { sas }));
             };
             handlers.set(JitsiConferenceEvents.E2EE_SAS_AVAILABLE, sasAvailableHandler);
             conference.on(JitsiConferenceEvents.E2EE_SAS_AVAILABLE, sasAvailableHandler);

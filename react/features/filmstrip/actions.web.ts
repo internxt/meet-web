@@ -110,6 +110,9 @@ export function setTileViewDimensions() {
                 numberOfParticipants,
                 desiredNumberOfVisibleTiles: numberOfVisibleTiles
             });
+        const measured = state['features/filmstrip'].tileViewDimensions?.measured
+            ? state['features/filmstrip'].tileViewDimensions?.thumbnailSize
+            : null;
         const thumbnailsTotalHeight = (rows ?? 1) * (TILE_VERTICAL_MARGIN + (height ?? 0));
         const availableHeight = clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN;
         const hasScroll = availableHeight < thumbnailsTotalHeight;
@@ -127,9 +130,10 @@ export function setTileViewDimensions() {
                     rows
                 },
                 thumbnailSize: {
-                    height,
-                    width
+                   height: measured?.height ?? height,
+                   width: measured?.width ?? width
                 },
+                measured: state['features/filmstrip'].tileViewDimensions?.measured ?? false,
                 filmstripHeight,
                 filmstripWidth,
                 hasScroll
@@ -157,6 +161,7 @@ export function setMeasuredTileViewThumbnailSize(height: number, width: number) 
             type: SET_TILE_VIEW_DIMENSIONS,
             dimensions: {
                 ...tileViewDimensions,
+                measured: true,
                 thumbnailSize: { height, width }
             }
         });

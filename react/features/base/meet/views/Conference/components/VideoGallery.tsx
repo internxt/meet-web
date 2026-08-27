@@ -13,6 +13,7 @@ export interface VideoGalleryProps {
 const VideoGallery = ({ participants, flipX, translate }: VideoGalleryProps) => {
     const dispatch = useDispatch();
     const gridRef = useRef<HTMLDivElement>(null);
+    const maxSeen = useRef(0);
     const participantsNumber = participants.length;
     const hasOneParticipant = participantsNumber === 1;
 
@@ -51,7 +52,7 @@ const VideoGallery = ({ participants, flipX, translate }: VideoGalleryProps) => 
     useEffect(() => {
         const grid = gridRef.current;
 
-        if (!grid) {
+        if (!grid || participantsNumber === 0) {
             return;
         }
 
@@ -64,8 +65,14 @@ const VideoGallery = ({ participants, flipX, translate }: VideoGalleryProps) => 
 
             const { height, width: tileWidth } = tile.getBoundingClientRect();
 
-            if (height > 0 && tileWidth > 0) {
-                dispatch(setMeasuredTileViewThumbnailSize(Math.round(height), Math.round(tileWidth)));
+           const dpr = window.devicePixelRatio || 1;
+
+            if (height > 0 && tileWidth > 0 && height * dpr > maxSeen.current) {
+                maxSeen.current = height * dpr;
+                dispatch(setMeasuredTileViewThumbnailSize(
+                    Math.round(height * dpr),
+                    Math.round(tileWidth * dpr)
+                ));
             }
         };
 

@@ -212,6 +212,7 @@ interface IFilmstripDimensions {
         rows: number;
     };
     hasScroll?: boolean;
+    measured?: boolean;
     thumbnailSize?: IDimensions;
 }
 
