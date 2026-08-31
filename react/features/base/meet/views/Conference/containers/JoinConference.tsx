@@ -197,7 +197,7 @@ class Conference extends AbstractConference<IProps, any> {
                                 isVisible={this.state.isBannerVisible}
                                 onClose={() => this.setState({ isBannerVisible: false })}
                             />
-                            <div className="flex-1 flex justify-center items-center">
+                            <div className="flex-1 flex justify-center items-center pb-24">
                                 {/* <LargeVideoWeb /> */}
                                 <VideoGalleryWrapper videoMode={viewMode} />
                             </div>

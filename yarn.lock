@@ -3137,9 +3137,9 @@
     eslint-scope "5.1.1"
 
 "@noble/ciphers@^2.0.1":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@noble/ciphers/-/ciphers-2.2.0.tgz#84fb45ac9332925d643b80f89ceb0ea2f21dba95"
-  integrity sha512-Z6pjIZ/8IJcCGzb2S/0Px5J81yij85xASuk1teLNeg75bfT07MV3a/O2Mtn1I2se43k3lkVEcFaR10N4cgQcZA==
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@noble/ciphers/-/ciphers-2.4.0.tgz#04cf9e0f1cd3d521e8e5ca92dc0c02238180f676"
+  integrity sha512-AnjFn0Jv92laAkvMrghlFZq4qQCIN/4DxFV/eooqtC2YTjB7kBeLMS2T9KJX4Dn+ZVXLOwK0lSgqDtx9gvxtiw==
 
 "@noble/curves@~2.0.0":
   version "2.0.1"
@@ -3159,9 +3159,9 @@
   integrity sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==
 
 "@noble/hashes@^2.0.1":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-2.2.0.tgz#22da1d16a469954fce877055d559900a6c73b63b"
-  integrity sha512-IYqDGiTXab6FniAgnSdZwgWbomxpy9FtYvLKs7wCUs2a8RkITG+DFGO1DM9cr+E3/RgADRpFjrKVaJ1z6sjtEg==
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-2.4.0.tgz#e6a3e98edbed3c8659b28bb8f9b18ca02ec8ea4b"
+  integrity sha512-X5XaVWZIBCT7HHZGm5I7ZQXDwLG+bGXuSrMQAW+7Zvl87h1kmc1ZB1VSRJcpUfoUrGQp4Fkoxm5kZ+Ms+aW+eA==
 
 "@noble/post-quantum@^0.5.2":
   version "0.5.4"
@@ -3300,9 +3300,9 @@
   integrity sha512-0kELaGSIDBKvcgS4zkjz1PeddatrjYcmMWOlAuAPwAeccUrPHdUqo/J6LiymHHEiJT5NrF1UVwxY14f+fy4WQw==
 
 "@protobufjs/utf8@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.1.tgz#eaee5900122c110a3dbcb728c0597014a2621774"
-  integrity sha512-oOAWABowe8EAbMyWKM0tYDKi8Yaox52D+HWZhAIJqQXbqe0xI/GV7FhLWqlEKreMkfDjshR5FKgi3mnle0h6Eg==
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.2.tgz#78d476333d85d5b1c792e257bca74ba080da49a4"
+  integrity sha512-b1UQwcEZ4yCnMCD8DAL1VlbvBJE9/IX4FTIp7BG1xYpf29SLazLSrqUkj4w7Y5y7cCVP6E5tcqqcI0xemPkHug==
 
 "@puppeteer/browsers@^2.2.0":
   version "2.11.0"
@@ -5564,9 +5564,9 @@
     undici-types "~7.16.0"
 
 "@types/node@>=13.7.0":
-  version "26.0.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-26.0.0.tgz#d4aece9e9412e9f2008d59bc2d74f5279316b665"
-  integrity sha512-vf2YFi1iY9lHGwNJMs01biZFbKJkrZR1T6/MlzjhJLPdntOHLhTrDSnSVcdtvjihi4VQNlrFRIxLsDBlQpAipA==
+  version "26.4.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-26.4.0.tgz#4c4ca071c42241fe602741d02999f16b4e64c468"
+  integrity sha512-faiGnoIrLH/V8cibOMEAZ8pMw6oXqSukl29ra4mN8GdaB2ZewzeaLj+INpV5N+Z1eKWzY+IzaIZH2EIR6YZRNQ==
   dependencies:
     undici-types "~8.3.0"
 
@@ -12482,9 +12482,9 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-"lib-meet@https://github.com/internxt/lib-meet/releases/download/v.1.0.2/lib-meet-1.0.2.tgz":
-  version "1.0.2"
-  resolved "https://github.com/internxt/lib-meet/releases/download/v.1.0.2/lib-meet-1.0.2.tgz#5195bc96930c0a3fedc9eee52151f2ad5f6d3a4a"
+"lib-meet@https://github.com/internxt/lib-meet/releases/download/v.1.0.3/lib-meet-1.0.3.tgz":
+  version "1.0.3"
+  resolved "https://github.com/internxt/lib-meet/releases/download/v.1.0.3/lib-meet-1.0.3.tgz#8188f845d75011396e6fb98c854f52b2285a947f"
   dependencies:
     "@hexagon/base64" "^2.0.4"
     "@jitsi/js-utils" "6.3.2"
@@ -12501,7 +12501,7 @@ levn@^0.4.1:
     emoji-regex "10.4.0"
     jwt-decode "4.0.0"
     lodash-es "4.18.1"
-    onnxruntime-web "=1.23.0"
+    onnxruntime-web "1.29.0"
     sdp-transform "2.3.0"
     strophe.js "https://github.com/jitsi/strophejs/releases/download/v1.5-jitsi-3/strophe.js-1.5.0.tgz"
     uuid "14.0.0"
@@ -14171,20 +14171,20 @@ onetime@^5.1.0, onetime@^5.1.2:
   dependencies:
     mimic-fn "^2.1.0"
 
-onnxruntime-common@1.23.0:
-  version "1.23.0"
-  resolved "https://registry.yarnpkg.com/onnxruntime-common/-/onnxruntime-common-1.23.0.tgz#ab254b0725fc837597000e705f885db523d6c37e"
-  integrity sha512-Auz8S9D7vpF8ok7fzTobvD1XdQDftRf/S7pHmjeCr3Xdymi4z1C7zx4vnT6nnUjbpelZdGwda0BmWHCCTMKUTg==
+onnxruntime-common@1.29.0:
+  version "1.29.0"
+  resolved "https://registry.yarnpkg.com/onnxruntime-common/-/onnxruntime-common-1.29.0.tgz#e489ef9cb17074b5d38b829fa43679b8dcd155b7"
+  integrity sha512-/F63/e2VJoaVXGGNu6S5QH7jivBThGO95OzAVXXQ8hTta/b1QxI8udHa6cI3+3mAb5WWIIaMMwfZw01oivjJ1g==
 
-onnxruntime-web@=1.23.0:
-  version "1.23.0"
-  resolved "https://registry.yarnpkg.com/onnxruntime-web/-/onnxruntime-web-1.23.0.tgz#7e3dd04df7e6d659f7acf1cab6caa706898344e0"
-  integrity sha512-w0bvC2RwDxphOUFF8jFGZ/dYw+duaX20jM6V4BIZJPCfK4QuCpB/pVREV+hjYbT3x4hyfa2ZbTaWx4e1Vot0fQ==
+onnxruntime-web@1.29.0:
+  version "1.29.0"
+  resolved "https://registry.yarnpkg.com/onnxruntime-web/-/onnxruntime-web-1.29.0.tgz#b5a1670237b4670c40e2468c465af9144fd81aaf"
+  integrity sha512-LuQlpX6MFLJZu756erwUeb1mNfoJGbs1kzDwJGNlf5RvfYMdqhcY3vNpDPK40CUV2HoWTkIj+uS0o36GFHjeYw==
   dependencies:
     flatbuffers "^25.1.24"
     guid-typescript "^1.0.9"
     long "^5.2.3"
-    onnxruntime-common "1.23.0"
+    onnxruntime-common "1.29.0"
     platform "^1.3.6"
     protobufjs "^7.2.4"
 
@@ -14852,9 +14852,9 @@ proto-list@~1.2.1:
   integrity sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==
 
 protobufjs@^7.2.4:
-  version "7.6.4"
-  resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-7.6.4.tgz#8bb000300026efd63eb7951d26e5dbb38f5658f2"
-  integrity sha512-RJJPTTpvFfHcWLkIa2JFWK4XvtSzS0yEWDmunqHXli1h3JlkbcQZXDZdcWxv+JK3Xsl5/UFDPZ0iGm7DAengYw==
+  version "7.6.6"
+  resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-7.6.6.tgz#7a3923e8e32b0ee2ff689f8eed6e455c090ac67e"
+  integrity sha512-dYDWdjSl5RNb7SgPxGQcRU+GtvP7s2fpkrY0r432PcOIaZ0/rBcxEZnQN67iJhFuQiVw754JDoPruPCNdGsbjg==
   dependencies:
     "@protobufjs/aspromise" "^1.1.2"
     "@protobufjs/base64" "^1.1.2"
