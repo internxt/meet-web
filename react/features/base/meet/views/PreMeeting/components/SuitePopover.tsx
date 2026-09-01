@@ -64,8 +64,13 @@ export default function SuitePopover({ className = '' }: Readonly<SuitePopoverPr
     {
       icon: <EnvelopeSimpleIcon />,
       title: 'Mail',
-      onClick: () => { },
-      availableSoon: true,
+      onClick: () =>
+        openSuite({
+          enabled: userTier?.featuresPerService?.[Service.Mail].enabled ?? false,
+          onOpenSuite: () => window.open('https://mail.internxt.com', '_blank', 'noopener'),
+          upgradeTitle: translate('upgradePlanDialog.mail.title'),
+          upgradeDescription: translate('upgradePlanDialog.mail.description'),
+        }),
       isLocked: !userTier?.featuresPerService?.[Service.Mail].enabled,
     },
     {
