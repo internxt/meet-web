@@ -87,7 +87,7 @@
         "jwt-decode": "2.2.0",
         "lib-meet": "https://github.com/internxt/lib-meet/releases/download/v.1.0.3/lib-meet-1.0.3.tgz",
         "lodash-es": "4.18.1",
-        "moment": "2.29.4",
+        "moment": "2.31.0",
         "moment-duration-format": "2.2.2",
         "null-loader": "4.0.1",
         "optional-require": "1.0.3",
