@@ -24,7 +24,7 @@ jobs:
             - name: Setup Node
               uses: actions/setup-node@v5
               with:
-                  node-version: '24.x'
+                  node-version: "24.x"
                   cache: yarn
 
             - name: Add .npmrc
@@ -37,7 +37,7 @@ jobs:
               run: yarn test:coverage
 
             - name: SonarCloud Scan
-              uses: SonarSource/sonarqube-scan-action@v8
+              uses: SonarSource/sonarcloud-github-action@master
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
