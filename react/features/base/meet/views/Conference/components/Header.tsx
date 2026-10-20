@@ -1,6 +1,7 @@
 import { Header as IntxHeader } from "@internxt/ui";
 import { SquaresFourIcon, UserFocusIcon } from "@phosphor-icons/react";
 import React from "react";
+import ReportProblemButton from "../../../general/components/ReportProblemButton";
 import ConferenceTimer from "./ConferenceTimer";
 
 const LeftContent = React.memo(
@@ -42,17 +43,20 @@ const RightContent = React.memo(({ mode, translate, onSetModeClicked }: RightCon
     };
 
     return (
-        <button
-            onClick={handleSetMode}
-            className="flex flex-row justify-center items-center space-x-2 p-[10px] bg-black/50 border border-white/10 rounded-2xl"
-        >
-           {mode === "gallery" ? <>
-            <SquaresFourIcon size={20} /> <span>{translate("meet.meeting.button.gallery")}</span>
-           </>
-           : <>
-           <UserFocusIcon size={20} /> <span>{translate("meet.meeting.button.speaker")}</span>
-           </>}
-        </button>
+        <div className="flex flex-row space-x-2">
+            <ReportProblemButton />
+            <button
+                onClick={handleSetMode}
+                className="flex flex-row justify-center items-center space-x-2 p-[10px] bg-black/50 border border-white/10 rounded-2xl"
+            >
+               {mode === "gallery" ? <>
+                <SquaresFourIcon size={20} /> <span>{translate("meet.meeting.button.gallery")}</span>
+               </>
+               : <>
+               <UserFocusIcon size={20} /> <span>{translate("meet.meeting.button.speaker")}</span>
+               </>}
+            </button>
+        </div>
     );
 });
 

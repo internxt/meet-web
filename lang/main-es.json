@@ -855,6 +855,12 @@
         },
         "errors": {
             "noAvailableOptions": "No devices available"
+        },
+        "reportProblem": {
+            "button": "Reportar un problema",
+            "downloadedDescription": "Envíalo a soporte junto con una breve descripción de lo que ha pasado para que podamos revisarlo.",
+            "downloadedTitle": "Informe descargado",
+            "failedTitle": "No se ha podido generar el informe"
         }
     },
     "notify": {

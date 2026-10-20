@@ -24,6 +24,7 @@ declare global {
         // selenium tests handler
         _sharedVideoPlayer: any;
         alwaysOnTop: { api: any };
+        downloadMeetDebugReport?: () => Promise<void>;
         opera?: {
             version?: () => string;
         };

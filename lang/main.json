@@ -983,6 +983,12 @@
         },
         "errors": {
             "noAvailableOptions": "No hay dispositivos disponibles"
+        },
+        "reportProblem": {
+            "button": "Report a problem",
+            "downloadedDescription": "Send it to support with a short description of what happened so we can look into it.",
+            "downloadedTitle": "Report downloaded",
+            "failedTitle": "The report could not be generated"
         }
     },
     "notify": {

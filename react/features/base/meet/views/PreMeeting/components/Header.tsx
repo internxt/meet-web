@@ -4,6 +4,7 @@ import { ArrowSquareOut } from "@phosphor-icons/react";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import PlanBadge from "../../../general/components/PlanBadge";
+import ReportProblemButton from "../../../general/components/ReportProblemButton";
 import TextButton from "../../../general/components/TextButton";
 import { isMeetingEnabled } from "../../../general/store/meeting/selectors";
 import { getPlanName } from "../../../services/utils/payments.utils";
@@ -156,6 +157,8 @@ const RightContent = React.memo(
 
         return isLogged ? (
             <div className="flex space-x-2 flex-row">
+                <ReportProblemButton showLabelFrom="wide" />
+
                 {meetingButton}
 
                 <SuitePopover />
@@ -252,6 +255,7 @@ const RightContent = React.memo(
             </div>
         ) : (
             <div className="flex space-x-2 flex-row">
+                <ReportProblemButton showLabelFrom="wide" />
                 <Button variant="secondary" onClick={onLogin}>
                     {translate("meet.login.login")}
                 </Button>
