@@ -170,8 +170,7 @@ const useStyles = makeStyles<{
                 userSelect: 'text',
                 WebkitUserSelect: 'text',
             },
-            
-            '&::selection': {
+            '&::selection, & *::selection': {
                 backgroundColor: '#FFFFFF',
                 color: '#000000'
             },
