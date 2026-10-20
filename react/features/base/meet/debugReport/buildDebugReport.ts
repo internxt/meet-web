@@ -3,15 +3,11 @@ import { downloadJSON } from "../../util/downloadJSON";
 
 import { getTimelineEvents } from "./eventTimeline";
 import { getLogEntries } from "./logBuffer";
+import { ConferenceLike, collectMediaSample, getMediaSamples } from "./mediaStatsSampler";
+import { getPreviousPages } from "./previousPage";
 import { redact } from "./redact";
 
 export const DEBUG_REPORT_VERSION = 1;
-
-interface ConferenceLike {
-    myUserId: () => string;
-    isJoined: () => boolean;
-    isP2PActive?: () => boolean;
-}
 
 const safely = <T>(read: () => T): T | { error: string } => {
     try {
@@ -118,15 +114,28 @@ const getConferenceState = (state: IReduxState) => {
 };
 
 export const buildDebugReport = async (state: IReduxState) => {
+    const conference = state["features/base/conference"].conference as unknown as ConferenceLike | undefined;
     const report = {
         reportVersion: DEBUG_REPORT_VERSION,
         generatedAt: new Date().toISOString(),
         environment: safely(getEnvironment),
         devices: await getDevices().catch(error => ({ error: String(error) })),
         conference: safely(() => getConferenceState(state)),
+        media: {
+            now: conference ? await collectMediaSample(conference).catch(error => ({ error: String(error) })) : undefined,
+            history: getMediaSamples(),
+        },
         timeline: getTimelineEvents().map(event => ({ ...event, time: new Date(event.time).toISOString() })),
         logs: getLogEntries().map(entry => `${new Date(entry.time).toISOString()} [${entry.level}] ${entry.text}`),
         connectionLogs: safely(() => (state["features/base/connection"].connection as { getLogs?: () => unknown })?.getLogs?.()),
+        previousPages: safely(() =>
+            getPreviousPages().map(page => ({
+                unloadedAt: new Date(page.unloadedAt).toISOString(),
+                url: page.url,
+                timeline: page.timeline.map(event => ({ ...event, time: new Date(event.time).toISOString() })),
+                logs: page.logs.map(entry => `${new Date(entry.time).toISOString()} [${entry.level}] ${entry.text}`),
+            })),
+        ),
     };
 
     return redact(report);
