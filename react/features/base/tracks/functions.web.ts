@@ -4,6 +4,7 @@ import { isAdvancedAudioSettingsEnabled } from '../config/functions.any';
 import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { gumPending, setAudioMuted } from '../media/actions';
+import { shouldShowPermissionsModal } from '../meet/general/utils/mediaPermissions';
 import { MEDIA_TYPE } from '../media/constants';
 import { getStartWithAudioMuted } from '../media/functions';
 import { IGUMPendingState } from '../media/types';
@@ -96,14 +97,9 @@ export function createLocalTracksF(options: ITrackOptions = {}, store?: IStore, 
                 resolution,
                 timeout,
             }).catch((err: any) => {
-                // Don't show permission modal if user cancelled screen share selection
-                const isScreenShare = options.devices?.includes('desktop');
-                const isCancellation = err.name === JitsiTrackErrors.SCREENSHARING_USER_CANCELED
-                    || err.name === 'NotAllowedError'
-                    || err.message?.toLowerCase().includes('cancel');
+                const isScreenShare = Boolean(options.devices?.includes('desktop'));
 
-
-                if (!isScreenShare || !isCancellation) {
+                if (shouldShowPermissionsModal(err, isScreenShare)) {
                     store?.dispatch({
                         type: "SHOW_PERMISSIONS_MODAL",
                     });

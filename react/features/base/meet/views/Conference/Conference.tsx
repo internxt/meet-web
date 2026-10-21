@@ -73,6 +73,11 @@ interface IProps extends AbstractProps, WithTranslation {
     _showLobby: boolean;
 
     /**
+     * Whether the page was reloaded to reconnect to the meeting after a connection failure.
+     */
+    _isReconnecting: boolean;
+
+    /**
      * If prejoin page is visible or not.
      */
     _showPrejoin: boolean;
@@ -141,15 +146,13 @@ class Conference extends AbstractConference<IProps, any> {
         const { t } = this.props;
 
         if (APP.conference.isJoined()) {
-            const confirmLeave = window.confirm(
-                t('dialog.leaveMeetingConfirmation')
-            );
+            const confirmLeave = window.confirm(t("dialog.leaveMeetingConfirmation"));
             if (confirmLeave) {
                 window.removeEventListener("pagehide", this._handlePageHide, true);
                 this.props.dispatch(hangup(false, this.props.roomId));
-                window.history.pushState(null, '', '/');
+                window.history.pushState(null, "", "/");
             } else {
-                window.history.pushState(null, '', `/${this.props.roomId}`);
+                window.history.pushState(null, "", `/${this.props.roomId}`);
             }
         } else {
             this.props.dispatch(appNavigate(window.location.pathname + window.location.search));
@@ -195,7 +198,7 @@ class Conference extends AbstractConference<IProps, any> {
      * @inheritdoc
      */
     override componentWillUnmount() {
-        console.log('[RELOAD] Conference component will unmount, leaving the call and cleaning up');
+        console.log("[RELOAD] Conference component will unmount, leaving the call and cleaning up");
         APP.UI.unbindEvents();
 
         FULL_SCREEN_EVENTS.forEach((name) => document.removeEventListener(name, this._onFullScreenChange));
@@ -210,7 +213,7 @@ class Conference extends AbstractConference<IProps, any> {
     }
 
     /**
-     * 
+     *
      * Handler for pagehide event that sends a leave call request to the server when the page is being unloaded.
      * @private
      * @returns {string}
@@ -221,7 +224,7 @@ class Conference extends AbstractConference<IProps, any> {
             console.log("[RELOAD]: _handlePageHide calls leaveCall with callID:", callId);
             leaveCallWithUserIdentification(callId);
         }
-         console.log("[RELOAD]: _handlePageHide done");
+        console.log("[RELOAD]: _handlePageHide done");
     };
 
     /**
@@ -365,8 +368,9 @@ class Conference extends AbstractConference<IProps, any> {
 
         FULL_SCREEN_EVENTS.forEach((name) => document.addEventListener(name, this._onFullScreenChange));
 
-        const { dispatch, t } = this.props;
-        dispatch(init(false));
+        const { _isReconnecting, dispatch, t } = this.props;
+
+        dispatch(init(_isReconnecting));
 
         maybeShowSuboptimalExperienceNotification(dispatch, t);
     }
@@ -381,14 +385,15 @@ class Conference extends AbstractConference<IProps, any> {
  * @returns {IProps}
  */
 function _mapStateToProps(state: IReduxState) {
-    const { backgroundAlpha } = state["features/base/config"];
-    const { showCreatingMeeting } = state["features/prejoin"];
+    const { backgroundAlpha, enableForcedReload } = state["features/base/config"];
+    const { showCreatingMeeting, skipPrejoinOnReload } = state["features/prejoin"];
     const _room = state["features/base/conference"].room;
 
     return {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: backgroundAlpha,
         _showNewMeeting: showCreatingMeeting,
+        _isReconnecting: Boolean(enableForcedReload && skipPrejoinOnReload),
         roomId: _room,
     };
 }
