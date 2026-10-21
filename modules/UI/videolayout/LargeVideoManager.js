@@ -543,6 +543,9 @@ export default class LargeVideoManager {
      * Updates the src of the dominant speaker avatar
      */
     updateAvatar() {
+        if (!this._dominantSpeakerAvatarContainer) {
+           return;
+        }
         if (!this._avatarRoot) {
             this._avatarRoot = createRoot(this._dominantSpeakerAvatarContainer);
         }

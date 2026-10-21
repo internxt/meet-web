@@ -110,6 +110,9 @@ export function setTileViewDimensions() {
                 numberOfParticipants,
                 desiredNumberOfVisibleTiles: numberOfVisibleTiles
             });
+        const measured = state['features/filmstrip'].tileViewDimensions?.measured
+            ? state['features/filmstrip'].tileViewDimensions?.thumbnailSize
+            : null;
         const thumbnailsTotalHeight = (rows ?? 1) * (TILE_VERTICAL_MARGIN + (height ?? 0));
         const availableHeight = clientHeight - TILE_VIEW_GRID_VERTICAL_MARGIN;
         const hasScroll = availableHeight < thumbnailsTotalHeight;
@@ -127,12 +130,39 @@ export function setTileViewDimensions() {
                     rows
                 },
                 thumbnailSize: {
-                    height,
-                    width
+                   height: measured?.height ?? height,
+                   width: measured?.width ?? width
                 },
+                measured: state['features/filmstrip'].tileViewDimensions?.measured ?? false,
                 filmstripHeight,
                 filmstripWidth,
                 hasScroll
+            }
+        });
+    };
+}
+
+/**
+ * Overrides the tile thumbnail size with one measured from the rendered grid.
+ * setTileViewDimensions() derives it from the legacy filmstrip geometry, which
+ * this UI does not render, so it under-reports and the receiver constraints end
+ * up lower than the tiles actually are.
+ */
+export function setMeasuredTileViewThumbnailSize(height: number, width: number) {
+    return (dispatch: IStore['dispatch'], getState: IStore['getState']) => {
+        const { tileViewDimensions } = getState()['features/filmstrip'];
+
+        if (tileViewDimensions?.thumbnailSize?.height === height
+                && tileViewDimensions?.thumbnailSize?.width === width) {
+            return;
+        }
+
+        dispatch({
+            type: SET_TILE_VIEW_DIMENSIONS,
+            dimensions: {
+                ...tileViewDimensions,
+                measured: true,
+                thumbnailSize: { height, width }
             }
         });
     };

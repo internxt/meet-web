@@ -1,26 +1,23 @@
-import { AnyAction } from 'redux';
+import { AnyAction } from "redux";
 
-import { IStore } from '../app/types';
-import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../base/conference/actionTypes';
-import { SET_CONFIG } from '../base/config/actionTypes';
-import { CONNECTION_FAILED } from '../base/connection/actionTypes';
-import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media/actionTypes';
-import MiddlewareRegistry from '../base/redux/MiddlewareRegistry';
-import { updateSettings } from '../base/settings/actions';
-import {
-    TRACK_ADDED,
-    TRACK_NO_DATA_FROM_SOURCE
-} from '../base/tracks/actionTypes';
-import { preloadZxcvbn } from '../base/util/isInsecureRoomName';
+import { IStore } from "../app/types";
+import { CONFERENCE_FAILED, CONFERENCE_JOINED } from "../base/conference/actionTypes";
+import { SET_CONFIG } from "../base/config/actionTypes";
+import { CONNECTION_FAILED } from "../base/connection/actionTypes";
+import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from "../base/media/actionTypes";
+import MiddlewareRegistry from "../base/redux/MiddlewareRegistry";
+import { updateSettings } from "../base/settings/actions";
+import { TRACK_ADDED, TRACK_NO_DATA_FROM_SOURCE } from "../base/tracks/actionTypes";
+import { preloadZxcvbn } from "../base/util/isInsecureRoomName";
 
-import {
-    setDeviceStatusOk,
-    setDeviceStatusWarning,
-    setJoiningInProgress
-} from './actions';
-import { isPrejoinPageVisible, isUnsafeRoomWarningEnabled } from './functions.any';
+import { setDeviceStatusOk, setDeviceStatusWarning, setJoiningInProgress, setSkipPrejoinOnReload } from "./actions";
+import { isPrejoinPageVisible, isUnsafeRoomWarningEnabled } from "./functions.any";
 
-import { cleanUpConference } from '../base/conference/actions.any';
+import { cleanUpConference } from "../base/conference/actions.any";
+import { reconnectAndReload } from "../base/connection/actions";
+import { shouldRetryConnection } from "../base/meet/general/utils/connectionRecovery";
+
+let isHandlingFailure = false;
 
 /**
  * The redux middleware for {@link PrejoinPage}.
@@ -28,72 +25,87 @@ import { cleanUpConference } from '../base/conference/actions.any';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(store => next => action => {
+MiddlewareRegistry.register((store) => (next) => (action) => {
     switch (action.type) {
-    case SET_CONFIG: {
-        const result = next(action);
+        case SET_CONFIG: {
+            const result = next(action);
 
-        if (isUnsafeRoomWarningEnabled(store.getState())) {
-            preloadZxcvbn();
+            if (isUnsafeRoomWarningEnabled(store.getState())) {
+                preloadZxcvbn();
+            }
+
+            return result;
+        }
+        case SET_AUDIO_MUTED: {
+            if (isPrejoinPageVisible(store.getState())) {
+                store.dispatch(
+                    updateSettings({
+                        startWithAudioMuted: Boolean(action.muted),
+                    }),
+                );
+            }
+            break;
         }
 
-        return result;
-    }
-    case SET_AUDIO_MUTED: {
-        if (isPrejoinPageVisible(store.getState())) {
-            store.dispatch(updateSettings({
-                startWithAudioMuted: Boolean(action.muted)
-            }));
+        case SET_VIDEO_MUTED: {
+            if (isPrejoinPageVisible(store.getState())) {
+                store.dispatch(
+                    updateSettings({
+                        startWithVideoMuted: Boolean(action.muted),
+                    }),
+                );
+            }
+            break;
         }
-        break;
-    }
 
-    case SET_VIDEO_MUTED: {
-        if (isPrejoinPageVisible(store.getState())) {
-            store.dispatch(updateSettings({
-                startWithVideoMuted: Boolean(action.muted)
-            }));
+        case TRACK_ADDED:
+        case TRACK_NO_DATA_FROM_SOURCE: {
+            const state = store.getState();
+
+            if (isPrejoinPageVisible(state)) {
+                const {
+                    track: { jitsiTrack: track },
+                } = action;
+                const { deviceStatusType, deviceStatusText } = state["features/prejoin"];
+
+                if (!track.isAudioTrack()) {
+                    break;
+                }
+
+                if (track.isReceivingData()) {
+                    if (deviceStatusType === "warning" && deviceStatusText === "prejoin.audioDeviceProblem") {
+                        store.dispatch(setDeviceStatusOk("prejoin.lookGood"));
+                    }
+                } else if (deviceStatusType === "ok") {
+                    store.dispatch(setDeviceStatusWarning("prejoin.audioDeviceProblem"));
+                }
+            }
+            break;
         }
-        break;
-    }
+        case CONFERENCE_FAILED:
+        case CONNECTION_FAILED: {
+            store.dispatch(setJoiningInProgress(false));
+            const state = store.getState();
+            const { conference, room } = state["features/base/conference"];
+            console.log("[RELOAD_PAGE]: Room ID on failure: ", room);
 
-    case TRACK_ADDED:
-    case TRACK_NO_DATA_FROM_SOURCE: {
-        const state = store.getState();
-
-        if (isPrejoinPageVisible(state)) {
-            const { track: { jitsiTrack: track } } = action;
-            const { deviceStatusType, deviceStatusText } = state['features/prejoin'];
-
-            if (!track.isAudioTrack()) {
+            if (!room || isHandlingFailure) {
                 break;
             }
+            isHandlingFailure = true;
 
-            if (track.isReceivingData()) {
-                if (deviceStatusType === 'warning'
-                    && deviceStatusText === 'prejoin.audioDeviceProblem') {
-                    store.dispatch(setDeviceStatusOk('prejoin.lookGood'));
-                }
-            } else if (deviceStatusType === 'ok') {
-                store.dispatch(setDeviceStatusWarning('prejoin.audioDeviceProblem'));
+            if (shouldRetryConnection(action.error, Boolean(conference))) {
+                store.dispatch(setSkipPrejoinOnReload(true));
+                reconnectAndReload();
+            } else {
+                store.dispatch(setSkipPrejoinOnReload(false));
+                store.dispatch(cleanUpConference(room));
             }
+
+            break;
         }
-        break;
-    }
-    case CONFERENCE_FAILED:
-    case CONNECTION_FAILED: {
-        store.dispatch(setJoiningInProgress(false));
-        const state = store.getState();
-        const { room } = state['features/base/conference'];
-        console.log("[RELOAD_PAGE]: Room ID on failure: ", room);
-        if (room) {
-            store.dispatch(cleanUpConference(room));
-        }
-        
-        break;
-    }
-    case CONFERENCE_JOINED:
-        return _conferenceJoined(store, next, action);
+        case CONFERENCE_JOINED:
+            return _conferenceJoined(store, next, action);
     }
 
     return next(action);
