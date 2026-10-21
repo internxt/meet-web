@@ -1,6 +1,6 @@
-import { AuthService } from './auth.service';
-import { ConfigService } from './config.service';
-import { LoginCredentials } from './types/command.types';
+import { AuthService } from "./auth.service";
+import { ConfigService } from "./config.service";
+import { LoginCredentials } from "./types/command.types";
 import {
     WEB_AUTH_CONFIG,
     WEB_AUTH_MESSAGE_TYPES,
@@ -8,7 +8,7 @@ import {
     WEB_AUTH_VALID_ORIGINS,
     WebAuthMessage,
     WebAuthParams,
-} from './types/web-auth.types';
+} from "./types/web-auth.types";
 
 export class WebAuthService {
     public static readonly instance: WebAuthService = new WebAuthService();
