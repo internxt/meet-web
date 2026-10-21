@@ -163,6 +163,7 @@ import { createRnnoiseProcessor } from './react/features/stream-effects/rnnoise'
 import { handleToggleVideoMuted } from './react/features/toolbox/actions.any';
 import { transcriberJoined, transcriberLeft } from './react/features/transcribing/actions';
 import { muteLocal } from './react/features/video-menu/actions.any';
+import { setTileView } from './react/features/video-layout/actions.any';
 
 const logger = Logger.getLogger('app:conference-web');
 let room;
@@ -1882,6 +1883,7 @@ export default {
         APP.UI.initConference();
 
         dispatch(conferenceJoined(room));
+        dispatch(setTileView(true));
         const participantCount = room?.getParticipants()?.length;
         if (participantCount === 0) {
             dispatch(toggleE2EE(true));

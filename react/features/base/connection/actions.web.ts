@@ -1,20 +1,20 @@
 // @ts-expect-error
-import { jitsiLocalStorage } from '@jitsi/js-utils';
+import { jitsiLocalStorage } from "@jitsi/js-utils";
 
-import { IStore } from '../../app/types';
-import { getCustomerDetails } from '../../jaas/actions.any';
-import { getJaasJWT, isVpaasMeeting } from '../../jaas/functions';
-import { showWarningNotification } from '../../notifications/actions';
-import { NOTIFICATION_TIMEOUT_TYPE } from '../../notifications/constants';
-import { stopLocalVideoRecording } from '../../recording/actions.any';
-import LocalRecordingManager from '../../recording/components/Recording/LocalRecordingManager.web';
-import { setJWT } from '../jwt/actions';
+import { IStore } from "../../app/types";
+import { getCustomerDetails } from "../../jaas/actions.any";
+import { getJaasJWT, isVpaasMeeting } from "../../jaas/functions";
+import { showWarningNotification } from "../../notifications/actions";
+import { NOTIFICATION_TIMEOUT_TYPE } from "../../notifications/constants";
+import { stopLocalVideoRecording } from "../../recording/actions.any";
+import LocalRecordingManager from "../../recording/components/Recording/LocalRecordingManager.web";
+import { setJWT } from "../jwt/actions";
 
 import { LocalStorageManager } from "../meet/LocalStorageManager";
 import MeetingService from "../meet/services/meeting.service";
 import { _connectInternal } from "./actions.any";
-import logger from './logger';
-import { SessionStorageManager } from '../meet/SessionStorageManager';
+import logger from "./logger";
+import { SessionStorageManager } from "../meet/SessionStorageManager";
 
 /**
  * Helper function to leave a call with proper user identification (authenticated or anonymous)
@@ -53,7 +53,7 @@ export function connect(id?: string, password?: string) {
                         return getJaasJWT(state);
                     }
                 })
-                .then(j => {
+                .then((j) => {
                     j && dispatch(setJWT(j));
 
                     return dispatch(
@@ -63,10 +63,11 @@ export function connect(id?: string, password?: string) {
                             name: user?.name,
                             lastname: user?.lastname,
                             isAnonymous: !user,
-                        })
+                        }),
                     );
-                }).catch(e => {
-                    logger.error('Connection error', e);
+                })
+                .catch((e) => {
+                    logger.error("Connection error", e);
                 });
         }
 
@@ -75,10 +76,10 @@ export function connect(id?: string, password?: string) {
         const passwordOverride = jitsiLocalStorage.getItem("xmpp_password_override");
 
         if (usernameOverride && usernameOverride.length > 0) {
-            id = usernameOverride; // eslint-disable-line no-param-reassign
+            id = usernameOverride;
         }
         if (passwordOverride && passwordOverride.length > 0) {
-            password = passwordOverride; // eslint-disable-line no-param-reassign
+            password = passwordOverride;
         }
 
         return dispatch(
@@ -88,7 +89,7 @@ export function connect(id?: string, password?: string) {
                 name: user?.name,
                 lastname: user?.lastname,
                 isAnonymous: !user,
-            })
+            }),
         );
     };
 }
@@ -103,8 +104,14 @@ export function connect(id?: string, password?: string) {
  * the user on conference termination.
  * @returns {Function}
  */
-export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?: string, notifyOnConferenceTermination?: boolean, feedbackMessage?: string) {
-     // XXX For web based version we use conference hanging up logic from the old app.
+export function hangup(
+    requestFeedback = false,
+    roomId?: string,
+    feedbackTitle?: string,
+    notifyOnConferenceTermination?: boolean,
+    feedbackMessage?: string,
+) {
+    // XXX For web based version we use conference hanging up logic from the old app.
     return async (dispatch: IStore["dispatch"]) => {
         if (LocalRecordingManager.isRecordingLocally()) {
             dispatch(stopLocalVideoRecording());
@@ -114,8 +121,8 @@ export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?:
                         titleKey: "localRecording.stopping",
                         descriptionKey: "localRecording.wait",
                     },
-                    NOTIFICATION_TIMEOUT_TYPE.STICKY
-                )
+                    NOTIFICATION_TIMEOUT_TYPE.STICKY,
+                ),
             );
 
             // wait 1000ms for the recording to end and start downloading
@@ -135,14 +142,40 @@ export function hangup(requestFeedback = false, roomId?: string, feedbackTitle?:
 }
 
 export async function cleanupAndReload(roomId: string) {
-    try{
-        console.log('[RELOAD] cleanupAndReload is called:', roomId);
+    try {
+        console.log("[RELOAD] cleanupAndReload is called:", roomId);
         await leaveCallWithUserIdentification(roomId);
         await APP.conference.cleanup();
     } catch (error) {
         console.error("[RELOAD]: Error during cleanup and reload", error);
     } finally {
         console.log("[RELOAD]: Reloading the page");
+        window.location.reload();
+    }
+}
+
+const RECONNECT_DELAY_MS = 3000;
+
+const waitUntilOnline = () =>
+    new Promise<void>((resolve) => {
+        if (navigator.onLine) {
+            resolve();
+
+            return;
+        }
+        window.addEventListener("online", () => resolve(), { once: true });
+    });
+
+export async function reconnectAndReload() {
+    try {
+        console.log("[RELOAD] reconnectAndReload is called");
+        await APP.conference.cleanup();
+    } catch (error) {
+        console.error("[RELOAD]: Error during cleanup before reconnecting", error);
+    } finally {
+        await new Promise((resolve) => setTimeout(resolve, RECONNECT_DELAY_MS));
+        await waitUntilOnline();
+        console.log("[RELOAD]: Reloading the page to reconnect");
         window.location.reload();
     }
 }
