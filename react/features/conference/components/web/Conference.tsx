@@ -303,7 +303,7 @@ class Conference extends AbstractConference<IProps, any> {
                     <Notice />
                     <div onTouchStart={this._onVideospaceTouchStart}>
                         <Header mode={viewMode} translate={t} onSetModeClicked={this._onSetVideoModeClicked} />
-                        <div className="flex">
+                        <div className="flex pb-24">
                             {/* <LargeVideoWeb /> */}
                             <VideoGalleryWrapper videoMode={viewMode} />
                         </div>
